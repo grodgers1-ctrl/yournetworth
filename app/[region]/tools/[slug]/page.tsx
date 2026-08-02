@@ -98,7 +98,7 @@ export default async function ToolPage({ params }: PageProps) {
             <Link href="/methodology/fire-number/" className="text-accent hover:text-accent-hover">
               FIRE Number methodology
             </Link>
-            .
+            . (Deployed to Vercel production.)
           </p>
         </div>
       </section>
