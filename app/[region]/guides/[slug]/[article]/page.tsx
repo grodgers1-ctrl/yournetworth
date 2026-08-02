@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { ComponentType } from "react";
 import { getArticle, getGuide, getAuthor, type Region } from "@/content/taxonomy";
 import UK4PercentRule from "@/content/articles/uk/fire-number/4-percent-rule.mdx";
 import US4PercentRule from "@/content/articles/us/fire-number/4-percent-rule.mdx";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Badge } from "@/components/ui/Badge";
+import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
+import { buildBreadcrumb } from "@/lib/seo/breadcrumb";
 
 type PageProps = {
   params: Promise<{ region: string; slug: string; article: string }>;
@@ -49,7 +54,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         "x-default": `/uk/guides/${slug}/${article}/`,
       },
     },
-    openGraph: { title, description, url: path, type: "article" },
+    openGraph: { title, description, url: path, type: "article", images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
   };
 }
 
@@ -76,30 +82,60 @@ export default async function ArticlePage({ params }: PageProps) {
     url: `https://yournetworth.net${path}`,
     isPartOf: { "@type": "Article", name: guide.title, url: `https://yournetworth.net/${r}/guides/${slug}/` },
   };
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://yournetworth.net/" },
-      { "@type": "ListItem", position: 2, name: r.toUpperCase(), item: `https://yournetworth.net/${r}/` },
-      { "@type": "ListItem", position: 3, name: guide.title, item: `https://yournetworth.net/${r}/guides/${slug}/` },
-      { "@type": "ListItem", position: 4, name: item.title },
-    ],
-  };
+  const breadcrumbLd = buildBreadcrumb([
+    { name: "Home", item: "https://yournetworth.net/" },
+    { name: r.toUpperCase(), item: `https://yournetworth.net/${r}/` },
+    { name: guide.title, item: `https://yournetworth.net/${r}/guides/${slug}/` },
+    { name: item.title },
+  ]);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <article className="mx-auto max-w-[760px] px-6 py-10 md:py-16">
-        <div className="mb-8 text-sm text-text-muted">
-          {r === "uk" ? "UK article" : "US article"} · Updated 2 August 2026
-          {author && <> · By <a href={`/authors/${author.slug}/`}>{author.name}</a></>}
-        </div>
-        <div className="mdx-content">
-          <Module />
-        </div>
-      </article>
+      <section className="mx-auto max-w-[1160px] px-6 py-6 md:py-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: r.toUpperCase(), href: `/${r}/` },
+            { label: guide.title, href: `/${r}/guides/${slug}/` },
+            { label: item.title },
+          ]}
+        />
+      </section>
+      <section className="mx-auto max-w-[760px] px-6 pb-10 md:pb-16">
+        <article>
+          <div className="mb-8 flex flex-wrap items-center gap-3 text-sm text-text-dim">
+            <Badge variant="muted">{r === "uk" ? "UK article" : "US article"}</Badge>
+            <span>Updated 2 August 2026</span>
+            {author && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>
+                  By{" "}
+                  <Link href={`/authors/${author.slug}/`} className="text-accent hover:text-accent-hover">
+                    {author.name}
+                  </Link>
+                </span>
+              </>
+            )}
+          </div>
+          <div className="mdx-content">
+            <Module />
+          </div>
+        </article>
+
+        <Card variant="surface" className="mt-10 p-5">
+          <CardTitle>Back to the guide</CardTitle>
+          <CardDescription className="mt-1">
+            Read the full{" "}
+            <Link href={`/${r}/guides/${slug}/`} className="text-accent hover:text-accent-hover">
+              {guide.title}
+            </Link>{" "}
+            for the complete picture.
+          </CardDescription>
+        </Card>
+      </section>
     </>
   );
 }

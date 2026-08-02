@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getTool } from "@/content/taxonomy";
+import { notFound } from "next/navigation";
+import { Card, CardDescription } from "@/components/ui/Card";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { buildBreadcrumb } from "@/lib/seo/breadcrumb";
+import { getTool, type Region } from "@/content/taxonomy";
 import { ukRegion, usRegion } from "@/lib/regions";
 import { FireNumberTool } from "@/components/tools/FireNumberTool";
-import type { Region } from "@/content/taxonomy";
 
 type PageProps = {
   params: Promise<{ region: string; slug: string }>;
@@ -51,6 +53,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: path,
       type: "website",
+      images: ["/og.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
     },
   };
 }
@@ -76,31 +85,36 @@ export default async function ToolPage({ params }: PageProps) {
     inLanguage: r === "uk" ? "en-GB" : "en-US",
     offers: { "@type": "Offer", price: "0", priceCurrency: config.currency },
   };
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://yournetworth.net/" },
-      { "@type": "ListItem", position: 2, name: r.toUpperCase(), item: `https://yournetworth.net/${r}/` },
-      { "@type": "ListItem", position: 3, name: tool.title },
-    ],
-  };
+  const breadcrumbLd = buildBreadcrumb([
+    { name: "Home", item: "https://yournetworth.net/" },
+    { name: r.toUpperCase(), item: `https://yournetworth.net/${r}/` },
+    { name: tool.title },
+  ]);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <section className="mx-auto max-w-[1160px] px-6 py-10 md:py-16">
+      <section className="mx-auto max-w-[1160px] px-6 py-6 md:py-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: r.toUpperCase() },
+            { label: tool.title },
+          ]}
+        />
+      </section>
+      <section className="mx-auto max-w-[1160px] px-6 pb-10 md:pb-16">
         <FireNumberTool region={r} />
-        <div className="mt-8 rounded-[16px] border border-hairline bg-surface p-5">
-          <p className="text-sm text-text-muted">
+        <Card variant="surface" className="mt-8 p-5">
+          <CardDescription>
             Want to see the formulas, assumptions, and sources behind the numbers? Read the{" "}
             <Link href="/methodology/fire-number/" className="text-accent hover:text-accent-hover">
               FIRE Number methodology
             </Link>
             .
-          </p>
-        </div>
+          </CardDescription>
+        </Card>
       </section>
     </>
   );

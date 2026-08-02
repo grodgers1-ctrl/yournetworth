@@ -22,6 +22,7 @@ type CalcChartProps = {
   endAge: number;
   formatValue: (value: number) => string;
   className?: string;
+  title?: string;
 };
 
 const width = 800;
@@ -30,9 +31,19 @@ const margin = { top: 20, right: 40, bottom: 50, left: 70 };
 const innerWidth = width - margin.left - margin.right;
 const innerHeight = height - margin.top - margin.bottom;
 
-export function CalcChart({ data, currentAge, endAge, formatValue, className }: CalcChartProps) {
-  const [tooltip, setTooltip] = useState<{ year: number; value: number; x: number; y: number } | null>(null);
+export function CalcChart({ data, currentAge, endAge, formatValue, className, title }: CalcChartProps) {
+  const [tooltip, setTooltip] = useState<{
+    year: number;
+    p10: number;
+    p25: number;
+    p50: number;
+    p75: number;
+    p90: number;
+    x: number;
+    y: number;
+  } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const xScale = useMemo(
     () => scaleLinear({ domain: [currentAge, endAge], range: [0, innerWidth] }),
@@ -48,18 +59,21 @@ export function CalcChart({ data, currentAge, endAge, formatValue, className }: 
 
   const handleMouseMove = useCallback(
     (event: React.MouseEvent<SVGRectElement>) => {
-      if (!svgRef.current) return;
-      const rect = svgRef.current.getBoundingClientRect();
-      const x = event.clientX - rect.left - margin.left;
-      const year = Math.round(xScale.invert((x / rect.width) * width));
+      if (!svgRef.current || !wrapperRef.current) return;
+      const wrapperRect = wrapperRef.current.getBoundingClientRect();
+      const svgRect = svgRef.current.getBoundingClientRect();
+      const x = event.clientX - svgRect.left - margin.left;
+      const svgX = (x / svgRect.width) * width;
+      const year = Math.round(xScale.invert(svgX));
       const clampedYear = Math.max(currentAge, Math.min(endAge, year));
       const point = data.find((d) => d.year === clampedYear);
       if (point) {
+        const rawX = event.clientX - wrapperRect.left;
+        const rawY = event.clientY - wrapperRect.top;
         setTooltip({
-          year: clampedYear,
-          value: point.p50,
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top,
+          ...point,
+          x: Math.min(rawX + 12, wrapperRect.width - 160),
+          y: rawY - 12,
         });
       }
     },
@@ -77,10 +91,26 @@ export function CalcChart({ data, currentAge, endAge, formatValue, className }: 
   }
 
   return (
-    <div className={cn("relative aspect-video rounded-[16px] border border-hairline bg-surface", className)}>
-      <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} className="h-full w-full overflow-visible" aria-label="FIRE projection chart">
+    <div ref={wrapperRef} className={cn("relative aspect-video rounded-[16px] border border-hairline bg-surface", className)}>
+      {(title || tooltip) && (
+        <div className="absolute left-5 right-5 top-5 flex items-start justify-between">
+          {title && <h3 className="text-sm font-semibold text-text">{title}</h3>}
+          <div className="flex items-center gap-3 text-xs text-text-dim">
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-4 rounded-full bg-text/20" /> p10–p90
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-4 rounded-full bg-text/40" /> p25–p75
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-0.5 w-4 bg-text" /> median
+            </span>
+          </div>
+        </div>
+      )}
+      <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} className="h-full w-full overflow-visible" aria-label={title || "FIRE projection chart"}>
         <defs>
-          <linearGradient id="wedge" gradientUnits="userSpaceOnUse" x1={xScale(currentAge)} y1={0} x2={xScale(110)} y2={0}>
+          <linearGradient id="wedge" gradientUnits="userSpaceOnUse" x1={xScale(currentAge)} y1={0} x2={xScale(endAge)} y2={0}>
             <stop offset="0%" stopColor="var(--color-bg)" stopOpacity={0} />
             <stop offset="100%" stopColor="var(--color-bg)" stopOpacity={0.85} />
           </linearGradient>
@@ -170,11 +200,17 @@ export function CalcChart({ data, currentAge, endAge, formatValue, className }: 
       </svg>
       {tooltip && (
         <div
-          className="pointer-events-none absolute rounded-lg border border-hairline bg-elevated px-3 py-2 text-xs shadow-studio"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 12 }}
+          className="pointer-events-none absolute z-10 rounded-lg border border-hairline bg-elevated px-3 py-2 text-xs shadow-card"
+          style={{ left: tooltip.x, top: tooltip.y }}
         >
           <p className="font-medium text-text">Age {tooltip.year}</p>
-          <p className="tabular-nums text-text-muted">{formatValue(tooltip.value)}</p>
+          <div className="mt-1 space-y-0.5 tabular-nums text-text-muted">
+            <p>p90: {formatValue(tooltip.p90)}</p>
+            <p>p75: {formatValue(tooltip.p75)}</p>
+            <p className="text-text">p50: {formatValue(tooltip.p50)}</p>
+            <p>p25: {formatValue(tooltip.p25)}</p>
+            <p>p10: {formatValue(tooltip.p10)}</p>
+          </div>
         </div>
       )}
     </div>

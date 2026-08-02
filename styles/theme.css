@@ -6,6 +6,11 @@
   --color-hairline: #222225;
   --color-stroke: #2E2E33;
 
+  /* Border aliases */
+  --color-border-subtle: rgba(255, 255, 255, 0.03);
+  --color-border-default: #222225;
+  --color-border-strong: #2E2E33;
+
   /* Typography */
   --color-text: #F5F5F7;
   --color-text-muted: #86868B;
@@ -14,14 +19,36 @@
   /* Interactive */
   --color-accent: #2F79EF;
   --color-accent-hover: #1A62D6;
+  --color-accent-muted: rgba(47, 121, 239, 0.12);
   --color-debt: #8B1E1E;
+  --color-success: #3D8B40;
 
   /* Geometry */
+  --radius-sm: 8px;
   --radius-card: 16px;
+  --radius-lg: 20px;
   --radius-pill: 30px;
+
+  /* Elevation */
+  --shadow-card: 0px 20px 40px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0px 30px 60px rgba(0, 0, 0, 0.5);
   --shadow-studio: 0px 20px 40px rgba(0, 0, 0, 0.4);
 
   /* Fonts */
   --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Spacing scale (documented; use Tailwind classes in practice) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-30: 120px;
 }

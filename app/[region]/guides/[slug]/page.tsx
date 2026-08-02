@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { ComponentType } from "react";
-import { getGuide, getAuthor, getTool, type Region } from "@/content/taxonomy";
+import { getGuide, getAuthor, getTool, getArticlesByGuide, type Region } from "@/content/taxonomy";
 import UKFireNumberGuide from "@/content/guides/uk/fire-number.mdx";
 import USFireNumberGuide from "@/content/guides/us/fire-number.mdx";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Badge } from "@/components/ui/Badge";
+import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
+import { buildBreadcrumb } from "@/lib/seo/breadcrumb";
 
 type PageProps = {
   params: Promise<{ region: string; slug: string }>;
@@ -47,7 +52,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         "x-default": `/uk/guides/${slug}/`,
       },
     },
-    openGraph: { title, description, url: path, type: "article" },
+    openGraph: { title, description, url: path, type: "article", images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
   };
 }
 
@@ -61,6 +67,7 @@ export default async function GuidePage({ params }: PageProps) {
   if (!Module) notFound();
   const author = guide.authorSlug ? getAuthor(guide.authorSlug) : undefined;
   const tool = getTool(r, guide.tool);
+  const relatedArticles = getArticlesByGuide(r, slug);
   const path = `/${r}/guides/${slug}/`;
 
   const articleLd = {
@@ -74,29 +81,77 @@ export default async function GuidePage({ params }: PageProps) {
     url: `https://yournetworth.net${path}`,
     isPartOf: tool ? { "@type": "WebApplication", name: tool.title, url: `https://yournetworth.net/${r}/tools/${tool.slug}/` } : undefined,
   };
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://yournetworth.net/" },
-      { "@type": "ListItem", position: 2, name: r.toUpperCase(), item: `https://yournetworth.net/${r}/` },
-      { "@type": "ListItem", position: 3, name: guide.title },
-    ],
-  };
+  const breadcrumbLd = buildBreadcrumb([
+    { name: "Home", item: "https://yournetworth.net/" },
+    { name: r.toUpperCase(), item: `https://yournetworth.net/${r}/` },
+    { name: guide.title },
+  ]);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <article className="mx-auto max-w-[760px] px-6 py-10 md:py-16">
-        <div className="mb-8 text-sm text-text-muted">
-          {r === "uk" ? "UK guide" : "US guide"} · Updated 2 August 2026
-          {author && <> · By <a href={`/authors/${author.slug}/`}>{author.name}</a></>}
-        </div>
-        <div className="mdx-content">
-          <Module />
-        </div>
-      </article>
+      <section className="mx-auto max-w-[1160px] px-6 py-6 md:py-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: r.toUpperCase(), href: `/${r}/` },
+            { label: guide.title },
+          ]}
+        />
+      </section>
+      <section className="mx-auto max-w-[760px] px-6 pb-10 md:pb-16">
+        <article>
+          <div className="mb-8 flex flex-wrap items-center gap-3 text-sm text-text-dim">
+            <Badge variant="muted">{r === "uk" ? "UK guide" : "US guide"}</Badge>
+            <span>Updated 2 August 2026</span>
+            {author && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>
+                  By{" "}
+                  <Link href={`/authors/${author.slug}/`} className="text-accent hover:text-accent-hover">
+                    {author.name}
+                  </Link>
+                </span>
+              </>
+            )}
+          </div>
+          <div className="mdx-content">
+            <Module />
+          </div>
+        </article>
+
+        {tool && (
+          <Card variant="surface" className="mt-10 p-5">
+            <CardTitle>Try the calculator</CardTitle>
+            <CardDescription className="mt-1">
+              Put the guide into practice with the{" "}
+              <Link href={`/${r}/tools/${tool.slug}/`} className="text-accent hover:text-accent-hover">
+                {tool.title} calculator
+              </Link>
+              .
+            </CardDescription>
+          </Card>
+        )}
+
+        {relatedArticles.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-subsection">Related articles</h2>
+            <div className="mt-4 grid gap-4">
+              {relatedArticles.map((a) => (
+                <Link
+                  key={a.slug}
+                  href={`/${r}/guides/${slug}/${a.slug}/`}
+                  className="rounded-[16px] border border-hairline bg-surface p-5 transition-colors hover:border-stroke focus-ring"
+                >
+                  <p className="text-sm font-medium text-text">{a.title}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
     </>
   );
 }

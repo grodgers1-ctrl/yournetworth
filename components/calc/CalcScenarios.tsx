@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 type ScenarioMap = Record<string, Record<string, unknown>>;
@@ -23,7 +23,12 @@ function loadScenarios(storageKey: string): ScenarioMap {
   }
 }
 
-export function CalcScenarios<T extends Record<string, unknown>>({ slug, state, setState, initial }: CalcScenariosProps<T>) {
+export function CalcScenarios<T extends Record<string, unknown>>({
+  slug,
+  state,
+  setState,
+  initial,
+}: CalcScenariosProps<T>) {
   const storageKey = `${slug}-scenarios`;
   const [scenarios, setScenarios] = useState<ScenarioMap>(() => loadScenarios(storageKey));
   const [active, setActive] = useState<string>("baseline");
@@ -32,6 +37,19 @@ export function CalcScenarios<T extends Record<string, unknown>>({ slug, state, 
     if (typeof window === "undefined") return;
     window.localStorage.setItem(storageKey, JSON.stringify(scenarios));
   }, [storageKey, scenarios]);
+
+  const stateKey = JSON.stringify(state);
+  const initialKey = JSON.stringify(initial);
+
+  const unsaved = useMemo(() => {
+    const set = new Set<string>();
+    if (stateKey !== initialKey) set.add("baseline");
+    for (const name of ["A", "B", "C"]) {
+      const saved = scenarios[name] as T | undefined;
+      if (saved && JSON.stringify(saved) !== stateKey) set.add(name);
+    }
+    return set;
+  }, [stateKey, initialKey, scenarios]);
 
   const names = ["baseline", "A", "B", "C"];
 
@@ -60,22 +78,34 @@ export function CalcScenarios<T extends Record<string, unknown>>({ slug, state, 
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-xs text-text-dim">Scenarios</span>
-      {names.map((name) => (
-        <button
-          key={name}
-          type="button"
-          onClick={() => select(name)}
-          className={cn(
-            "rounded-full px-3 py-1 text-xs font-medium transition-colors",
-            active === name
-              ? "bg-accent text-text"
-              : "border border-hairline bg-elevated text-text-muted hover:text-text"
-          )}
-          aria-pressed={active === name}
-        >
-          {name === "baseline" ? "Baseline" : name}
-        </button>
-      ))}
+      {names.map((name) => {
+        const label = name === "baseline" ? "Baseline" : name;
+        const saved = name !== "baseline" && scenarios[name] !== undefined;
+        const dirty = unsaved.has(name);
+        return (
+          <button
+            key={name}
+            type="button"
+            onClick={() => select(name)}
+            className={cn(
+              "relative rounded-full px-3 py-1 text-xs font-medium transition-colors focus-ring",
+              active === name
+                ? "bg-accent text-text"
+                : "border border-hairline bg-elevated text-text-muted hover:text-text"
+            )}
+            aria-pressed={active === name}
+            aria-label={`${label} scenario${saved ? ", saved" : ""}${dirty ? ", unsaved changes" : ""}`}
+          >
+            {label}
+            {dirty && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

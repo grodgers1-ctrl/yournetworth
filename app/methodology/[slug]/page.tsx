@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { ComponentType } from "react";
 import { getMethodology, getTool, getAuthor } from "@/content/taxonomy";
 import FireNumberMethodology from "@/content/methodology/fire-number.mdx";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Badge } from "@/components/ui/Badge";
+import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
+import { buildBreadcrumb } from "@/lib/seo/breadcrumb";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -27,7 +32,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { title, description, url: path, type: "article" },
+    openGraph: { title, description, url: path, type: "article", images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
   };
 }
 
@@ -56,28 +62,68 @@ export default async function MethodologyPage({ params }: PageProps) {
       toolUs ? { "@type": "WebApplication", name: toolUs.title, url: `https://yournetworth.net/us/tools/${toolUs.slug}/` } : undefined,
     ].filter(Boolean),
   };
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://yournetworth.net/" },
-      { "@type": "ListItem", position: 2, name: methodology.title },
-    ],
-  };
+  const breadcrumbLd = buildBreadcrumb([
+    { name: "Home", item: "https://yournetworth.net/" },
+    { name: methodology.title },
+  ]);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <article className="mx-auto max-w-[760px] px-6 py-10 md:py-16">
-        <div className="mb-8 text-sm text-text-muted">
-          Region-neutral methodology · Last reviewed {methodology.lastReviewed}
-          {author && <> · By <a href={`/authors/${author.slug}/`}>{author.name}</a></>}
+      <section className="mx-auto max-w-[1160px] px-6 py-6 md:py-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: methodology.title },
+          ]}
+        />
+      </section>
+      <section className="mx-auto max-w-[760px] px-6 pb-10 md:pb-16">
+        <article>
+          <div className="mb-8 flex flex-wrap items-center gap-3 text-sm text-text-dim">
+            <Badge variant="muted">Region-neutral methodology</Badge>
+            <span>Last reviewed {methodology.lastReviewed}</span>
+            {author && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>
+                  By{" "}
+                  <Link href={`/authors/${author.slug}/`} className="text-accent hover:text-accent-hover">
+                    {author.name}
+                  </Link>
+                </span>
+              </>
+            )}
+          </div>
+          <div className="mdx-content">
+            <Module />
+          </div>
+        </article>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {toolUk && (
+            <Card variant="surface" className="p-5">
+              <CardTitle>UK tool</CardTitle>
+              <CardDescription className="mt-1">
+                <Link href={`/uk/tools/${toolUk.slug}/`} className="text-accent hover:text-accent-hover">
+                  Open the UK {toolUk.title} calculator
+                </Link>
+              </CardDescription>
+            </Card>
+          )}
+          {toolUs && (
+            <Card variant="surface" className="p-5">
+              <CardTitle>US tool</CardTitle>
+              <CardDescription className="mt-1">
+                <Link href={`/us/tools/${toolUs.slug}/`} className="text-accent hover:text-accent-hover">
+                  Open the US {toolUs.title} calculator
+                </Link>
+              </CardDescription>
+            </Card>
+          )}
         </div>
-        <div className="mdx-content">
-          <Module />
-        </div>
-      </article>
+      </section>
     </>
   );
 }

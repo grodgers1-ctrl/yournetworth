@@ -26,10 +26,50 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: "/",
     siteName: "Your Net Worth",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Your Net Worth - Free UK and US personal finance calculators",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@yournetworth",
+    title: "Your Net Worth",
+    description: "Free UK and US personal finance calculators with live charts.",
+    images: ["/og.png"],
   },
   alternates: {
     canonical: "/",
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Your Net Worth",
+  url: "https://yournetworth.net",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://yournetworth.net/glossary?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Your Net Worth",
+  url: "https://yournetworth.net",
+  logo: "https://yournetworth.net/icon.png",
+  sameAs: ["https://dividendmapper.com"],
 };
 
 export default function RootLayout({
@@ -37,13 +77,25 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+        />
+      </head>
       <PostHogProvider>
         <body className="flex min-h-full flex-col bg-bg font-sans text-text">
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <Footer />
         </body>
       </PostHogProvider>

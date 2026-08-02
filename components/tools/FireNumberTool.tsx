@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { ArrowUpRight, TrendingUp } from "lucide-react";
 import { CalcShell } from "@/components/calc/CalcShell";
 import { CalcSlider } from "@/components/calc/CalcSlider";
 import { CalcChart } from "@/components/calc/CalcChart";
@@ -8,6 +9,8 @@ import { CalcResult } from "@/components/calc/CalcResult";
 import { useCalcState } from "@/components/calc/useCalcState";
 import { calculateFire, type FireInputs } from "@/lib/calc/fire";
 import { ukRegion, usRegion } from "@/lib/regions";
+import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
+import { useTrackEvent } from "@/lib/analytics";
 
 type FireState = {
   annualSpend: number;
@@ -43,6 +46,7 @@ export function FireNumberTool({ region }: { region: "uk" | "us" }) {
     key: "fire-number",
     initial: initialFireState,
   });
+  const track = useTrackEvent();
 
   const currentAge = clamp(state.currentAge, 18, 80);
   const targetAge = clamp(state.targetAge, currentAge + 1, 90);
@@ -58,6 +62,33 @@ export function FireNumberTool({ region }: { region: "uk" | "us" }) {
     return calculateFire(inputs);
   }, [state, currentAge, targetAge, endAge]);
 
+  const cta = (
+    <Card variant="surface" className="p-5">
+      <div className="flex items-start gap-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-elevated text-text">
+          <TrendingUp className="h-5 w-5" />
+        </div>
+        <div>
+          <CardTitle className="text-base">Model the income, not just the number</CardTitle>
+          <CardDescription className="mt-1">
+            Your FIRE number is a portfolio size. If you want to see the actual yearly dividend income that portfolio
+            could produce,{" "}
+            <a
+              href="https://dividendmapper.com"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1 text-accent hover:text-accent-hover"
+              onClick={() => track("dividendmapper_cta_click", { region, path: "fire-number-tool" })}
+            >
+              DividendMapper <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>{" "}
+            models the cash flows behind it.
+          </CardDescription>
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <CalcShell
       title="FIRE Number"
@@ -67,20 +98,7 @@ export function FireNumberTool({ region }: { region: "uk" | "us" }) {
       initial={initialFireState}
       copyLink={copyLink}
       exportJson={exportJson}
-      cta={
-        <div className="text-sm text-text-muted">
-          Your FIRE number is the portfolio you need.{" "}
-          <a
-            href="https://dividendmapper.com"
-            target="_blank"
-            rel="noopener"
-            className="text-accent hover:text-accent-hover"
-          >
-            DividendMapper
-          </a>{" "}
-          models the actual yearly dividend income that portfolio could produce.
-        </div>
-      }
+      cta={cta}
     >
       <div className="grid gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-5">
@@ -171,6 +189,7 @@ export function FireNumberTool({ region }: { region: "uk" | "us" }) {
             currentAge={currentAge}
             endAge={endAge}
             formatValue={config.formatCompact}
+            title="Portfolio projection by age"
           />
           <CalcResult
             primary={{ label: "Your FIRE number", value: config.formatValue(outputs.fireNumber) }}
