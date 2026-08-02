@@ -1,0 +1,27 @@
+@theme {
+  /* Base environment */
+  --color-bg: #0B0B0C;
+  --color-surface: #141416;
+  --color-elevated: #1D1D20;
+  --color-hairline: #222225;
+  --color-stroke: #2E2E33;
+
+  /* Typography */
+  --color-text: #F5F5F7;
+  --color-text-muted: #86868B;
+  --color-text-dim: #6E6E73;
+
+  /* Interactive */
+  --color-accent: #2F79EF;
+  --color-accent-hover: #1A62D6;
+  --color-debt: #8B1E1E;
+
+  /* Geometry */
+  --radius-card: 16px;
+  --radius-pill: 30px;
+  --shadow-studio: 0px 20px 40px rgba(0, 0, 0, 0.4);
+
+  /* Fonts */
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
