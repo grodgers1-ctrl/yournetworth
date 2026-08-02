@@ -1,7 +1,8 @@
-// Placeholder analytics wrapper. Replace with PostHog init when keys are ready.
-// See https://posthog.com/docs/libraries/next-js for the recommended Next.js 15+ setup.
+import { usePostHog } from "posthog-js/react";
 
-export function trackEvent(name: string, properties?: Record<string, unknown>) {
-  if (typeof window === "undefined") return;
-  console.log("[analytics]", name, properties);
+export function useTrackEvent() {
+  const posthog = usePostHog();
+  return (name: string, properties?: Record<string, unknown>) => {
+    posthog?.capture(name, properties);
+  };
 }

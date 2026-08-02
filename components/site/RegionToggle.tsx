@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useTrackEvent } from "@/lib/analytics";
 
 type Region = "uk" | "us";
 
@@ -11,12 +12,15 @@ export function RegionToggle() {
     return (window.localStorage.getItem("region") as Region | null) ?? "uk";
   });
 
+  const track = useTrackEvent();
+
   useEffect(() => {
     window.localStorage.setItem("region", region);
   }, [region]);
 
   const select = (next: Region) => {
     setRegion(next);
+    track("region_toggle", { region: next });
   };
 
   return (

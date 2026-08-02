@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { Suspense } from "react";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { PostHogPageView } from "@/components/providers/PostHogPageView";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,11 +37,16 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-bg font-sans text-text">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <PostHogProvider>
+        <body className="flex min-h-full flex-col bg-bg font-sans text-text">
+          <Suspense fallback={null}>
+            <PostHogPageView />
+          </Suspense>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </body>
+      </PostHogProvider>
     </html>
   );
 }
