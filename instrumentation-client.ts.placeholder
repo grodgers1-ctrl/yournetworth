@@ -1,3 +1,0 @@
-// Paste client-side instrumentation here, e.g. PostHog init.
-// Do not import packages that are not installed.
-// When PostHog is added, rename this file to instrumentation-client.ts at the project root.
