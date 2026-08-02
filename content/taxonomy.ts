@@ -13,6 +13,37 @@ export type Tool = {
   published?: boolean;
 };
 
+export type Guide = {
+  slug: string;
+  title: string;
+  region: Region;
+  tool: string;
+  relatedGuides?: string[];
+  relatedArticles?: string[];
+  authorSlug?: string;
+  reviewedBy?: string;
+  published?: boolean;
+};
+
+export type Article = {
+  slug: string;
+  title: string;
+  region: Region;
+  guide: string;
+  relatedArticles?: string[];
+  authorSlug?: string;
+  reviewedBy?: string;
+  published?: boolean;
+};
+
+export type Methodology = {
+  slug: string;
+  title: string;
+  toolSlug: string;
+  lastReviewed: string;
+  published?: boolean;
+};
+
 export type Author = {
   slug: string;
   name: string;
@@ -85,14 +116,22 @@ export const tools: Tool[] = [
     title: "FIRE Number",
     region: "uk",
     description: "Estimate the portfolio size needed to cover annual spending.",
-    published: false,
+    pillarGuide: "fire-number",
+    supportingArticles: ["4-percent-rule"],
+    methodology: "fire-number",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "fire-number",
     title: "FIRE Number",
     region: "us",
     description: "Estimate the portfolio size needed to cover annual spending.",
-    published: false,
+    pillarGuide: "fire-number",
+    supportingArticles: ["4-percent-rule"],
+    methodology: "fire-number",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "mortgage-overpayment",
@@ -135,6 +174,56 @@ export const tools: Tool[] = [
     region: "us",
     description: "Add income and spending in different currencies and convert to one base.",
     published: false,
+  },
+];
+
+export const guides: Guide[] = [
+  {
+    slug: "fire-number",
+    title: "What is a FIRE number?",
+    region: "uk",
+    tool: "fire-number",
+    relatedArticles: ["4-percent-rule"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "fire-number",
+    title: "What is a FIRE number?",
+    region: "us",
+    tool: "fire-number",
+    relatedArticles: ["4-percent-rule"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+];
+
+export const articles: Article[] = [
+  {
+    slug: "4-percent-rule",
+    title: "Is the 4% rule safe in the UK?",
+    region: "uk",
+    guide: "fire-number",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "4-percent-rule",
+    title: "Where does the 4% rule come from?",
+    region: "us",
+    guide: "fire-number",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+];
+
+export const methodologies: Methodology[] = [
+  {
+    slug: "fire-number",
+    title: "FIRE Number methodology",
+    toolSlug: "fire-number",
+    lastReviewed: "2026-08-02",
+    published: true,
   },
 ];
 
@@ -253,7 +342,7 @@ It suits people who can stay motivated without frequent small victories. Our cal
     definition: "A multi-currency budget tracks income and spending in more than one currency and converts them to a single base currency.",
     body: `A multi-currency budget is useful for freelancers, expats, travellers, and anyone with income or expenses across borders. Instead of guessing, you convert each line to a base currency at a live rate.
 
-The hard part is exchange-rate movement. A rent payment in euros can look cheaper one month and more expensive the next, even if the local amount stays the same. Converting everything to one base currency removes that illusion.
+The hard part is exchange-rate movement. A rent payment in euros can look cheaper one month and more expensive the next, even if the local amount stays the same. Converting everything to a base currency removes that illusion.
 
 The tool also helps you see whether your total income covers your total spending, regardless of where each transaction happens.`,
     relatedTerms: ["net-worth", "compound-interest"],
@@ -266,6 +355,11 @@ export const updates: Update[] = [
     date: "2026-08-02",
     title: "Week 0: site infrastructure live",
     body: "Launched the homepage, about page, editorial policy, glossary shell, and author page scaffolding. Calculators will follow in weekly clusters starting with FIRE Number.",
+  },
+  {
+    date: "2026-08-02",
+    title: "Week 1: FIRE Number cluster live",
+    body: "Added the FIRE Number calculator for UK and US users, plus pillar guides, supporting articles, and a methodology page.",
   },
 ];
 
@@ -283,4 +377,28 @@ export function getPublishedTools(): Tool[] {
 
 export function getAllTools(): Tool[] {
   return tools;
+}
+
+export function getTool(region: Region, slug: string): Tool | undefined {
+  return tools.find((t) => t.region === region && t.slug === slug && t.published);
+}
+
+export function getGuide(region: Region, slug: string): Guide | undefined {
+  return guides.find((g) => g.region === region && g.slug === slug && g.published);
+}
+
+export function getArticle(region: Region, slug: string): Article | undefined {
+  return articles.find((a) => a.region === region && a.slug === slug && a.published);
+}
+
+export function getMethodology(slug: string): Methodology | undefined {
+  return methodologies.find((m) => m.slug === slug && m.published);
+}
+
+export function getArticlesByGuide(region: Region, guideSlug: string): Article[] {
+  return articles.filter((a) => a.region === region && a.guide === guideSlug && a.published);
+}
+
+export function getPublishedToolsByRegion(region: Region): Tool[] {
+  return tools.filter((t) => t.region === region && t.published);
 }

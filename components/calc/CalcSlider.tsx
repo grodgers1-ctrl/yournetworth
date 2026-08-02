@@ -1,7 +1,17 @@
-export function CalcSlider() {
-  return (
-    <div className="text-sm text-text-muted">
-      Slider placeholder. Install a Radix slider primitive and restyle it to finish this component.
-    </div>
-  );
+"use client";
+
+import { Slider } from "@/components/ui/slider";
+
+type CalcSliderProps = {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  onChange: (value: number) => void;
+  format?: (value: number) => string;
+};
+
+export function CalcSlider(props: CalcSliderProps) {
+  return <Slider {...props} />;
 }

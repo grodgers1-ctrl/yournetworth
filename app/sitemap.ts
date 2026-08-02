@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { glossaryTerms } from "@/content/taxonomy";
+import { glossaryTerms, tools, guides, articles, methodologies } from "@/content/taxonomy";
 
 const base = "https://yournetworth.net";
 
@@ -20,5 +20,43 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...pages, ...glossary].map((p) => ({ ...p, url: `${base}${p.url}` }));
+  const publishedTools = tools
+    .filter((t) => t.published)
+    .map((t) => ({
+      url: `/${t.region}/tools/${t.slug}/`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    }));
+
+  const publishedGuides = guides
+    .filter((g) => g.published)
+    .map((g) => ({
+      url: `/${g.region}/guides/${g.slug}/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
+
+  const publishedArticles = articles
+    .filter((a) => a.published)
+    .map((a) => ({
+      url: `/${a.region}/guides/${a.guide}/${a.slug}/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
+
+  const publishedMethodologies = methodologies
+    .filter((m) => m.published)
+    .map((m) => ({
+      url: `/methodology/${m.slug}/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
+
+  return [...pages, ...glossary, ...publishedTools, ...publishedGuides, ...publishedArticles, ...publishedMethodologies].map(
+    (p) => ({ ...p, url: `${base}${p.url}` })
+  );
 }

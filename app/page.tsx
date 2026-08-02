@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ToolRegionLink } from "@/components/site/ToolRegionLink";
 
 export const metadata: Metadata = {
   title: "Free UK & US Personal Finance Calculators",
@@ -90,15 +91,26 @@ export default function HomePage() {
             Six calculators, each built around the same idea: move a slider and watch the answer change.
           </p>
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {tools.map((t) => (
-              <div
-                key={t.slug}
-                className="rounded-[16px] border border-hairline bg-elevated p-6 shadow-studio"
-              >
-                <h3 className="text-lg font-semibold text-text">{t.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-muted">{t.desc}</p>
-              </div>
-            ))}
+            {tools.map((t) =>
+              t.slug === "fire-number" ? (
+                <ToolRegionLink
+                  key={t.slug}
+                  toolSlug={t.slug}
+                  className="rounded-[16px] border border-hairline bg-elevated p-6 shadow-studio transition-colors hover:border-stroke"
+                >
+                  <h3 className="text-lg font-semibold text-text">{t.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-text-muted">{t.desc}</p>
+                </ToolRegionLink>
+              ) : (
+                <div
+                  key={t.slug}
+                  className="rounded-[16px] border border-hairline bg-elevated p-6 shadow-studio"
+                >
+                  <h3 className="text-lg font-semibold text-text">{t.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-text-muted">{t.desc}</p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>

@@ -1,0 +1,84 @@
+# FIRE Number methodology
+
+This page explains how the Your Net Worth FIRE Number calculator works, what assumptions it uses, and where the data comes from. It is written to be readable without a finance degree, but it also gives you enough detail to judge the tool for yourself.
+
+## What the calculator measures
+
+The FIRE Number calculator estimates three things:
+
+1. Your **FIRE number**: the portfolio size needed to cover annual spending at a chosen withdrawal rate.
+2. Your **Coast FIRE number**: the portfolio size needed today so that growth alone reaches the FIRE number by your target retirement age.
+3. The **range of outcomes** between now and your planning horizon, shown as percentile bands.
+
+It does not predict the future. It shows how a set of assumptions would have behaved, and it lets you move those assumptions until you find a plan you trust.
+
+## Core formulas
+
+**FIRE number**
+
+```
+FIRE number = annual spending / withdrawal rate
+```
+
+A household spending £40,000 a year with a 4% withdrawal rate needs £1,000,000. At 3.5%, the same spending needs £1,142,857.
+
+**Coast FIRE number**
+
+```
+Coast FIRE number = FIRE number / (1 + r) ^ (target age - current age)
+```
+
+Where `r` is the expected real annual return, currently set to 6%.
+
+**Years to FIRE**
+
+The calculator finds the first year in the median simulation path where the portfolio value equals or exceeds the FIRE number. This is an approximation. The actual path depends on returns, contributions, and spending.
+
+## Simulation assumptions
+
+The fan chart is produced by a seeded Monte Carlo simulation with 1,000 runs. This means the same inputs always produce the same chart, so the results are reproducible and the chart does not jitter while you drag a slider.
+
+| Assumption | Value | Rationale |
+| ---------- | ----- | ----------- |
+| Mean annual real return | 6% | Rough midpoint between historical global equity returns and conservative planning estimates |
+| Standard deviation of real return | 15% | Approximate long-term volatility of a global equity-heavy portfolio |
+| Contributions | Monthly, converted to annual | Added while current age < target age |
+| Withdrawals | Annual | Subtracted after target age is reached |
+| Negative balances | Capped at zero | Once the portfolio hits zero, the run is considered failed |
+| Success rate | Fraction of runs ending above zero | Simple proxy for plan robustness |
+
+The simulation ignores taxes, fees, currency effects, and inflation separately. All of these are implicitly captured in the real return assumption, which is why the 6% figure is conservative relative to nominal historical returns.
+
+## Wedge of Death overlay
+
+The darkening right edge of the chart is the Wedge of Death. It is a visual overlay based on a simplified survival curve calibrated to national life tables. It does not change the numbers. It is there to remind you that your money does not need to last forever; it only needs to last until you are no longer alive to spend it.
+
+- UK calibration: simplified Gompertz-Makeham curve informed by the Office for National Statistics 2020-2022 national life tables.
+- US calibration: simplified Gompertz-Makeham curve informed by the US Social Security Administration 2020 period life table.
+
+The curve is a visual aid, not a mortality forecast for any individual.
+
+## Sources and references
+
+- William Bengen, "Determining Withdrawal Rates Using Historical Data," Journal of Financial Planning, 1994.
+- Philip L. Cooley, Carl M. Hubbard, and Daniel T. Walz, "Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable," AAII Journal, 1998 (the Trinity Study).
+- Office for National Statistics, 2020-2022 national life tables.
+- US Social Security Administration, 2020 period life table.
+- Bank of England inflation data and HMRC pension and ISA guidance are used for UK context.
+- US Federal Reserve and IRS guidance are used for US context.
+
+## Limitations
+
+The calculator is a model, not a personalised plan. It does not know your tax situation, your health, your family plans, your job security, or your willingness to adjust spending. It does not predict returns. It uses a single mean and standard deviation for returns, which is less nuanced than historical cycles or regime-based models.
+
+Use the calculator to stress-test your assumptions. Then speak to a qualified financial adviser before making major decisions.
+
+## Last updated
+
+This methodology was last reviewed on **2 August 2026**.
+
+<Related slugs={["fire-number", "withdrawal-rate", "four-percent-rule"]} />
+
+---
+
+_This methodology page is educational and is not financial advice._

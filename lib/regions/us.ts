@@ -7,6 +7,38 @@ export const usRegion = {
   taxShelterLabel: "Roth IRA",
   premiumBondLabel: "I Bonds",
   mortgageTerminology: "30-year fixed amortisation",
+  fireTerminology: {
+    retirementAccount: "IRA",
+    taxShelter: "Roth IRA",
+    statePension: "Social Security",
+    pensionAge: "59.5",
+    currency: "dollars",
+  },
+  lifeTableSource: "US Social Security Administration (SSA) 2020 period life table",
+  lifeTableUrl: "https://www.ssa.gov/oact/STATS/table4c6.html",
+  survivalProbability(age: number, currentAge: number): number {
+    if (age <= currentAge) return 1;
+    // Simplified Gompertz-Makeham curve calibrated to SSA male cohort survival.
+    const a = 0.00006;
+    const b = 0.084;
+    const hazard = (a / b) * (Math.exp(b * (age - 30)) - Math.exp(b * (currentAge - 30)));
+    return Math.max(0, Math.min(1, Math.exp(-hazard)));
+  },
+  formatValue(value: number): string {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(value);
+  },
+  formatCompact(value: number): string {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 1,
+      notation: "compact",
+    }).format(value);
+  },
 };
 
 export type USRegion = typeof usRegion;
