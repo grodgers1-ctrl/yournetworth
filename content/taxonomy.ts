@@ -166,14 +166,22 @@ export const tools: Tool[] = [
     title: "Multi-Currency Budget",
     region: "uk",
     description: "Add income and spending in different currencies and convert to one base.",
-    published: false,
+    pillarGuide: "multi-currency-budget",
+    supportingArticles: ["exchange-rate-risk"],
+    methodology: "multi-currency-budget",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "multi-currency-budget",
     title: "Multi-Currency Budget",
     region: "us",
     description: "Add income and spending in different currencies and convert to one base.",
-    published: false,
+    pillarGuide: "multi-currency-budget",
+    supportingArticles: ["exchange-rate-risk"],
+    methodology: "multi-currency-budget",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
 ];
 
@@ -196,6 +204,24 @@ export const guides: Guide[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "multi-currency-budget",
+    title: "What is a multi-currency budget?",
+    region: "uk",
+    tool: "multi-currency-budget",
+    relatedArticles: ["exchange-rate-risk"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "multi-currency-budget",
+    title: "What is a multi-currency budget?",
+    region: "us",
+    tool: "multi-currency-budget",
+    relatedArticles: ["exchange-rate-risk"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const articles: Article[] = [
@@ -215,6 +241,22 @@ export const articles: Article[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "exchange-rate-risk",
+    title: "How do exchange-rate swings affect your UK budget?",
+    region: "uk",
+    guide: "multi-currency-budget",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "exchange-rate-risk",
+    title: "How do exchange-rate swings affect your US budget?",
+    region: "us",
+    guide: "multi-currency-budget",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const methodologies: Methodology[] = [
@@ -222,6 +264,13 @@ export const methodologies: Methodology[] = [
     slug: "fire-number",
     title: "FIRE Number methodology",
     toolSlug: "fire-number",
+    lastReviewed: "2026-08-02",
+    published: true,
+  },
+  {
+    slug: "multi-currency-budget",
+    title: "Multi-Currency Budget methodology",
+    toolSlug: "multi-currency-budget",
     lastReviewed: "2026-08-02",
     published: true,
   },
@@ -360,6 +409,11 @@ export const updates: Update[] = [
     date: "2026-08-02",
     title: "Week 1: FIRE Number cluster live",
     body: "Added the FIRE Number calculator for UK and US users, plus pillar guides, supporting articles, and a methodology page.",
+  },
+  {
+    date: "2026-08-02",
+    title: "Week 2: Multi-Currency Budget cluster live",
+    body: "Added the Multi-Currency Budget calculator for UK and US users, plus pillar guides, a supporting article on exchange-rate risk, and a methodology page.",
   },
 ];
 

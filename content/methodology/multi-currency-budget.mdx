@@ -1,0 +1,76 @@
+# Multi-Currency Budget methodology
+
+This page explains how the Your Net Worth Multi-Currency Budget calculator works, what assumptions it uses, and where the data comes from. It is written to be readable without a finance degree, but it also gives you enough detail to judge the tool for yourself.
+
+## What the calculator measures
+
+The Multi-Currency Budget calculator takes a list of income and expense lines, each in its native currency, and converts them to a single base currency. It then reports:
+
+1. Total income in the base currency.
+2. Total expenses in the base currency.
+3. Net balance, which is income minus expenses.
+4. A category breakdown, showing each category's net contribution.
+5. The currencies used in the budget.
+
+It does not predict future exchange rates. It shows the current or most recent position based on available rates.
+
+## Core formulas
+
+**Conversion to base currency**
+
+```
+value_in_base = amount × (rate(from_currency) / rate(base_currency))
+```
+
+All rates are stored against a common anchor, currently USD. To convert any amount to the base currency, the calculator divides the source currency's rate by the base currency's rate. This is equivalent to a cross-rate calculation in the wholesale market.
+
+**Total income and total expenses**
+
+```
+total_income = Σ (income_i converted to base)
+total_expenses = Σ (expense_i converted to base)
+net = total_income - total_expenses
+```
+
+**Category aggregation**
+
+Each line is assigned a category. The calculator sums all income and expense lines within each category and converts the net to the base currency.
+
+## Exchange-rate sources
+
+The calculator first tries to fetch live rates from the European Central Bank via the Frankfurter API. Frankfurter publishes daily reference rates based on ECB data. The API is free, requires no key, and is suitable for personal-finance tools.
+
+If the live fetch fails, or if the browser is offline, the calculator falls back to a set of static representative rates. These static rates are benchmarked to the US dollar and are updated periodically. They are not real-time, so they are only used when live data is unavailable.
+
+| Source | Coverage | Update frequency | Use in the tool |
+| ------ | -------- | ---------------- | --------------- |
+| Frankfurter / ECB | Major currencies against EUR | Daily | Primary live rate source |
+| Static fallback | 25+ currencies against USD | Updated periodically | Used when live fetch fails |
+
+The rates are cached in the browser's localStorage for one day. This reduces network requests and keeps the calculator responsive.
+
+## Limitations and assumptions
+
+The calculator uses a single rate for all conversions. It does not apply different rates for buying and selling currency, and it does not include bank spreads, card fees, or wire-transfer fees. For planning, this is the right approach because it shows the underlying economics. For actual transfers, you should use the rate and fee your provider charges.
+
+The tool does not account for timing differences. A foreign invoice due next month and a payment made today are both converted at the same rate. For households with large or volatile foreign exposures, timing can matter.
+
+Tax is not modeled. Foreign income and overseas property may have tax implications. The tool is a budgeting aid, not a tax calculator.
+
+## Sources and references
+
+- European Central Bank, daily euro foreign exchange reference rates.
+- Bank of England, daily spot exchange rates against sterling.
+- Federal Reserve, H.10 Statistical Release: Foreign Exchange Rates.
+- Bank of Canada, daily noon and closing exchange rates.
+- Frankfurter API, ECB-based currency conversion data.
+
+## Last updated
+
+This methodology was last reviewed on **2 August 2026**.
+
+<Related slugs={["multi-currency-budget", "net-worth", "compound-interest"]} />
+
+---
+
+_This methodology page is educational and is not financial advice._

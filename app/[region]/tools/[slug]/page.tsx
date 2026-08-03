@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ComponentType } from "react";
 import { Card, CardDescription } from "@/components/ui/Card";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { buildBreadcrumb } from "@/lib/seo/breadcrumb";
-import { getTool, type Region } from "@/content/taxonomy";
+import { getTool, getMethodology, type Region } from "@/content/taxonomy";
 import { ukRegion, usRegion } from "@/lib/regions";
 import { FireNumberTool } from "@/components/tools/FireNumberTool";
+import { MultiCurrencyBudgetTool } from "@/components/tools/MultiCurrencyBudgetTool";
 
 type PageProps = {
   params: Promise<{ region: string; slug: string }>;
@@ -16,17 +18,26 @@ function regionFromString(region: string): Region | null {
   return region === "uk" || region === "us" ? region : null;
 }
 
+const TOOL_MODULES: Record<string, ComponentType<{ region: "uk" | "us" }> | undefined> = {
+  "fire-number": FireNumberTool,
+  "multi-currency-budget": MultiCurrencyBudgetTool,
+};
+
+type ToolSlug = keyof typeof TOOL_MODULES;
+
+const PUBLISHED_SLUGS: ToolSlug[] = ["fire-number", "multi-currency-budget"];
+
 export function generateStaticParams() {
-  return [
-    { region: "uk", slug: "fire-number" },
-    { region: "us", slug: "fire-number" },
-  ];
+  return PUBLISHED_SLUGS.flatMap((slug) => [
+    { region: "uk", slug },
+    { region: "us", slug },
+  ]);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { region, slug } = await params;
   const r = regionFromString(region);
-  if (!r || slug !== "fire-number") {
+  if (!r || !PUBLISHED_SLUGS.includes(slug as ToolSlug)) {
     return {};
   }
   const tool = getTool(r, slug);
@@ -43,9 +54,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: path,
       languages: {
-        "en-GB": "/uk/tools/fire-number/",
-        "en-US": "/us/tools/fire-number/",
-        "x-default": "/uk/tools/fire-number/",
+        "en-GB": `/uk/tools/${slug}/`,
+        "en-US": `/us/tools/${slug}/`,
+        "x-default": `/uk/tools/${slug}/`,
       },
     },
     openGraph: {
@@ -67,15 +78,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ToolPage({ params }: PageProps) {
   const { region, slug } = await params;
   const r = regionFromString(region);
-  if (!r || slug !== "fire-number") {
+  if (!r || !PUBLISHED_SLUGS.includes(slug as ToolSlug)) {
     notFound();
   }
   const tool = getTool(r, slug);
   if (!tool) {
     notFound();
   }
+  const ToolModule = TOOL_MODULES[slug];
+  if (!ToolModule) {
+    notFound();
+  }
   const config = r === "uk" ? ukRegion : usRegion;
   const path = `/${r}/tools/${slug}/`;
+  const methodology = tool.methodology ? getMethodology(tool.methodology) : undefined;
   const appLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -105,16 +121,18 @@ export default async function ToolPage({ params }: PageProps) {
         />
       </section>
       <section className="mx-auto max-w-[1160px] px-6 pb-10 md:pb-16">
-        <FireNumberTool region={r} />
-        <Card variant="surface" className="mt-8 p-5">
-          <CardDescription>
-            Want to see the formulas, assumptions, and sources behind the numbers? Read the{" "}
-            <Link href="/methodology/fire-number/" className="text-accent hover:text-accent-hover">
-              FIRE Number methodology
-            </Link>
-            .
-          </CardDescription>
-        </Card>
+        <ToolModule region={r} />
+        {methodology && (
+          <Card variant="surface" className="mt-8 p-5">
+            <CardDescription>
+              Want to see the formulas, assumptions, and sources behind the numbers? Read the{" "}
+              <Link href={`/methodology/${tool.methodology}/`} className="text-accent hover:text-accent-hover">
+                {methodology.title}
+              </Link>
+              .
+            </CardDescription>
+          </Card>
+        )}
       </section>
     </>
   );

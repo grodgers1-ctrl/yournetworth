@@ -13,12 +13,15 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
+import MultiCurrencyBudgetMethodology from "@/content/methodology/multi-currency-budget.mdx";
+
 const METHODOLOGY_MODULES: Record<string, ComponentType | undefined> = {
   "fire-number": FireNumberMethodology,
+  "multi-currency-budget": MultiCurrencyBudgetMethodology,
 };
 
 export function generateStaticParams() {
-  return [{ slug: "fire-number" }];
+  return [{ slug: "fire-number" }, { slug: "multi-currency-budget" }];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

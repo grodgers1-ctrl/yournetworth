@@ -14,10 +14,17 @@ type PageProps = {
   params: Promise<{ region: string; slug: string }>;
 };
 
+import UKMultiCurrencyBudgetGuide from "@/content/guides/uk/multi-currency-budget.mdx";
+import USMultiCurrencyBudgetGuide from "@/content/guides/us/multi-currency-budget.mdx";
+
 const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> = {
   "fire-number": {
     uk: UKFireNumberGuide,
     us: USFireNumberGuide,
+  },
+  "multi-currency-budget": {
+    uk: UKMultiCurrencyBudgetGuide,
+    us: USMultiCurrencyBudgetGuide,
   },
 };
 
@@ -29,6 +36,8 @@ export function generateStaticParams() {
   return [
     { region: "uk", slug: "fire-number" },
     { region: "us", slug: "fire-number" },
+    { region: "uk", slug: "multi-currency-budget" },
+    { region: "us", slug: "multi-currency-budget" },
   ];
 }
 

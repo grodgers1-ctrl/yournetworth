@@ -14,11 +14,20 @@ type PageProps = {
   params: Promise<{ region: string; slug: string; article: string }>;
 };
 
+import UKExchangeRateRisk from "@/content/articles/uk/multi-currency-budget/exchange-rate-risk.mdx";
+import USExchangeRateRisk from "@/content/articles/us/multi-currency-budget/exchange-rate-risk.mdx";
+
 const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentType | undefined>>> = {
   "fire-number": {
     "4-percent-rule": {
       uk: UK4PercentRule,
       us: US4PercentRule,
+    },
+  },
+  "multi-currency-budget": {
+    "exchange-rate-risk": {
+      uk: UKExchangeRateRisk,
+      us: USExchangeRateRisk,
     },
   },
 };
@@ -31,6 +40,8 @@ export function generateStaticParams() {
   return [
     { region: "uk", slug: "fire-number", article: "4-percent-rule" },
     { region: "us", slug: "fire-number", article: "4-percent-rule" },
+    { region: "uk", slug: "multi-currency-budget", article: "exchange-rate-risk" },
+    { region: "us", slug: "multi-currency-budget", article: "exchange-rate-risk" },
   ];
 }
 
