@@ -1,3 +1,5 @@
+import type { Account } from "@/lib/calc/networth";
+
 export const usRegion = {
   id: "us" as const,
   currency: "USD",
@@ -24,6 +26,18 @@ export const usRegion = {
     const hazard = (a / b) * (Math.exp(b * (age - 30)) - Math.exp(b * (currentAge - 30)));
     return Math.max(0, Math.min(1, Math.exp(-hazard)));
   },
+  netWorthPresets: [
+    { id: "roth-ira", name: "Roth IRA", category: "freedom_fund" as const, currency: "USD" },
+    { id: "401k", name: "401(k)", category: "freedom_fund" as const, currency: "USD" },
+    { id: "hsa", name: "HSA", category: "freedom_fund" as const, currency: "USD" },
+    { id: "hysa", name: "High-Yield Savings", category: "cash" as const, currency: "USD" },
+    { id: "i-bonds", name: "I Bonds", category: "cash" as const, currency: "USD" },
+    { id: "checking", name: "Checking Account", category: "cash" as const, currency: "USD" },
+    { id: "main-residence", name: "Main Residence", category: "valuable_liability" as const, currency: "USD" },
+    { id: "mortgage", name: "Mortgage", category: "debt" as const, currency: "USD" },
+    { id: "credit-cards", name: "Credit Cards", category: "debt" as const, currency: "USD" },
+    { id: "student-loans", name: "Student Loans", category: "debt" as const, currency: "USD" },
+  ] satisfies Omit<Account, "snapshots">[],
   formatValue(value: number): string {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

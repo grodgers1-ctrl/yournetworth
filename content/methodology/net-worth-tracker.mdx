@@ -1,0 +1,115 @@
+# Net Worth Tracker methodology
+
+This page explains how the Your Net Worth Net Worth Tracker works, what assumptions it uses, and where the data comes from. It is written to be readable without a finance degree, but it also gives you enough detail to judge the tool for yourself.
+
+## What the calculator measures
+
+The Net Worth Tracker measures:
+
+1. Your net worth: total assets minus total liabilities.
+2. Your net worth over time, based on dated snapshots you enter for each account.
+3. Your category breakdown, using either Standard mode or the Freedom Framework mode.
+4. Your Freedom Fund total and the annual spending it could cover at a 4% withdrawal rate.
+
+It does not predict the future. It shows you what your inputs mean when they are added up consistently.
+
+## Core formulas
+
+**Net worth**
+
+```
+net worth = total assets - total liabilities
+```
+
+**Standard mode**
+
+- Assets include every account with category set to Asset.
+- Liabilities include every account with category set to Liability.
+
+**Freedom Framework mode**
+
+The Freedom Framework is based on the Rebel Finance School net worth model. It splits wealth into four categories:
+
+```
+Freedom Fund = sum of freedom_fund accounts
+Valuable Liabilities = sum of valuable_liability accounts
+Cash = sum of cash accounts
+Debts = sum of debt accounts
+
+net worth = Freedom Fund + Valuable Liabilities + Cash - Debts
+```
+
+**4% coverage overlay**
+
+```
+annual 4% coverage = Freedom Fund x 0.04
+```
+
+This is a benchmark, not a recommendation. The 4% rule comes from US historical market data and a 30-year retirement horizon. Many planners use 3% to 3.5% for longer retirements or more conservative assumptions.
+
+**Currency conversion**
+
+When an account is in a different currency from the base currency, the calculator converts using static fallback exchange rates stored against the US dollar as a common anchor.
+
+```
+value_in_base = account value x (rate(from_currency) / rate(base_currency))
+```
+
+For precise tracking, enter values directly in your chosen base currency.
+
+## How snapshots are interpolated
+
+Each account has a list of dated snapshots. For any given date on the chart, the calculator uses the most recent snapshot on or before that date. This is a piecewise-constant interpolation. It assumes the value stayed flat between snapshots.
+
+If an account has no snapshot on or before a chart date, its value is treated as zero for that date. If an account only has future snapshots, it contributes nothing until the first snapshot date arrives.
+
+## Units tracking
+
+Advanced mode allows optional units tracking. If you enter a units value for an account, the snapshot value is treated as the price per unit, and the account value is calculated as:
+
+```
+account value = units x price per unit
+```
+
+If units are not entered, the snapshot value is used directly as the account value. This is useful for tracking share holdings, fund units, or property fractions without manually multiplying by the market price.
+
+## Mode switching
+
+When you switch between Standard mode and Freedom Framework mode, the tool maps account categories to preserve your data:
+
+| Original category | Standard mode mapping | Freedom Framework mapping |
+| ----------------- | --------------------- | ------------------------- |
+| asset | asset | freedom_fund |
+| liability | liability | debt |
+| freedom_fund | asset | freedom_fund |
+| valuable_liability | asset | valuable_liability |
+| cash | asset | cash |
+| debt | liability | debt |
+
+The mapping is designed to keep the chart meaningful without losing your account history.
+
+## Assumptions and limitations
+
+The calculator assumes that values between snapshots stay constant. This is an approximation. In reality, account balances change daily. The approximation is reasonable for monthly tracking but less accurate for short time horizons.
+
+Currency conversion uses static fallback rates, not live rates. If you need precise cross-currency tracking, update values directly in your base currency or supply your own converted values.
+
+The calculator does not model taxes, fees, inflation, or investment returns. It shows the values you enter. If you want to project future net worth, you would need to estimate those effects separately.
+
+## Sources and references
+
+- William Bengen, "Determining Withdrawal Rates Using Historical Data," Journal of Financial Planning, 1994.
+- Philip L. Cooley, Carl M. Hubbard, and Daniel T. Walz, "Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable," AAII Journal, 1998 (the Trinity Study).
+- HMRC guidance on ISAs, SIPPs, and pension access ages, for UK context.
+- IRS guidance on 401(k), IRA, HSA, and I Bond rules, for US context.
+- Bank of England and Federal Reserve reference data inform currency and inflation context.
+
+## Last updated
+
+This methodology was last reviewed on **3 August 2026**.
+
+<Related slugs={["net-worth", "withdrawal-rate", "fire-number"]} />
+
+---
+
+_This methodology page is educational and is not financial advice._

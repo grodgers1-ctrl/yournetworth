@@ -87,15 +87,25 @@ export const tools: Tool[] = [
     slug: "net-worth-tracker",
     title: "Net Worth Tracker",
     region: "uk",
-    description: "Track assets, liabilities, and the gap between them over time.",
-    published: false,
+    description: "Track assets, liabilities, and the gap between them over time. Includes a Freedom Framework mode with a 4% coverage overlay.",
+    pillarGuide: "net-worth-tracker",
+    supportingArticles: ["sinking-funds"],
+    relatedTools: ["fire-number", "compound-interest"],
+    methodology: "net-worth-tracker",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "net-worth-tracker",
     title: "Net Worth Tracker",
     region: "us",
-    description: "Track assets, liabilities, and the gap between them over time.",
-    published: false,
+    description: "Track assets, liabilities, and the gap between them over time. Includes a Freedom Framework mode with a 4% coverage overlay.",
+    pillarGuide: "net-worth-tracker",
+    supportingArticles: ["emergency-fund-vs-hysa"],
+    relatedTools: ["fire-number", "compound-interest"],
+    methodology: "net-worth-tracker",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "compound-interest",
@@ -222,6 +232,26 @@ export const guides: Guide[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "net-worth-tracker",
+    title: "What is net worth and how do you track it?",
+    region: "uk",
+    tool: "net-worth-tracker",
+    relatedArticles: ["sinking-funds"],
+    relatedGuides: ["fire-number", "multi-currency-budget"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "net-worth-tracker",
+    title: "What is net worth and how do you track it?",
+    region: "us",
+    tool: "net-worth-tracker",
+    relatedArticles: ["emergency-fund-vs-hysa"],
+    relatedGuides: ["fire-number", "multi-currency-budget"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const articles: Article[] = [
@@ -257,6 +287,22 @@ export const articles: Article[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "sinking-funds",
+    title: "How do sinking funds work in the UK?",
+    region: "uk",
+    guide: "net-worth-tracker",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "emergency-fund-vs-hysa",
+    title: "Emergency fund vs high-yield savings: where should US savers keep cash?",
+    region: "us",
+    guide: "net-worth-tracker",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const methodologies: Methodology[] = [
@@ -272,6 +318,13 @@ export const methodologies: Methodology[] = [
     title: "Multi-Currency Budget methodology",
     toolSlug: "multi-currency-budget",
     lastReviewed: "2026-08-02",
+    published: true,
+  },
+  {
+    slug: "net-worth-tracker",
+    title: "Net Worth Tracker methodology",
+    toolSlug: "net-worth-tracker",
+    lastReviewed: "2026-08-03",
     published: true,
   },
 ];
@@ -414,6 +467,11 @@ export const updates: Update[] = [
     date: "2026-08-02",
     title: "Week 2: Multi-Currency Budget cluster live",
     body: "Added the Multi-Currency Budget calculator for UK and US users, plus pillar guides, a supporting article on exchange-rate risk, and a methodology page.",
+  },
+  {
+    date: "2026-08-03",
+    title: "Week 3: Net Worth Tracker cluster live",
+    body: "Added the Net Worth Tracker calculator for UK and US users, with Standard and Freedom Framework modes, sinking-fund accounts, per-account sparklines, JSON export and import, plus region-specific guides, supporting articles, and a methodology page.",
   },
 ];
 

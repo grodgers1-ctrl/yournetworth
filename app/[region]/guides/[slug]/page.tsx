@@ -16,6 +16,8 @@ type PageProps = {
 
 import UKMultiCurrencyBudgetGuide from "@/content/guides/uk/multi-currency-budget.mdx";
 import USMultiCurrencyBudgetGuide from "@/content/guides/us/multi-currency-budget.mdx";
+import UKNetWorthTrackerGuide from "@/content/guides/uk/net-worth-tracker.mdx";
+import USNetWorthTrackerGuide from "@/content/guides/us/net-worth-tracker.mdx";
 
 const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> = {
   "fire-number": {
@@ -25,6 +27,10 @@ const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> =
   "multi-currency-budget": {
     uk: UKMultiCurrencyBudgetGuide,
     us: USMultiCurrencyBudgetGuide,
+  },
+  "net-worth-tracker": {
+    uk: UKNetWorthTrackerGuide,
+    us: USNetWorthTrackerGuide,
   },
 };
 
@@ -38,6 +44,8 @@ export function generateStaticParams() {
     { region: "us", slug: "fire-number" },
     { region: "uk", slug: "multi-currency-budget" },
     { region: "us", slug: "multi-currency-budget" },
+    { region: "uk", slug: "net-worth-tracker" },
+    { region: "us", slug: "net-worth-tracker" },
   ];
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Link2, Download, Check, RotateCcw } from "lucide-react";
+import { useRef, useState } from "react";
+import { Link2, Download, Upload, Check, RotateCcw } from "lucide-react";
 import { RegionToggle } from "@/components/site/RegionToggle";
 import { CalcScenarios } from "./CalcScenarios";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +15,7 @@ type CalcShellProps<T extends Record<string, unknown>> = {
   initial: T;
   copyLink: () => Promise<void>;
   exportJson: () => string;
+  importJson?: (json: string) => void;
   cta?: React.ReactNode;
   children: React.ReactNode;
 };
@@ -27,15 +28,29 @@ export function CalcShell<T extends Record<string, unknown>>({
   initial,
   copyLink,
   exportJson,
+  importJson,
   cta,
   children,
 }: CalcShellProps<T>) {
   const [copied, setCopied] = useState(false);
+  const importRef = useRef<HTMLInputElement>(null);
 
   const handleCopy = async () => {
     await copyLink();
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !importJson) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = String(reader.result);
+      importJson(text);
+    };
+    reader.readAsText(file);
+    event.target.value = "";
   };
 
   return (
@@ -77,6 +92,28 @@ export function CalcShell<T extends Record<string, unknown>>({
               <Download className="h-4 w-4" />
               Export
             </Button>
+            {importJson && (
+              <>
+                <input
+                  ref={importRef}
+                  type="file"
+                  accept="application/json"
+                  className="hidden"
+                  onChange={handleImport}
+                  aria-label="Import scenario JSON"
+                />
+                <Button
+                  type="button"
+                  onClick={() => importRef.current?.click()}
+                  variant="secondary"
+                  size="sm"
+                  aria-label="Import scenario JSON"
+                >
+                  <Upload className="h-4 w-4" />
+                  Import
+                </Button>
+              </>
+            )}
             <Button
               type="button"
               onClick={() => setState(initial)}

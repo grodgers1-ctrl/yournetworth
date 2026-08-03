@@ -1,3 +1,5 @@
+import type { Account } from "@/lib/calc/networth";
+
 export const ukRegion = {
   id: "uk" as const,
   currency: "GBP",
@@ -24,6 +26,18 @@ export const ukRegion = {
     const hazard = (a / b) * (Math.exp(b * (age - 30)) - Math.exp(b * (currentAge - 30)));
     return Math.max(0, Math.min(1, Math.exp(-hazard)));
   },
+  netWorthPresets: [
+    { id: "stocks-isa", name: "Stocks & Shares ISA", category: "freedom_fund" as const, currency: "GBP" },
+    { id: "sipp", name: "SIPP", category: "freedom_fund" as const, currency: "GBP" },
+    { id: "gia", name: "General Investment Account", category: "freedom_fund" as const, currency: "GBP" },
+    { id: "premium-bonds", name: "Premium Bonds", category: "cash" as const, currency: "GBP" },
+    { id: "cash-isa", name: "Cash ISA", category: "cash" as const, currency: "GBP" },
+    { id: "current-account", name: "Current Account", category: "cash" as const, currency: "GBP" },
+    { id: "main-residence", name: "Main Residence", category: "valuable_liability" as const, currency: "GBP" },
+    { id: "mortgage", name: "Mortgage", category: "debt" as const, currency: "GBP" },
+    { id: "credit-cards", name: "Credit Cards", category: "debt" as const, currency: "GBP" },
+    { id: "student-loan", name: "Student Loan", category: "debt" as const, currency: "GBP" },
+  ] satisfies Omit<Account, "snapshots">[],
   formatValue(value: number): string {
     return new Intl.NumberFormat("en-GB", {
       style: "currency",

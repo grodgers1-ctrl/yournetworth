@@ -16,6 +16,8 @@ type PageProps = {
 
 import UKExchangeRateRisk from "@/content/articles/uk/multi-currency-budget/exchange-rate-risk.mdx";
 import USExchangeRateRisk from "@/content/articles/us/multi-currency-budget/exchange-rate-risk.mdx";
+import UKSinkingFunds from "@/content/articles/uk/net-worth-tracker/sinking-funds.mdx";
+import USEmergencyFundVsHysa from "@/content/articles/us/net-worth-tracker/emergency-fund-vs-hysa.mdx";
 
 const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentType | undefined>>> = {
   "fire-number": {
@@ -30,6 +32,16 @@ const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentTyp
       us: USExchangeRateRisk,
     },
   },
+  "net-worth-tracker": {
+    "sinking-funds": {
+      uk: UKSinkingFunds,
+      us: undefined,
+    },
+    "emergency-fund-vs-hysa": {
+      uk: undefined,
+      us: USEmergencyFundVsHysa,
+    },
+  },
 };
 
 function regionFromString(region: string): Region | null {
@@ -42,6 +54,8 @@ export function generateStaticParams() {
     { region: "us", slug: "fire-number", article: "4-percent-rule" },
     { region: "uk", slug: "multi-currency-budget", article: "exchange-rate-risk" },
     { region: "us", slug: "multi-currency-budget", article: "exchange-rate-risk" },
+    { region: "uk", slug: "net-worth-tracker", article: "sinking-funds" },
+    { region: "us", slug: "net-worth-tracker", article: "emergency-fund-vs-hysa" },
   ];
 }
 
