@@ -11,7 +11,7 @@ export const ukRegion = {
     retirementAccount: "SIPP",
     taxShelter: "ISA",
     statePension: "State Pension",
-    pensionAge: "57",
+    pensionAge: "55 to 57",
     currency: "pounds",
   },
   lifeTableSource: "Office for National Statistics (ONS) 2020-2022 national life tables",

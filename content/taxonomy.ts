@@ -331,7 +331,7 @@ Each tax year has an annual contribution limit. Unused allowance does not roll o
     definition: "A SIPP is a UK pension that gives you full control over the investments inside it.",
     body: `SIPP stands for Self-Invested Personal Pension. It is a UK tax wrapper for retirement savings that lets you choose the underlying investments.
 
-Contributions usually receive tax relief at your marginal rate. Investments grow free of capital gains and income tax while inside the wrapper. Money cannot normally be withdrawn before age 55, rising to 57 from 2028.
+Contributions usually receive tax relief at your marginal rate. Investments grow free of capital gains and income tax while inside the wrapper. Money cannot normally be withdrawn before age 55 for many people, and the normal minimum age rises to 57 from 2028 for those born on or after 6 April 1973.
 
 SIPPs suit people who want to pick their own funds, shares, or property and who understand the tax rules and restrictions.`,
     relatedTerms: ["isa", "net-worth"],
