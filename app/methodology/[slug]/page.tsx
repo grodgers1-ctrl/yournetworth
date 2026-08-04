@@ -14,16 +14,23 @@ type PageProps = {
 };
 
 import MultiCurrencyBudgetMethodology from "@/content/methodology/multi-currency-budget.mdx";
+import MortgageOverpaymentMethodology from "@/content/methodology/mortgage-overpayment.mdx";
 import NetWorthTrackerMethodology from "@/content/methodology/net-worth-tracker.mdx";
 
 const METHODOLOGY_MODULES: Record<string, ComponentType | undefined> = {
   "fire-number": FireNumberMethodology,
   "multi-currency-budget": MultiCurrencyBudgetMethodology,
+  "mortgage-overpayment": MortgageOverpaymentMethodology,
   "net-worth-tracker": NetWorthTrackerMethodology,
 };
 
 export function generateStaticParams() {
-  return [{ slug: "fire-number" }, { slug: "multi-currency-budget" }, { slug: "net-worth-tracker" }];
+  return [
+    { slug: "fire-number" },
+    { slug: "multi-currency-budget" },
+    { slug: "mortgage-overpayment" },
+    { slug: "net-worth-tracker" },
+  ];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

@@ -9,6 +9,12 @@ export const usRegion = {
   taxShelterLabel: "Roth IRA",
   premiumBondLabel: "I Bonds",
   mortgageTerminology: "30-year fixed amortisation",
+  mortgageDefaults: {
+    defaultTermYears: 30,
+    defaultFixedPeriodYears: 30,
+    defaultSvrRate: 0.06,
+    defaultInvestRate: 0.06,
+  },
   fireTerminology: {
     retirementAccount: "IRA",
     taxShelter: "Roth IRA",

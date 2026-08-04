@@ -11,10 +11,41 @@ export type CompoundOutputs = {
   series: { year: number; contributions: number; value: number }[];
 };
 
-export function calculateCompound(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _inputs: CompoundInputs
-): CompoundOutputs {
-  // TODO: implement compound-interest formula and yearly series.
-  return { futureValue: 0, series: [] };
+export function calculateCompound(inputs: CompoundInputs): CompoundOutputs {
+  const principal = inputs.principal;
+  const monthly = inputs.monthly;
+  const rate = inputs.rate;
+  const years = inputs.years;
+  const frequency = inputs.frequency ?? 12;
+  const n = years * frequency;
+  const pmtPerPeriod = monthly * (12 / frequency);
+
+  if (rate === 0) {
+    const value = principal + pmtPerPeriod * n;
+    const series = [];
+    for (let year = 0; year <= years; year++) {
+      const periodN = year * frequency;
+      series.push({
+        year,
+        contributions: principal + pmtPerPeriod * periodN,
+        value: principal + pmtPerPeriod * periodN,
+      });
+    }
+    return { futureValue: value, series };
+  }
+
+  const r = rate / frequency;
+  const factor = Math.pow(1 + r, n);
+  const futureValue = principal * factor + pmtPerPeriod * ((factor - 1) / r);
+
+  const series = [];
+  for (let year = 0; year <= years; year++) {
+    const periodN = year * frequency;
+    const periodFactor = Math.pow(1 + r, periodN);
+    const value = principal * periodFactor + pmtPerPeriod * ((periodFactor - 1) / r);
+    const contributions = principal + pmtPerPeriod * periodN;
+    series.push({ year, contributions, value });
+  }
+
+  return { futureValue, series };
 }

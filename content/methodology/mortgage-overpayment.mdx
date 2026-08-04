@@ -1,0 +1,87 @@
+# Mortgage Overpayment methodology
+
+This page explains how the Your Net Worth Mortgage Overpayment calculator works, what assumptions it uses, and where the data comes from. It is written to be readable without a finance degree, but it gives enough detail to judge the tool for yourself.
+
+## What the calculator measures
+
+The calculator measures three things.
+
+1. The standard monthly payment for an amortising loan, based on the principal, interest rate, and term.
+2. The balance over time if you make only that payment, and the balance if you add a fixed monthly overpayment.
+3. A counterfactual: what the same monthly overpayment would grow to if invested at a fixed annual return.
+
+From these it derives the months saved, the interest saved, the total cost under each path, and the difference between the investment value and the interest saved.
+
+## Core formulas
+
+**Monthly payment (capital repayment)**
+
+```
+M = P × [ r × (1 + r)^n ] / [ (1 + r)^n − 1 ]
+```
+
+Where `P` is the outstanding principal, `r` is the monthly interest rate (annual rate divided by 12), and `n` is the total number of monthly payments (term in years multiplied by 12). If the annual rate is zero, the monthly payment is simply `P / n`.
+
+**Amortisation per month**
+
+For each month `k` from 1 to `n`:
+
+```
+interest_k = balance_(k-1) × r
+principal_k = M − interest_k
+balance_k = balance_(k-1) − principal_k
+```
+
+**With overpayment**
+
+The same schedule is built, but after the regular payment is applied, the overpayment is subtracted from the balance. If the balance would become zero or negative, the final payment is truncated to exactly the remaining balance plus that month's interest.
+
+**Investment counterfactual**
+
+The future value of monthly contributions is calculated using the compound-interest formula with monthly contributions at the end of each month:
+
+```
+FV = PMT × [ ((1 + r/m)^(m×t) − 1) / (r/m) ]
+```
+
+Where `PMT` is the monthly overpayment, `r` is the annual investment return, `m` is 12, and `t` is the term in years. The principal is zero because we are comparing only the overpayment stream.
+
+## UK fixed-rate and SVR modelling
+
+For UK users, the calculator allows a fixed-rate period followed by a reversion to a standard variable rate. At the end of the fixed period, the monthly payment is recalculated using the remaining balance, the new rate, and the remaining term. This is the remortgage assumption: the borrower does not pay off the whole balance at the end of the fix, but the payment is reset as if the loan were reissued at the new rate.
+
+The Bank of England publishes the official bank rate, which influences lender SVRs. Individual lenders set their own SVRs, which are usually higher than the market's best fixed or tracker deals. The calculator does not predict future SVR changes; it uses the rate you enter.
+
+## US escrow modelling
+
+For US users, the calculator includes optional annual property tax and home insurance inputs. These are converted to a monthly escrow amount and added to the displayed total monthly payment. They are not compounded into the loan balance, because escrow is a payment to cover taxes and insurance, not a repayment of principal or interest.
+
+## Assumptions and limitations
+
+The calculator assumes the loan is a standard amortising capital-repayment mortgage. It does not model interest-only mortgages, offset mortgages, adjustable-rate mortgages, balloon payments, or loans with changing payment structures.
+
+It assumes all overpayments are applied immediately to principal with no penalty. Real lenders may have annual overpayment caps, early-repayment charges, or processing delays. Check your mortgage terms before relying on the numbers.
+
+The investment counterfactual uses a fixed annual return. Real investment returns are volatile and may be higher or lower. The tool does not model inflation, taxes, fees, or sequencing risk.
+
+The calculator does not give tax advice. UK users should consider ISA and pension allowances from HMRC. US users should consider the mortgage interest deduction, 401(k) and IRA contribution limits, and income tax brackets from the IRS.
+
+## Sources and references
+
+- Bank of England, official bank rate and monetary policy publications, for UK rate context.
+- Financial Conduct Authority, mortgage conduct of business rules and consumer guidance on overpayments and charges.
+- US Federal Reserve, mortgage rate data and consumer finance publications.
+- US Consumer Financial Protection Bureau, mortgage amortisation and prepayment guidance.
+- HMRC, ISA and pension allowance rules for UK tax wrappers.
+- IRS, Publication 936 (Home Mortgage Interest Deduction) and retirement account contribution limits for US tax context.
+- Standard amortisation formula as used by the CFPB and mortgage servicers.
+
+## Last updated
+
+This methodology was last reviewed on **4 August 2026**.
+
+<Related slugs={["compound-interest", "net-worth"]} />
+
+---
+
+_This methodology page is educational and is not financial advice._

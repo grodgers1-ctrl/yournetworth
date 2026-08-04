@@ -9,6 +9,12 @@ export const ukRegion = {
   taxShelterLabel: "ISA",
   premiumBondLabel: "Premium Bonds",
   mortgageTerminology: "fixed-rate period and SVR revert",
+  mortgageDefaults: {
+    defaultTermYears: 25,
+    defaultFixedPeriodYears: 5,
+    defaultSvrRate: 0.07,
+    defaultInvestRate: 0.06,
+  },
   fireTerminology: {
     retirementAccount: "SIPP",
     taxShelter: "ISA",

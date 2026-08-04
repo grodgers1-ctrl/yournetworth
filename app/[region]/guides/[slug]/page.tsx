@@ -16,6 +16,8 @@ type PageProps = {
 
 import UKMultiCurrencyBudgetGuide from "@/content/guides/uk/multi-currency-budget.mdx";
 import USMultiCurrencyBudgetGuide from "@/content/guides/us/multi-currency-budget.mdx";
+import UKMortgageOverpaymentGuide from "@/content/guides/uk/mortgage-overpayment.mdx";
+import USMortgageOverpaymentGuide from "@/content/guides/us/mortgage-overpayment.mdx";
 import UKNetWorthTrackerGuide from "@/content/guides/uk/net-worth-tracker.mdx";
 import USNetWorthTrackerGuide from "@/content/guides/us/net-worth-tracker.mdx";
 
@@ -27,6 +29,10 @@ const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> =
   "multi-currency-budget": {
     uk: UKMultiCurrencyBudgetGuide,
     us: USMultiCurrencyBudgetGuide,
+  },
+  "mortgage-overpayment": {
+    uk: UKMortgageOverpaymentGuide,
+    us: USMortgageOverpaymentGuide,
   },
   "net-worth-tracker": {
     uk: UKNetWorthTrackerGuide,
@@ -44,6 +50,8 @@ export function generateStaticParams() {
     { region: "us", slug: "fire-number" },
     { region: "uk", slug: "multi-currency-budget" },
     { region: "us", slug: "multi-currency-budget" },
+    { region: "uk", slug: "mortgage-overpayment" },
+    { region: "us", slug: "mortgage-overpayment" },
     { region: "uk", slug: "net-worth-tracker" },
     { region: "us", slug: "net-worth-tracker" },
   ];

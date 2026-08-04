@@ -9,6 +9,7 @@ import { getTool, getMethodology, type Region } from "@/content/taxonomy";
 import { ukRegion, usRegion } from "@/lib/regions";
 import { FireNumberTool } from "@/components/tools/FireNumberTool";
 import { MultiCurrencyBudgetTool } from "@/components/tools/MultiCurrencyBudgetTool";
+import { MortgageOverpaymentTool } from "@/components/tools/MortgageOverpaymentTool";
 import { NetWorthTrackerTool } from "@/components/tools/NetWorthTrackerTool";
 
 type PageProps = {
@@ -22,12 +23,13 @@ function regionFromString(region: string): Region | null {
 const TOOL_MODULES: Record<string, ComponentType<{ region: "uk" | "us" }> | undefined> = {
   "fire-number": FireNumberTool,
   "multi-currency-budget": MultiCurrencyBudgetTool,
+  "mortgage-overpayment": MortgageOverpaymentTool,
   "net-worth-tracker": NetWorthTrackerTool,
 };
 
 type ToolSlug = keyof typeof TOOL_MODULES;
 
-const PUBLISHED_SLUGS: ToolSlug[] = ["fire-number", "multi-currency-budget", "net-worth-tracker"];
+const PUBLISHED_SLUGS: ToolSlug[] = ["fire-number", "multi-currency-budget", "mortgage-overpayment", "net-worth-tracker"];
 
 export function generateStaticParams() {
   return PUBLISHED_SLUGS.flatMap((slug) => [

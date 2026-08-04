@@ -148,14 +148,24 @@ export const tools: Tool[] = [
     title: "Mortgage Overpayment Calculator",
     region: "uk",
     description: "Compare overpaying your mortgage against investing the same cash.",
-    published: false,
+    pillarGuide: "mortgage-overpayment",
+    supportingArticles: ["overpay-vs-isa"],
+    relatedTools: ["compound-interest", "net-worth-tracker"],
+    methodology: "mortgage-overpayment",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "mortgage-overpayment",
     title: "Mortgage Overpayment Calculator",
     region: "us",
     description: "Compare overpaying your mortgage against investing the same cash.",
-    published: false,
+    pillarGuide: "mortgage-overpayment",
+    supportingArticles: ["pay-off-vs-401k"],
+    relatedTools: ["compound-interest", "net-worth-tracker"],
+    methodology: "mortgage-overpayment",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "debt-payoff",
@@ -252,6 +262,26 @@ export const guides: Guide[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "mortgage-overpayment",
+    title: "Should you overpay your mortgage?",
+    region: "uk",
+    tool: "mortgage-overpayment",
+    relatedArticles: ["overpay-vs-isa"],
+    relatedGuides: ["compound-interest", "net-worth-tracker"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "mortgage-overpayment",
+    title: "Should you overpay your mortgage?",
+    region: "us",
+    tool: "mortgage-overpayment",
+    relatedArticles: ["pay-off-vs-401k"],
+    relatedGuides: ["compound-interest", "net-worth-tracker"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const articles: Article[] = [
@@ -303,6 +333,22 @@ export const articles: Article[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "overpay-vs-isa",
+    title: "Should you overpay your mortgage or invest in a Stocks and Shares ISA?",
+    region: "uk",
+    guide: "mortgage-overpayment",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "pay-off-vs-401k",
+    title: "Should you pay off your mortgage early or invest in a 401(k)?",
+    region: "us",
+    guide: "mortgage-overpayment",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const methodologies: Methodology[] = [
@@ -325,6 +371,13 @@ export const methodologies: Methodology[] = [
     title: "Net Worth Tracker methodology",
     toolSlug: "net-worth-tracker",
     lastReviewed: "2026-08-03",
+    published: true,
+  },
+  {
+    slug: "mortgage-overpayment",
+    title: "Mortgage Overpayment methodology",
+    toolSlug: "mortgage-overpayment",
+    lastReviewed: "2026-08-04",
     published: true,
   },
 ];
@@ -472,6 +525,11 @@ export const updates: Update[] = [
     date: "2026-08-03",
     title: "Week 3: Net Worth Tracker cluster live",
     body: "Added the Net Worth Tracker calculator for UK and US users, with Standard and Freedom Framework modes, sinking-fund accounts, per-account sparklines, JSON export and import, plus region-specific guides, supporting articles, and a methodology page.",
+  },
+  {
+    date: "2026-08-04",
+    title: "Week 4: Mortgage Overpayment cluster live",
+    body: "Added the Mortgage Overpayment calculator for UK and US users, with UK fixed-rate + SVR modelling, US escrow display, an invest-instead counterfactual, dual-line balance chart, plus region-specific guides, supporting articles, and a methodology page.",
   },
 ];
 
