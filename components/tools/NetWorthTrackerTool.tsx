@@ -8,8 +8,6 @@ import {
   TrendingUp,
   ChevronDown,
   ChevronUp,
-  Download,
-  Upload,
 } from "lucide-react";
 import { CalcShell } from "@/components/calc/CalcShell";
 import { CalcResult } from "@/components/calc/CalcResult";
@@ -29,7 +27,6 @@ import { convertToBase, DEFAULT_FX_RATES } from "@/lib/calc/fx";
 import { ukRegion, usRegion } from "@/lib/regions";
 import { Input } from "@/components/ui/Input";
 import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { useTrackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -91,17 +88,35 @@ function formatDate(iso: string): string {
   return `${y}-${m}`;
 }
 
+function makeSnapshot(value = 0, date = today()): { id: string; date: string; value: number } {
+  return { id: makeId(), date, value };
+}
+
+function sortSnapshots<T extends { date: string }>(snapshots: T[]): T[] {
+  return [...snapshots].sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function starterPresetIds(region: "uk" | "us"): string[] {
+  if (region === "uk") {
+    return ["current-account", "stocks-isa", "main-residence", "mortgage"];
+  }
+  return ["checking", "roth-ira", "main-residence", "mortgage"];
+}
+
 function makeInitialState(region: "uk" | "us"): NetWorthState {
   const config = region === "uk" ? ukRegion : usRegion;
+  const starters = new Set(starterPresetIds(region));
   return {
     mode: "freedom_framework",
     baseCurrency: config.currency,
     region,
-    accounts: config.netWorthPresets.map((preset) => ({
-      ...preset,
-      id: makeId(),
-      snapshots: [{ date: today(), value: 0 }],
-    })),
+    accounts: config.netWorthPresets
+      .filter((preset) => starters.has(preset.id))
+      .map((preset) => ({
+        ...preset,
+        id: makeId(),
+        snapshots: [makeSnapshot()],
+      })),
   };
 }
 
@@ -113,7 +128,6 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
     initial,
   });
   const track = useTrackEvent();
-  const importRef = useRef<HTMLInputElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const outputs = useMemo(() => calculateNetWorth(state, DEFAULT_FX_RATES), [state]);
@@ -154,10 +168,11 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
     }));
   };
 
-  const removeAccount = (id: string) => {
+  const removeAccount = (account: Account) => {
+    if (!window.confirm(`Delete "${account.name || "Untitled"}" and all its snapshots?`)) return;
     setState((s) => ({
       ...s,
-      accounts: s.accounts.filter((account) => account.id !== id),
+      accounts: s.accounts.filter((a) => a.id !== account.id),
     }));
   };
 
@@ -171,7 +186,7 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
           name: "",
           category,
           currency: s.baseCurrency,
-          snapshots: [{ date: today(), value: 0 }],
+          snapshots: [makeSnapshot()],
         },
       ],
     }));
@@ -185,7 +200,7 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
         {
           ...preset,
           id: makeId(),
-          snapshots: [{ date: today(), value: 0 }],
+          snapshots: [makeSnapshot()],
         },
       ],
     }));
@@ -196,35 +211,42 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
       ...s,
       accounts: s.accounts.map((account) => {
         if (account.id !== accountId) return account;
-        const lastDate = account.snapshots.length > 0 ? account.snapshots[account.snapshots.length - 1].date : today();
-        const next = nextMonth(lastDate);
+        const maxDate = account.snapshots.length > 0
+          ? account.snapshots.reduce((max, snapshot) => (snapshot.date > max ? snapshot.date : max), account.snapshots[0].date)
+          : today();
+        const next = nextMonth(maxDate);
         return {
           ...account,
-          snapshots: [...account.snapshots, { date: next, value: accountValueAt(account, next) }],
+          snapshots: sortSnapshots([
+            ...account.snapshots,
+            makeSnapshot(accountValueAt(account, next), next),
+          ]),
         };
       }),
     }));
   };
 
-  const updateSnapshot = (accountId: string, index: number, patch: { date?: string; value?: number }) => {
+  const updateSnapshot = (accountId: string, snapshotId: string | undefined, patch: { date?: string; value?: number }) => {
     setState((s) => ({
       ...s,
       accounts: s.accounts.map((account) => {
         if (account.id !== accountId) return account;
-        const snapshots = account.snapshots.map((snapshot, i) =>
-          i === index ? { ...snapshot, ...patch } : snapshot
+        const snapshots = account.snapshots.map((snapshot) =>
+          snapshot.id === snapshotId || (snapshotId === undefined && snapshot.id === undefined)
+            ? { ...snapshot, ...patch }
+            : snapshot
         );
-        return { ...account, snapshots };
+        return { ...account, snapshots: sortSnapshots(snapshots) };
       }),
     }));
   };
 
-  const removeSnapshot = (accountId: string, index: number) => {
+  const removeSnapshot = (accountId: string, snapshotId: string | undefined) => {
     setState((s) => ({
       ...s,
       accounts: s.accounts.map((account) => {
         if (account.id !== accountId) return account;
-        return { ...account, snapshots: account.snapshots.filter((_, i) => i !== index) };
+        return { ...account, snapshots: account.snapshots.filter((snapshot) => snapshot.id !== snapshotId) };
       }),
     }));
   };
@@ -232,7 +254,15 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
   const importJson = (json: string) => {
     try {
       const parsed = JSON.parse(json) as Partial<NetWorthState>;
-      setState({ ...initial, ...parsed });
+      const accounts = parsed.accounts?.map((account) => ({
+        ...account,
+        snapshots: account.snapshots.map((snapshot) => ({
+          id: snapshot.id ?? makeId(),
+          date: snapshot.date,
+          value: snapshot.value,
+        })),
+      })) ?? initial.accounts;
+      setState({ ...initial, ...parsed, accounts });
       track("networth_import", { region });
     } catch {
       window.alert("Could not import that file. Make sure it is valid JSON exported from this tool.");
@@ -290,6 +320,10 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
       copyLink={copyLink}
       exportJson={exportJson}
       importJson={importJson}
+      subtitle="Add accounts and monthly snapshots to see your net worth chart update."
+      exportLabel="Back up data"
+      importLabel="Restore backup"
+      note="Backups save a small file to your computer so you can restore your tracker later."
       cta={undefined}
     >
       <div className="grid gap-6 lg:grid-cols-12">
@@ -373,10 +407,10 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
                   baseCurrency={state.baseCurrency}
                   showAdvanced={showAdvanced}
                   onUpdate={(patch) => updateAccount(account.id, patch)}
-                  onRemove={() => removeAccount(account.id)}
+                  onRemove={() => removeAccount(account)}
                   onAddSnapshot={() => addSnapshot(account.id)}
-                  onUpdateSnapshot={(index, patch) => updateSnapshot(account.id, index, patch)}
-                  onRemoveSnapshot={(index) => removeSnapshot(account.id, index)}
+                  onUpdateSnapshot={(snapshotId, patch) => updateSnapshot(account.id, snapshotId, patch)}
+                  onRemoveSnapshot={(snapshotId) => removeSnapshot(account.id, snapshotId)}
                 />
               ))}
             </div>
@@ -449,48 +483,6 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
             )}
           </div>
 
-          <div className="rounded-[16px] border border-hairline bg-surface p-5">
-            <h3 className="text-sm font-semibold text-text">Export and import</h3>
-            <p className="mt-1 text-xs text-text-muted">
-              Back up your tracker or move it to another device. The JSON file contains your accounts and snapshots.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  const blob = new Blob([exportJson()], { type: "application/json" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = "net-worth-tracker.json";
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >
-                <Download className="h-4 w-4" /> Export JSON
-              </Button>
-              <input
-                ref={importRef}
-                type="file"
-                accept="application/json"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  const reader = new FileReader();
-                  reader.onload = () => importJson(String(reader.result));
-                  reader.readAsText(file);
-                  e.target.value = "";
-                }}
-              />
-              <Button type="button" variant="secondary" size="sm" onClick={() => importRef.current?.click()}>
-                <Upload className="h-4 w-4" /> Import JSON
-              </Button>
-            </div>
-          </div>
-
           <p className="text-xs text-text-dim">
             Not financial advice. Net worth is assets minus liabilities, converted to your base currency using static
             fallback rates. Your inputs stay in your browser.
@@ -519,8 +511,8 @@ function AccountCard({
   onUpdate: (patch: Partial<Account>) => void;
   onRemove: () => void;
   onAddSnapshot: () => void;
-  onUpdateSnapshot: (index: number, patch: { date?: string; value?: number }) => void;
-  onRemoveSnapshot: (index: number) => void;
+  onUpdateSnapshot: (snapshotId: string | undefined, patch: { date?: string; value?: number }) => void;
+  onRemoveSnapshot: (snapshotId: string | undefined) => void;
 }) {
   const categories = modeCategories[mode];
   const latest = accountValueAt(account, today());
@@ -607,12 +599,12 @@ function AccountCard({
         </div>
         <div className="space-y-2">
           {account.snapshots.length === 0 && <p className="text-xs text-text-dim">No snapshots yet.</p>}
-          {account.snapshots.map((snapshot, index) => (
-            <div key={`${snapshot.date}-${index}`} className="grid grid-cols-[1fr_1fr_auto] items-center gap-2">
+          {account.snapshots.map((snapshot) => (
+            <div key={snapshot.id ?? snapshot.date} className="grid grid-cols-[1fr_1fr_auto] items-center gap-2">
               <Input
                 type="date"
                 value={snapshot.date}
-                onChange={(e) => onUpdateSnapshot(index, { date: e.target.value })}
+                onChange={(e) => onUpdateSnapshot(snapshot.id, { date: e.target.value })}
                 className="h-8 text-xs"
                 aria-label="Snapshot date"
               />
@@ -620,13 +612,14 @@ function AccountCard({
                 type="number"
                 step={1}
                 value={snapshot.value}
-                onChange={(e) => onUpdateSnapshot(index, { value: Number(e.target.value) })}
+                onChange={(e) => onUpdateSnapshot(snapshot.id, { value: Number(e.target.value) })}
+                onFocus={(e) => e.target.select()}
                 className="h-8 text-xs"
                 aria-label="Snapshot value"
               />
               <button
                 type="button"
-                onClick={() => onRemoveSnapshot(index)}
+                onClick={() => onRemoveSnapshot(snapshot.id)}
                 className="inline-flex h-7 w-7 items-center justify-center rounded-full text-text-dim transition-colors hover:bg-debt/10 hover:text-debt focus-ring"
                 aria-label="Remove snapshot"
               >

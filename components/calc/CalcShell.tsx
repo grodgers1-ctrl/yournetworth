@@ -16,6 +16,10 @@ type CalcShellProps<T extends Record<string, unknown>> = {
   copyLink: () => Promise<void>;
   exportJson: () => string;
   importJson?: (json: string) => void;
+  subtitle?: string;
+  exportLabel?: string;
+  importLabel?: string;
+  note?: string;
   cta?: React.ReactNode;
   children: React.ReactNode;
 };
@@ -29,6 +33,10 @@ export function CalcShell<T extends Record<string, unknown>>({
   copyLink,
   exportJson,
   importJson,
+  subtitle,
+  exportLabel = "Export",
+  importLabel = "Import",
+  note,
   cta,
   children,
 }: CalcShellProps<T>) {
@@ -59,7 +67,7 @@ export function CalcShell<T extends Record<string, unknown>>({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-text">{title}</h1>
-            <p className="mt-1 text-sm text-text-muted">Move any slider to see the chart recalculate instantly.</p>
+            <p className="mt-1 text-sm text-text-muted">{subtitle ?? "Move any slider to see the chart recalculate instantly."}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <RegionToggle />
@@ -87,10 +95,10 @@ export function CalcShell<T extends Record<string, unknown>>({
               }}
               variant="secondary"
               size="sm"
-              aria-label="Export scenario as JSON"
+              aria-label={`${exportLabel} as JSON`}
             >
               <Download className="h-4 w-4" />
-              Export
+              {exportLabel}
             </Button>
             {importJson && (
               <>
@@ -107,10 +115,10 @@ export function CalcShell<T extends Record<string, unknown>>({
                   onClick={() => importRef.current?.click()}
                   variant="secondary"
                   size="sm"
-                  aria-label="Import scenario JSON"
+                  aria-label={`${importLabel} JSON`}
                 >
                   <Upload className="h-4 w-4" />
-                  Import
+                  {importLabel}
                 </Button>
               </>
             )}
@@ -126,6 +134,7 @@ export function CalcShell<T extends Record<string, unknown>>({
             </Button>
           </div>
         </div>
+        {note && <p className="mt-3 text-xs text-text-dim">{note}</p>}
         <div className="mt-5 border-t border-hairline pt-4">
           <CalcScenarios slug={slug} state={state} setState={setState} initial={initial} />
         </div>

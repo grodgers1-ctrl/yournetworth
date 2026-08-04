@@ -7,6 +7,7 @@ export type AccountCategory =
   | "debt";
 
 export type Snapshot = {
+  id?: string;
   date: string;
   value: number;
 };
@@ -62,8 +63,12 @@ export function categorySign(category: AccountCategory): number {
   return categoryIsNegative(category) ? -1 : 1;
 }
 
+function sortedSnapshots(snapshots: Snapshot[]): Snapshot[] {
+  return [...snapshots].sort((a, b) => a.date.localeCompare(b.date));
+}
+
 export function accountValueAt(account: Account, date: string): number {
-  const snapshots = account.snapshots.filter((s) => s.date <= date).sort((a, b) => a.date.localeCompare(b.date));
+  const snapshots = sortedSnapshots(account.snapshots).filter((s) => s.date <= date);
   if (snapshots.length === 0) return 0;
   return snapshots[snapshots.length - 1].value;
 }
@@ -89,7 +94,7 @@ export function convertToBase(
 function uniqueDates(accounts: Account[]): string[] {
   const set = new Set<string>();
   for (const account of accounts) {
-    for (const snapshot of account.snapshots) {
+    for (const snapshot of sortedSnapshots(account.snapshots)) {
       set.add(snapshot.date);
     }
   }
