@@ -20,6 +20,8 @@ import UKSinkingFunds from "@/content/articles/uk/net-worth-tracker/sinking-fund
 import USEmergencyFundVsHysa from "@/content/articles/us/net-worth-tracker/emergency-fund-vs-hysa.mdx";
 import UKMortgageOverpayVsIsa from "@/content/articles/uk/mortgage-overpayment/overpay-vs-isa.mdx";
 import USMortgagePayOffVs401k from "@/content/articles/us/mortgage-overpayment/pay-off-vs-401k.mdx";
+import UKMortgage10PercentRule from "@/content/articles/uk/mortgage-overpayment/10-percent-overpayment-rule.mdx";
+import USBiweeklyMortgagePayments from "@/content/articles/us/mortgage-overpayment/biweekly-mortgage-payments.mdx";
 
 const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentType | undefined>>> = {
   "fire-number": {
@@ -42,6 +44,14 @@ const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentTyp
     "pay-off-vs-401k": {
       uk: undefined,
       us: USMortgagePayOffVs401k,
+    },
+    "10-percent-overpayment-rule": {
+      uk: UKMortgage10PercentRule,
+      us: undefined,
+    },
+    "biweekly-mortgage-payments": {
+      uk: undefined,
+      us: USBiweeklyMortgagePayments,
     },
   },
   "net-worth-tracker": {
@@ -68,6 +78,8 @@ export function generateStaticParams() {
     { region: "us", slug: "multi-currency-budget", article: "exchange-rate-risk" },
     { region: "uk", slug: "mortgage-overpayment", article: "overpay-vs-isa" },
     { region: "us", slug: "mortgage-overpayment", article: "pay-off-vs-401k" },
+    { region: "uk", slug: "mortgage-overpayment", article: "10-percent-overpayment-rule" },
+    { region: "us", slug: "mortgage-overpayment", article: "biweekly-mortgage-payments" },
     { region: "uk", slug: "net-worth-tracker", article: "sinking-funds" },
     { region: "us", slug: "net-worth-tracker", article: "emergency-fund-vs-hysa" },
   ];
