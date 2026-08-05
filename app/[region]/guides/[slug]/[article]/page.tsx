@@ -79,8 +79,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!r) return {};
   const item = getArticle(r, article);
   if (!item || item.guide !== slug) return {};
+  const guide = getGuide(r, slug);
   const title = `${item.title} (${r.toUpperCase()})`;
-  const description = `A supporting article for the ${r.toUpperCase()} FIRE Number guide.`;
+  const description = guide
+    ? `A supporting article for the ${r.toUpperCase()} guide to ${guide.title.toLowerCase()}.`
+    : `A supporting article for the ${r.toUpperCase()} guide.`;
   const path = `/${r}/guides/${slug}/${article}/`;
   return {
     title,
