@@ -145,7 +145,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "mortgage-overpayment",
-    title: "Mortgage Overpayment Calculator",
+    title: "Mortgage Overpayment",
     region: "uk",
     description: "Free UK mortgage overpayment calculator. See how much interest you could save by overpaying your mortgage, model fixed-rate and SVR periods, and compare overpaying to investing.",
     pillarGuide: "mortgage-overpayment",
@@ -157,7 +157,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "mortgage-overpayment",
-    title: "Mortgage Overpayment Calculator",
+    title: "Mortgage Overpayment",
     region: "us",
     description: "Free US mortgage payoff calculator with extra payments. See how much interest you save by paying off your mortgage early, model escrow, and compare early payoff to investing.",
     pillarGuide: "mortgage-overpayment",
@@ -274,7 +274,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "mortgage-overpayment",
-    title: "Should you overpay your mortgage?",
+    title: "Should you pay off your mortgage early?",
     region: "us",
     tool: "mortgage-overpayment",
     relatedArticles: ["pay-off-vs-401k"],
