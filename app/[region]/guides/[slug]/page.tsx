@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const guide = getGuide(r, slug);
   if (!guide) return {};
   const title = `${guide.title} (${r.toUpperCase()})`;
-  const description = `A plain-English guide to ${guide.title.toLowerCase()} for ${r === "uk" ? "UK" : "US"} savers.`;
+  const description = guide.description || `A plain-English guide to ${guide.title.toLowerCase()} for ${r === "uk" ? "UK" : "US"} savers.`;
   const path = `/${r}/guides/${slug}/`;
   return {
     title,

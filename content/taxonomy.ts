@@ -18,6 +18,7 @@ export type Guide = {
   title: string;
   region: Region;
   tool: string;
+  description?: string;
   relatedGuides?: string[];
   relatedArticles?: string[];
   authorSlug?: string;
@@ -30,6 +31,7 @@ export type Article = {
   title: string;
   region: Region;
   guide: string;
+  description?: string;
   relatedArticles?: string[];
   authorSlug?: string;
   reviewedBy?: string;
@@ -150,7 +152,7 @@ export const tools: Tool[] = [
     description: "Free UK mortgage overpayment calculator. See how much interest you could save by overpaying your mortgage, model fixed-rate and SVR periods, and compare overpaying to investing.",
     pillarGuide: "mortgage-overpayment",
     supportingArticles: ["overpay-vs-isa", "10-percent-overpayment-rule"],
-    relatedTools: ["compound-interest", "fire-number", "net-worth-tracker"],
+    relatedTools: ["compound-interest", "debt-payoff", "fire-number", "net-worth-tracker"],
     methodology: "mortgage-overpayment",
     authorSlug: "glenn-rodgers",
     published: true,
@@ -162,7 +164,7 @@ export const tools: Tool[] = [
     description: "Free US mortgage payoff calculator with extra payments. See how much interest you save by paying off your mortgage early, model escrow, and compare early payoff to investing.",
     pillarGuide: "mortgage-overpayment",
     supportingArticles: ["pay-off-vs-401k", "biweekly-mortgage-payments"],
-    relatedTools: ["compound-interest", "fire-number", "net-worth-tracker"],
+    relatedTools: ["compound-interest", "debt-payoff", "fire-number", "net-worth-tracker"],
     methodology: "mortgage-overpayment",
     authorSlug: "glenn-rodgers",
     published: true,
@@ -211,6 +213,7 @@ export const guides: Guide[] = [
     title: "What is a FIRE number?",
     region: "uk",
     tool: "fire-number",
+    description: "What is a FIRE number and how do you calculate it for the UK? Learn the 4% rule, safe withdrawal rates, and why UK retirees may need a lower number.",
     relatedArticles: ["4-percent-rule"],
     authorSlug: "glenn-rodgers",
     published: true,
@@ -220,6 +223,7 @@ export const guides: Guide[] = [
     title: "What is a FIRE number?",
     region: "us",
     tool: "fire-number",
+    description: "What is a FIRE number and how do you calculate it in the US? Learn the 4% rule, the Trinity Study, and how to estimate your retirement portfolio size.",
     relatedArticles: ["4-percent-rule"],
     authorSlug: "glenn-rodgers",
     published: true,
@@ -229,6 +233,7 @@ export const guides: Guide[] = [
     title: "What is a multi-currency budget?",
     region: "uk",
     tool: "multi-currency-budget",
+    description: "How to build a multi-currency budget in the UK. Track income and spending in pounds, euros, dollars and more with live exchange rates.",
     relatedArticles: ["exchange-rate-risk"],
     authorSlug: "glenn-rodgers",
     published: true,
@@ -238,6 +243,7 @@ export const guides: Guide[] = [
     title: "What is a multi-currency budget?",
     region: "us",
     tool: "multi-currency-budget",
+    description: "How to build a multi-currency budget in the US. Track income and spending across dollars, euros, pounds and more with live exchange rates.",
     relatedArticles: ["exchange-rate-risk"],
     authorSlug: "glenn-rodgers",
     published: true,
@@ -247,6 +253,7 @@ export const guides: Guide[] = [
     title: "What is net worth and how do you track it?",
     region: "uk",
     tool: "net-worth-tracker",
+    description: "How to calculate and track your net worth in the UK. Understand assets, liabilities, and use the Freedom Framework to measure progress.",
     relatedArticles: ["sinking-funds"],
     relatedGuides: ["fire-number", "multi-currency-budget"],
     authorSlug: "glenn-rodgers",
@@ -257,6 +264,7 @@ export const guides: Guide[] = [
     title: "What is net worth and how do you track it?",
     region: "us",
     tool: "net-worth-tracker",
+    description: "How to calculate and track your net worth in the US. Understand assets, liabilities, and use the Freedom Framework to measure progress.",
     relatedArticles: ["emergency-fund-vs-hysa"],
     relatedGuides: ["fire-number", "multi-currency-budget"],
     authorSlug: "glenn-rodgers",
@@ -267,6 +275,7 @@ export const guides: Guide[] = [
     title: "Should you overpay your mortgage?",
     region: "uk",
     tool: "mortgage-overpayment",
+    description: "Should you overpay your mortgage in the UK? Compare overpaying to ISAs, pensions and LISAs, understand ERCs, and calculate your interest saving.",
     relatedArticles: ["overpay-vs-isa", "10-percent-overpayment-rule"],
     relatedGuides: ["compound-interest", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
@@ -277,6 +286,7 @@ export const guides: Guide[] = [
     title: "Should you pay off your mortgage early?",
     region: "us",
     tool: "mortgage-overpayment",
+    description: "Should you pay off your mortgage early in the US? Compare extra principal payments to 401(k) investing, understand prepayment penalties, and see worked examples.",
     relatedArticles: ["pay-off-vs-401k", "biweekly-mortgage-payments"],
     relatedGuides: ["compound-interest", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
@@ -290,6 +300,7 @@ export const articles: Article[] = [
     title: "Is the 4% rule safe in the UK?",
     region: "uk",
     guide: "fire-number",
+    description: "Is the 4% rule safe for UK retirees? Why US-based research may be too optimistic for UK investors and what withdrawal rate to use instead.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -298,6 +309,7 @@ export const articles: Article[] = [
     title: "Where does the 4% rule come from?",
     region: "us",
     guide: "fire-number",
+    description: "Where does the 4% rule come from? A look at Bengen's 1994 study, the Trinity Study, and what US retirees should know about safe withdrawals.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -306,6 +318,7 @@ export const articles: Article[] = [
     title: "How do exchange-rate swings affect your UK budget?",
     region: "uk",
     guide: "multi-currency-budget",
+    description: "How exchange-rate swings affect a UK budget. Why converting foreign income and spending to pounds matters and how to manage currency risk.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -314,6 +327,7 @@ export const articles: Article[] = [
     title: "How do exchange-rate swings affect your US budget?",
     region: "us",
     guide: "multi-currency-budget",
+    description: "How exchange-rate swings affect a US budget. Why converting foreign income and spending to dollars matters and how to manage currency risk.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -322,6 +336,7 @@ export const articles: Article[] = [
     title: "How do sinking funds work in the UK?",
     region: "uk",
     guide: "net-worth-tracker",
+    description: "How sinking funds work in the UK. Set aside small monthly amounts for predictable expenses like Christmas, car maintenance, and holidays.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -330,6 +345,7 @@ export const articles: Article[] = [
     title: "Emergency fund vs high-yield savings: where should US savers keep cash?",
     region: "us",
     guide: "net-worth-tracker",
+    description: "Emergency fund versus high-yield savings: where US savers should keep cash. Learn the difference and how much to keep accessible.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -338,6 +354,7 @@ export const articles: Article[] = [
     title: "Should you overpay your mortgage or invest in a Stocks and Shares ISA?",
     region: "uk",
     guide: "mortgage-overpayment",
+    description: "Should you overpay your mortgage or invest in a UK Stocks and Shares ISA? Compare guaranteed interest savings against tax-free investment growth.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -346,6 +363,7 @@ export const articles: Article[] = [
     title: "Should you pay off your mortgage early or invest in a 401(k)?",
     region: "us",
     guide: "mortgage-overpayment",
+    description: "Should you pay off your mortgage early or invest in a 401(k)? Compare guaranteed principal savings against tax-deferred retirement growth.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -354,6 +372,7 @@ export const articles: Article[] = [
     title: "The 10% mortgage overpayment rule explained",
     region: "uk",
     guide: "mortgage-overpayment",
+    description: "The 10% mortgage overpayment rule explained for UK borrowers. How annual overpayment limits work, when ERCs apply, and how to check your allowance.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
@@ -362,6 +381,7 @@ export const articles: Article[] = [
     title: "Should you make biweekly mortgage payments?",
     region: "us",
     guide: "mortgage-overpayment",
+    description: "Should you make biweekly mortgage payments? Learn how 26 half-payments save interest, when servicers hold funds, and how to avoid setup fees.",
     authorSlug: "glenn-rodgers",
     published: true,
   },
