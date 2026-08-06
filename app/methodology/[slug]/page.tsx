@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const methodology = getMethodology(slug);
   if (!methodology) return {};
   const title = methodology.title;
-  const description = `Methodology, assumptions, and sources for the ${methodology.title} calculator.`;
+  const description = `Assumptions, formulas, and sources for the ${methodology.title} calculator.`;
   const path = `/methodology/${slug}/`;
   return {
     title,
