@@ -200,10 +200,10 @@ export function calculateNetWorth(
 
   if (mode === "standard") {
     totalAssets = Math.max(0, currentTotals.asset);
-    totalLiabilities = Math.max(0, currentTotals.liability);
+    totalLiabilities = Math.abs(Math.min(0, currentTotals.liability));
   } else {
     totalAssets = Math.max(0, currentTotals.freedom_fund + currentTotals.valuable_liability + currentTotals.cash);
-    totalLiabilities = Math.max(0, currentTotals.debt);
+    totalLiabilities = Math.abs(Math.min(0, currentTotals.debt));
   }
 
   const netWorth = totalAssets - totalLiabilities;
@@ -252,6 +252,9 @@ export function categoryLabel(category: AccountCategory): string {
 export function categoryHint(category: AccountCategory): string | undefined {
   if (categoryIsNegative(category)) {
     return "Enter the amount you owe, as a positive number.";
+  }
+  if (category === "valuable_liability") {
+    return "Enter the full market value — add the mortgage as a separate debt account.";
   }
   return undefined;
 }

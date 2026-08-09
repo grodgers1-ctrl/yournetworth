@@ -524,7 +524,7 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
             ]}
           />
 
-          <NetWorthChart data={outputs.series} mode={state.mode} formatValue={formatCompact} />
+          <NetWorthChart data={outputs.series} mode={state.mode} formatValue={formatValue} formatAxis={formatCompact} />
 
           {trendSeries.length > 0 && (
             <div className="rounded-[16px] border border-hairline bg-surface p-5">
@@ -796,6 +796,7 @@ function NetWorthChart({
   data,
   mode,
   formatValue,
+  formatAxis,
 }: {
   data: {
     date: string;
@@ -806,6 +807,7 @@ function NetWorthChart({
   }[];
   mode: NetWorthMode;
   formatValue: (value: number) => string;
+  formatAxis: (value: number) => string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
@@ -816,7 +818,7 @@ function NetWorthChart({
   } | null>(null);
 
   const width = 800;
-  const height = 420;
+  const height = 450;
   const margin = { top: 30, right: 20, bottom: 50, left: 70 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -834,10 +836,12 @@ function NetWorthChart({
   }
 
   const yMin = Math.min(0, ...data.flatMap((d) => d.negatives.map((n) => n.y1)));
-  const yMax = Math.max(
+  let yMax = Math.max(
+    0,
     ...data.flatMap((d) => d.positives.map((p) => p.y1)),
     Math.max(...data.map((d) => d.netWorth)) * 1.05
   );
+  if (yMax === yMin) yMax = yMin + 1;
 
   const xFor = (index: number) => (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
   const yFor = (value: number) => innerHeight - ((value - yMin) / (yMax - yMin)) * innerHeight;
@@ -858,6 +862,10 @@ function NetWorthChart({
 
   const yTicks = 5;
   const yTickValues = Array.from({ length: yTicks + 1 }, (_, i) => yMin + ((yMax - yMin) / yTicks) * i);
+
+  const xTickStride = Math.max(1, Math.floor(data.length / 6));
+  const xTickIndices = data.map((_, i) => i).filter((i) => i % xTickStride === 0);
+  if (!xTickIndices.includes(data.length - 1)) xTickIndices.push(data.length - 1);
 
   const handleMouseMove = (event: React.MouseEvent<SVGRectElement>) => {
     if (!containerRef.current) return;
@@ -892,8 +900,8 @@ function NetWorthChart({
   };
 
   return (
-    <div ref={containerRef} className="relative aspect-video rounded-[16px] border border-hairline bg-surface">
-      <div className="absolute left-5 right-5 top-5 flex items-start justify-between">
+    <div ref={containerRef} className="relative flex flex-col rounded-[16px] border border-hairline bg-surface">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 pt-4">
         <h3 className="text-sm font-semibold text-text">Net worth over time</h3>
         <div className="flex flex-wrap items-center gap-3 text-xs text-text-dim">
           {mode === "freedom_framework" ? (
@@ -923,8 +931,9 @@ function NetWorthChart({
           )}
         </div>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-full w-full overflow-visible" aria-label="Net worth chart">
-        <g transform={`translate(${margin.left},${margin.top})`}>
+      <div className="aspect-video">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-full w-full overflow-visible" aria-label="Net worth chart">
+          <g transform={`translate(${margin.left},${margin.top})`}>
           {/* Y axis ticks */}
           {yTickValues.map((value, i) => (
             <g key={i}>
@@ -945,27 +954,25 @@ function NetWorthChart({
                 fontSize={11}
                 className="tabular-nums"
               >
-                {formatValue(value)}
+                {formatAxis(value)}
               </text>
             </g>
           ))}
 
           {/* X axis ticks */}
-          {data.map((d, i) =>
-            i % Math.max(1, Math.floor(data.length / 6)) === 0 ? (
-              <text
-                key={d.date}
-                x={xFor(i)}
-                y={innerHeight + 20}
-                textAnchor="middle"
-                fill="var(--color-text-dim)"
-                fontSize={11}
-                className="tabular-nums"
-              >
-                {formatDate(d.date)}
-              </text>
-            ) : null
-          )}
+          {xTickIndices.map((i, pos) => (
+            <text
+              key={data[i].date}
+              x={xFor(i)}
+              y={innerHeight + 20}
+              textAnchor={pos === 0 ? "start" : i === data.length - 1 ? "end" : "middle"}
+              fill="var(--color-text-dim)"
+              fontSize={11}
+              className="tabular-nums"
+            >
+              {formatDate(data[i].date)}
+            </text>
+          ))}
 
           {/* Positive stacked areas */}
           {positiveKeys.map((key) => {
@@ -1023,8 +1030,9 @@ function NetWorthChart({
             onMouseLeave={handleMouseLeave}
             style={{ cursor: "crosshair" }}
           />
-        </g>
-      </svg>
+          </g>
+        </svg>
+      </div>
 
       {tooltip && data[tooltip.index] && (
         <div
