@@ -26,6 +26,7 @@ import {
   type NetWorthState,
   accountValueAt,
   categorySign,
+  valueWithUnits,
   COMMON_CURRENCIES,
 } from "@/lib/calc/networth";
 import { convertToBase, DEFAULT_FX_RATES } from "@/lib/calc/fx";
@@ -420,40 +421,6 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
               </button>
             </div>
 
-            <div className="mb-4 grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="mode" className="block text-xs font-medium text-text-dim">
-                  Mode
-                </label>
-                <select
-                  id="mode"
-                  value={state.mode}
-                  onChange={(e) => setMode(e.target.value as NetWorthMode)}
-                  className="mt-1.5 h-10 w-full rounded-lg border border-hairline bg-elevated px-3 py-2 text-sm text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
-                >
-                  <option value="freedom_framework">Freedom Framework</option>
-                  <option value="standard">Standard</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="base-currency" className="block text-xs font-medium text-text-dim">
-                  Base currency
-                </label>
-                <select
-                  id="base-currency"
-                  value={state.baseCurrency}
-                  onChange={(e) => setState((s) => ({ ...s, baseCurrency: e.target.value }))}
-                  className="mt-1.5 h-10 w-full rounded-lg border border-hairline bg-elevated px-3 py-2 text-sm text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
-                >
-                  {COMMON_CURRENCIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c} ({currencySymbol(c)})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
             <div className="space-y-3">
               {state.accounts.length === 0 && (
                 <p className="text-sm text-text-dim">Add an account to start tracking your net worth.</p>
@@ -490,14 +457,47 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
           </button>
 
           {showAdvanced && (
-            <div className="rounded-[16px] border border-hairline bg-surface p-5 text-sm text-text-muted">
-              <p>
-                Units tracking lets you separate how many shares or units you own from the price per unit. Enable it on
-                an account by entering a units value. The account value is then units multiplied by the latest price.
+            <div className="rounded-[16px] border border-hairline bg-surface p-5">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="mode" className="block text-xs font-medium text-text-dim">
+                    Mode
+                  </label>
+                  <select
+                    id="mode"
+                    value={state.mode}
+                    onChange={(e) => setMode(e.target.value as NetWorthMode)}
+                    className="mt-1.5 h-10 w-full rounded-lg border border-hairline bg-elevated px-3 py-2 text-sm text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
+                  >
+                    <option value="freedom_framework">Freedom Framework</option>
+                    <option value="standard">Standard</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="base-currency" className="block text-xs font-medium text-text-dim">
+                    Base currency
+                  </label>
+                  <select
+                    id="base-currency"
+                    value={state.baseCurrency}
+                    onChange={(e) => setState((s) => ({ ...s, baseCurrency: e.target.value }))}
+                    className="mt-1.5 h-10 w-full rounded-lg border border-hairline bg-elevated px-3 py-2 text-sm text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
+                  >
+                    {COMMON_CURRENCIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c} ({currencySymbol(c)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-text-muted">
+                Currency, category and units fields are now shown on each account card above. Enter units held to track
+                a fund by price per unit instead of total value.
               </p>
-              <p className="mt-2">
-                Exchange rates use static fallback values when currencies differ from the base. For precise cross-currency
-                tracking, update values in the base currency directly.
+              <p className="mt-2 text-sm text-text-muted">
+                Exchange rates use static fallback values when currencies differ from the base. For precise
+                cross-currency tracking, update values in the base currency directly.
               </p>
             </div>
           )}
@@ -505,7 +505,7 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
           {cta}
         </div>
 
-        <div className="space-y-6 lg:col-span-7">
+        <div className="space-y-6 lg:col-span-7 lg:self-start lg:sticky lg:top-6">
           <CalcResult
             primary={{
               label: "Net worth",
@@ -614,10 +614,11 @@ function AccountCard({
   onRemoveSnapshot: (snapshotId: string | undefined) => void;
 }) {
   const categories = modeCategories[mode];
-  const latest = accountValueAt(account, today());
+  const latest = valueWithUnits(account, accountValueAt(account, today()));
   const signed = latest * categorySign(account.category);
   const converted = signed === 0 ? 0 : convertToBase(signed, account.currency, baseCurrency, DEFAULT_FX_RATES);
   const isDebt = categoryIsNegative(account.category);
+  const usesUnits = Boolean(account.units && account.units > 0);
   const hint = categoryHint(account.category);
   const [confirmingRemove, setConfirmingRemove] = useState(false);
 
@@ -690,12 +691,12 @@ function AccountCard({
                     const units = e.target.value === "" ? undefined : Number(e.target.value);
                     onUpdate({ units });
                   }}
-                  placeholder="Units (optional)"
+                  placeholder="Units held (optional)"
                   className="h-8 text-xs"
-                  aria-label="Units"
+                  aria-label="Units held"
                 />
                 <p className="flex items-center text-xs text-text-dim">
-                  {account.units && account.units > 0 ? `Value = units x price` : "Units disabled"}
+                  {usesUnits ? "Snapshots become price per unit" : "Leave empty to track total value"}
                 </p>
               </div>
             </div>
@@ -727,7 +728,7 @@ function AccountCard({
       <div className="mt-3 border-t border-hairline pt-3">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-xs font-medium text-text-dim">
-            {account.snapshots.length === 1 ? "Today's balance" : "Snapshots"}
+            {account.snapshots.length === 1 ? (usesUnits ? "Price per unit" : "Today's balance") : "Snapshots"}
           </p>
           <button
             type="button"
@@ -746,7 +747,7 @@ function AccountCard({
             hideZero
             step={1}
             placeholder="0"
-            aria-label="Today's balance"
+            aria-label={usesUnits ? "Price per unit" : "Today's balance"}
           />
         )}
         {account.snapshots.length > 1 && (
@@ -767,7 +768,7 @@ function AccountCard({
                   hideZero
                   step={1}
                   placeholder="0"
-                  aria-label="Snapshot value"
+                  aria-label={usesUnits ? "Price per unit" : "Snapshot value"}
                 />
                 <button
                   type="button"
@@ -884,18 +885,18 @@ function NetWorthChart({
   const handleMouseLeave = () => setTooltip(null);
 
   const colors: Record<string, string> = {
-    asset: "var(--color-text)",
+    asset: "var(--color-chart-investments)",
     liability: "var(--color-debt)",
-    freedom_fund: "var(--color-text)",
-    valuable_liability: "var(--color-text-muted)",
-    cash: "var(--color-text-dim)",
+    freedom_fund: "var(--color-chart-investments)",
+    valuable_liability: "var(--color-chart-property)",
+    cash: "var(--color-chart-cash)",
     debt: "var(--color-debt)",
   };
 
   const opacityFor = (key: string) => {
     if (key === "asset" || key === "freedom_fund") return 0.9;
-    if (key === "valuable_liability") return 0.5;
-    if (key === "cash") return 0.35;
+    if (key === "valuable_liability") return 0.6;
+    if (key === "cash") return 0.45;
     return 0.65;
   };
 
@@ -907,25 +908,25 @@ function NetWorthChart({
           {mode === "freedom_framework" ? (
             <>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-text/80" /> Investments
+                <span className="h-1.5 w-4 rounded-full" style={{ background: "var(--color-chart-investments)" }} /> Investments
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-text-muted/60" /> Property
+                <span className="h-1.5 w-4 rounded-full" style={{ background: "var(--color-chart-property)" }} /> Property
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-text-dim/50" /> Cash
+                <span className="h-1.5 w-4 rounded-full" style={{ background: "var(--color-chart-cash)" }} /> Cash
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-debt/70" /> Debts
+                <span className="h-1.5 w-4 rounded-full" style={{ background: "var(--color-debt)" }} /> Debts
               </span>
             </>
           ) : (
             <>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-text/80" /> Assets
+                <span className="h-1.5 w-4 rounded-full" style={{ background: "var(--color-chart-investments)" }} /> Assets
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-debt/70" /> Liabilities
+                <span className="h-1.5 w-4 rounded-full" style={{ background: "var(--color-debt)" }} /> Liabilities
               </span>
             </>
           )}

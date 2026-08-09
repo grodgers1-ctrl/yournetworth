@@ -23,6 +23,11 @@
   --color-debt: #8B1E1E;
   --color-success: #3D8B40;
 
+  /* Chart series (flat, matte categoricals for the net worth chart) */
+  --color-chart-investments: #2F79EF;
+  --color-chart-property: #A9825A;
+  --color-chart-cash: #5F8C66;
+
   /* Geometry */
   --radius-sm: 8px;
   --radius-card: 16px;

@@ -103,7 +103,7 @@ function uniqueDates(accounts: Account[]): string[] {
   return Array.from(set).sort();
 }
 
-function valueWithUnits(account: Account, rawValue: number): number {
+export function valueWithUnits(account: Account, rawValue: number): number {
   if (account.units && account.units > 0) {
     return account.units * rawValue;
   }
