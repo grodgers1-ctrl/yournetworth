@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { RegionToggle } from "@/components/site/RegionToggle";
 
 const navItems = [
+  { href: "/#tools", label: "Tools" },
   { href: "/about", label: "About" },
   { href: "/editorial-policy", label: "Editorial policy" },
   { href: "/updates", label: "Updates" },
@@ -25,7 +27,8 @@ export function Header() {
       </a>
       <header className="sticky top-0 z-50 border-b border-white/[0.04] bg-bg/70 backdrop-blur-[30px]">
         <div className="mx-auto flex h-16 max-w-[1160px] items-center justify-between px-6">
-          <Link href="/" className="text-lg font-semibold tracking-tight text-text focus-ring rounded-sm">
+          <Link href="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-text focus-ring rounded-sm">
+            <Image src="/logo-mark.png" alt="" width={26} height={26} priority />
             Your Net Worth
           </Link>
 

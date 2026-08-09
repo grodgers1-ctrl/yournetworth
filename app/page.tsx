@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { ArrowRight, BarChart3, CreditCard, Lock, Shield, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import type { ComponentType } from "react";
+import { ArrowRight, ArrowRightLeft, BarChart3, CreditCard, Home, Lock, Shield, TrendingUp } from "lucide-react";
 import { ToolRegionLink } from "@/components/site/ToolRegionLink";
 import { buttonVariants, LinkButton } from "@/components/ui/Button";
 import { AnimateIn } from "@/components/landing/AnimateIn";
 import { DashboardMockup } from "@/components/landing/DashboardMockup";
 import { NetWorthDeepDive } from "@/components/landing/NetWorthDeepDive";
+import { getPublishedTools } from "@/content/taxonomy";
 
 export const metadata: Metadata = {
   title: "Your Net Worth - Free UK & US Personal Finance Calculators",
@@ -17,23 +20,16 @@ export const metadata: Metadata = {
   },
 };
 
-const features = [
-  {
-    icon: BarChart3,
-    title: "Net worth tracking",
-    desc: "Monthly snapshots become a trend line with milestones and a monthly delta. Assets and debts in one view.",
-  },
-  {
-    icon: CreditCard,
-    title: "Liability tracking",
-    desc: "Mortgage, cards, and loans tracked alongside your investments.",
-  },
-  {
-    icon: TrendingUp,
-    title: "FIRE planning",
-    desc: "The portfolio size you need, with uncertainty bands instead of false precision.",
-  },
-];
+const toolIcons: Record<string, ComponentType<{ className?: string }>> = {
+  "net-worth-tracker": BarChart3,
+  "fire-number": TrendingUp,
+  "mortgage-overpayment": Home,
+  "debt-payoff": CreditCard,
+  "multi-currency-budget": ArrowRightLeft,
+};
+
+// One card per tool; the UK taxonomy entry carries the canonical description.
+const tools = [...new Map(getPublishedTools().map((t) => [t.slug, t])).values()];
 
 const testimonials = [
   {
@@ -52,6 +48,17 @@ const testimonials = [
     role: "Financial planner",
   },
 ];
+
+const toolsLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: tools.map((tool, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: tool.title,
+    url: `https://yournetworth.net/uk/tools/${tool.slug}/`,
+  })),
+};
 
 const faqLd = {
   "@context": "https://schema.org",
@@ -80,6 +87,7 @@ export default function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolsLd) }} />
 
       {/* Hero */}
       <section className="mx-auto max-w-[1160px] px-6 pt-16 md:pt-24 lg:pt-32">
@@ -118,19 +126,54 @@ export default function HomePage() {
         </AnimateIn>
       </section>
 
-      {/* Features */}
-      <section className="mx-auto max-w-[1160px] px-6 py-16 md:py-24">
-        <div className="grid gap-8 md:grid-cols-3">
-          {features.map((f, i) => {
-            const Icon = f.icon;
+      {/* Tools */}
+      <section id="tools" className="mx-auto max-w-[1160px] scroll-mt-24 px-6 py-16 md:py-24">
+        <AnimateIn>
+          <div className="max-w-2xl">
+            <p className="text-caption mb-3 font-medium uppercase tracking-widest text-accent">The tools</p>
+            <h2 className="text-section md:text-4xl">Free UK &amp; US personal finance calculators.</h2>
+            <p className="mt-4 text-body">
+              Every calculator runs live in your browser — no sign-up, nothing sent to a server. Pick one, move any
+              input, and the chart recalculates instantly.
+            </p>
+          </div>
+        </AnimateIn>
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool, i) => {
+            const Icon = toolIcons[tool.slug] ?? BarChart3;
             return (
-              <AnimateIn key={f.title} delay={i * 100}>
-                <div className="rounded-[12px] border border-hairline bg-surface p-6">
+              <AnimateIn key={tool.slug} delay={(i % 3) * 100}>
+                <div className="flex h-full flex-col rounded-[12px] border border-hairline bg-surface p-6">
                   <div className="flex h-10 w-10 items-center justify-center rounded-md bg-elevated text-text">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-text">{f.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-text-muted">{f.desc}</p>
+                  <h3 className="mt-4 text-lg font-semibold text-text">{tool.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-text-muted">{tool.description}</p>
+                  <div className="mt-5 flex items-center justify-between">
+                    <ToolRegionLink
+                      toolSlug={tool.slug}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-hover focus-ring rounded-sm"
+                    >
+                      Open calculator <ArrowRight className="h-4 w-4" />
+                    </ToolRegionLink>
+                    <span className="flex items-center gap-2 text-xs text-text-dim">
+                      <Link
+                        href={`/uk/tools/${tool.slug}/`}
+                        aria-label={`${tool.title} (UK)`}
+                        className="transition-colors hover:text-text focus-ring rounded-sm"
+                      >
+                        UK
+                      </Link>
+                      <span aria-hidden="true">·</span>
+                      <Link
+                        href={`/us/tools/${tool.slug}/`}
+                        aria-label={`${tool.title} (US)`}
+                        className="transition-colors hover:text-text focus-ring rounded-sm"
+                      >
+                        US
+                      </Link>
+                    </span>
+                  </div>
                 </div>
               </AnimateIn>
             );
