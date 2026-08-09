@@ -10,6 +10,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Download,
 } from "lucide-react";
 import { CalcShell } from "@/components/calc/CalcShell";
 import { CalcResult } from "@/components/calc/CalcResult";
@@ -361,6 +362,37 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
       .filter((id): id is string => Boolean(id))
   );
 
+  const netWorthDelta =
+    outputs.series.length >= 2
+      ? outputs.series[outputs.series.length - 1].netWorth - outputs.series[outputs.series.length - 2].netWorth
+      : null;
+
+  const downloadCsv = () => {
+    const escape = (cell: string) => (/[",\n]/.test(cell) ? `"${cell.replace(/"/g, '""')}"` : cell);
+    const dates = outputs.dates;
+    const rows = [
+      ["Account", "Category", ...dates],
+      ...state.accounts.map((account) => [
+        account.name,
+        categoryLabel(account.category),
+        ...dates.map((date) => {
+          const snapshot = account.snapshots.find((s) => s.date === date);
+          return snapshot ? String(snapshot.value) : "";
+        }),
+      ]),
+      ["Net worth", "", ...outputs.series.map((point) => String(point.netWorth))],
+    ];
+    const csv = rows.map((row) => row.map(escape).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `net-worth-tracker-${today()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    track("networth_download_csv", { region });
+  };
+
   const unusedPresets = config.netWorthPresets.filter((preset) => !usedPresets.has(preset.id));
 
   const trendSeries = outputs.accountSeries.filter((series) => {
@@ -378,22 +410,36 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
       copyLink={copyLink}
       exportJson={exportJson}
       importJson={importJson}
-      subtitle="Add accounts and monthly snapshots to see your net worth chart update."
+      subtitle="Add accounts and monthly snapshots to see your net worth chart update. Free, private, and no sign-up — your data stays in your browser."
       exportLabel="Back up data"
       importLabel="Restore backup"
       note="Backups save a small file to your computer so you can restore your tracker later."
       showRegionToggle={false}
       extraActions={
-        <Button
-          type="button"
-          onClick={loadExample}
-          variant="secondary"
-          size="sm"
-          aria-label="Load example data"
-        >
-          <Sparkles className="h-4 w-4" />
-          Load example
-        </Button>
+        <>
+          <Button
+            type="button"
+            onClick={loadExample}
+            variant="secondary"
+            size="sm"
+            aria-label="Load example data"
+          >
+            <Sparkles className="h-4 w-4" />
+            Load example
+          </Button>
+          {outputs.dates.length > 0 && (
+            <Button
+              type="button"
+              onClick={downloadCsv}
+              variant="secondary"
+              size="sm"
+              aria-label="Download snapshots as CSV"
+            >
+              <Download className="h-4 w-4" />
+              Download CSV
+            </Button>
+          )}
+        </>
       }
     >
       <IntroStrip />
@@ -445,6 +491,24 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
                 />
               ))}
             </div>
+            <p className="mt-4 text-xs text-text-dim">
+              {region === "uk" ? (
+                <>
+                  Tip: hunt down forgotten workplace pensions with the government&apos;s free{" "}
+                  <a
+                    href="https://www.gov.uk/find-pension-contact-details"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent underline-offset-2 hover:underline"
+                  >
+                    Pension Tracing Service
+                  </a>{" "}
+                  before your first snapshot.
+                </>
+              ) : (
+                "Tip: track down old 401(k)s from previous employers so your first snapshot is complete."
+              )}
+            </p>
           </div>
 
           <button
@@ -510,7 +574,18 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
             primary={{
               label: "Net worth",
               value: formatValue(outputs.netWorth),
-              caption: outputs.netWorth >= 0 ? "Assets exceed liabilities" : "Liabilities exceed assets",
+              caption: (
+                <>
+                  {outputs.netWorth >= 0 ? "Assets exceed liabilities" : "Liabilities exceed assets"}
+                  {netWorthDelta !== null && Math.abs(netWorthDelta) >= 0.01 && (
+                    <span className="text-text">
+                      {" · "}
+                      {netWorthDelta >= 0 ? "Up" : "Down"} {formatValue(Math.abs(netWorthDelta))} since{" "}
+                      {formatDate(outputs.series[outputs.series.length - 2].date)}
+                    </span>
+                  )}
+                </>
+              ),
             }}
             secondary={[
               { label: "Total assets", value: formatValue(outputs.totalAssets) },

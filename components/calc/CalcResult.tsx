@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 type CalcResultProps = {
-  primary: { label: string; value: string; caption?: string };
+  primary: { label: string; value: string; caption?: React.ReactNode };
   secondary: { label: string; value: string; caption?: string }[];
   className?: string;
 };
