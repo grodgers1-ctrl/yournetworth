@@ -173,15 +173,25 @@ export const tools: Tool[] = [
     slug: "debt-payoff",
     title: "Debt Payoff Calculator",
     region: "uk",
-    description: "Stack your debts and compare snowball versus avalanche strategies.",
-    published: false,
+    description: "Free debt payoff calculator for the UK. Add your credit cards and loans, set a monthly budget, and compare the cheapest order to clear them — with your debt-free date and total interest.",
+    pillarGuide: "debt-payoff",
+    supportingArticles: ["clear-5000-credit-card"],
+    relatedTools: ["mortgage-overpayment", "net-worth-tracker", "compound-interest"],
+    methodology: "debt-payoff",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "debt-payoff",
     title: "Debt Payoff Calculator",
     region: "us",
-    description: "Stack your debts and compare snowball versus avalanche strategies.",
-    published: false,
+    description: "Free debt snowball vs avalanche calculator. Add your debts, set a monthly budget, and see side-by-side debt-free dates and total interest for both methods.",
+    pillarGuide: "debt-payoff",
+    supportingArticles: ["pay-off-10000-credit-card"],
+    relatedTools: ["mortgage-overpayment", "net-worth-tracker", "compound-interest"],
+    methodology: "debt-payoff",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "multi-currency-budget",
@@ -292,6 +302,28 @@ export const guides: Guide[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "debt-payoff",
+    title: "Snowball vs avalanche: which debt payoff method gets you debt-free faster?",
+    region: "uk",
+    tool: "debt-payoff",
+    description: "Snowball vs avalanche in the UK: which debt payoff method actually clears your credit cards and loans faster? Real numbers on a £25k mixed-debt case, 0% balance-transfer context, and a hybrid plan.",
+    relatedArticles: ["clear-5000-credit-card"],
+    relatedGuides: ["mortgage-overpayment", "net-worth-tracker"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "debt-payoff",
+    title: "Snowball vs avalanche: which debt payoff method gets you debt-free faster?",
+    region: "us",
+    tool: "debt-payoff",
+    description: "Debt snowball vs debt avalanche: which method actually gets you debt-free faster? Real numbers on a $25k mixed-debt case, when each method wins, and a hybrid plan.",
+    relatedArticles: ["pay-off-10000-credit-card"],
+    relatedGuides: ["mortgage-overpayment", "net-worth-tracker"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const articles: Article[] = [
@@ -385,6 +417,24 @@ export const articles: Article[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "clear-5000-credit-card",
+    title: "How long to clear a £5,000 credit card? Real numbers by APR and monthly payment",
+    region: "uk",
+    guide: "debt-payoff",
+    description: "How long to clear a £5,000 credit card in the UK. Real payoff times and interest at 19.9%, 24.9% and 29.9% APR, and why the minimum-payment trap keeps you in debt for years.",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "pay-off-10000-credit-card",
+    title: "How long will it take to pay off $10,000 in credit card debt? (Tables at 18%, 22%, 26% APR)",
+    region: "us",
+    guide: "debt-payoff",
+    description: "How long to pay off $10,000 in credit card debt. Payoff-time and interest tables at 18%, 22% and 26% APR for $200, $300 and $500 monthly payments.",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const methodologies: Methodology[] = [
@@ -414,6 +464,13 @@ export const methodologies: Methodology[] = [
     title: "Mortgage Overpayment methodology",
     toolSlug: "mortgage-overpayment",
     lastReviewed: "2026-08-04",
+    published: true,
+  },
+  {
+    slug: "debt-payoff",
+    title: "Debt Payoff methodology",
+    toolSlug: "debt-payoff",
+    lastReviewed: "2026-08-09",
     published: true,
   },
 ];
@@ -551,6 +608,30 @@ The tool also helps you see whether your total income covers your total spending
     relatedTerms: ["net-worth", "compound-interest"],
     relatedTools: ["multi-currency-budget"],
   },
+  {
+    slug: "apr",
+    title: "APR",
+    definition: "APR is the annual percentage rate — the yearly cost of borrowing, including interest and most fees, expressed as a percentage of the balance.",
+    body: `APR stands for annual percentage rate. It rolls the interest rate and most compulsory fees into a single yearly figure, which makes it the cleanest way to compare two credit products.
+
+On a credit card, the APR is applied monthly: each month the issuer charges roughly one twelfth of the APR on your outstanding balance. A card at 24.9% APR charges about 2.075% of the balance every month. On a £5,000 balance that is over £100 of interest a month before your payment touches the principal.
+
+APR is the single most important number when you rank debts for payoff. The avalanche method orders debts by APR, highest first, because that order minimises the total interest you pay.`,
+    relatedTerms: ["minimum-payment", "avalanche-method", "snowball-method"],
+    relatedTools: ["debt-payoff"],
+  },
+  {
+    slug: "minimum-payment",
+    title: "Minimum payment",
+    definition: "The minimum payment is the smallest amount a lender requires you to pay each month to keep the account in good standing.",
+    body: `On a credit card, the minimum payment is usually a small percentage of the balance — often 1% to 3% — or a fixed floor amount, whichever is higher. It is designed to keep the account current, not to clear the debt quickly.
+
+The trap is that the minimum falls as the balance falls, so a card you could clear in three years at a fixed payment can take well over a decade on minimums alone, with interest mounting all the way. Fixing your payment at today's level, rather than letting it decline, is one of the simplest ways to shorten a payoff timeline.
+
+In a snowball or avalanche plan, every debt gets its minimum payment first, and whatever is left of your monthly budget attacks the priority debt. When a debt clears, its freed minimum rolls onto the next one.`,
+    relatedTerms: ["apr", "snowball-method", "avalanche-method"],
+    relatedTools: ["debt-payoff"],
+  },
 ];
 
 export const updates: Update[] = [
@@ -578,6 +659,11 @@ export const updates: Update[] = [
     date: "2026-08-04",
     title: "Week 4: Mortgage Overpayment cluster live",
     body: "Added the Mortgage Overpayment calculator for UK and US users, with UK fixed-rate + SVR modelling, US escrow display, an invest-instead counterfactual, dual-line balance chart, plus region-specific guides, supporting articles, and a methodology page.",
+  },
+  {
+    date: "2026-08-09",
+    title: "Week 5: Debt Payoff cluster live",
+    body: "Added the Debt Payoff calculator for UK and US users, with inline debt entry, a monthly-budget slider, overlaid snowball vs avalanche curves, side-by-side debt-free dates and total interest, plus region-specific pillar guides, supporting articles, and a methodology page.",
   },
 ];
 

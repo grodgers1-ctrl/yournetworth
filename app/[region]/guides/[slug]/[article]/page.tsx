@@ -22,6 +22,8 @@ import UKMortgageOverpayVsIsa from "@/content/articles/uk/mortgage-overpayment/o
 import USMortgagePayOffVs401k from "@/content/articles/us/mortgage-overpayment/pay-off-vs-401k.mdx";
 import UKMortgage10PercentRule from "@/content/articles/uk/mortgage-overpayment/10-percent-overpayment-rule.mdx";
 import USBiweeklyMortgagePayments from "@/content/articles/us/mortgage-overpayment/biweekly-mortgage-payments.mdx";
+import UKClear5000CreditCard from "@/content/articles/uk/debt-payoff/clear-5000-credit-card.mdx";
+import USPayOff10000CreditCard from "@/content/articles/us/debt-payoff/pay-off-10000-credit-card.mdx";
 
 const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentType | undefined>>> = {
   "fire-number": {
@@ -64,6 +66,16 @@ const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentTyp
       us: USEmergencyFundVsHysa,
     },
   },
+  "debt-payoff": {
+    "clear-5000-credit-card": {
+      uk: UKClear5000CreditCard,
+      us: undefined,
+    },
+    "pay-off-10000-credit-card": {
+      uk: undefined,
+      us: USPayOff10000CreditCard,
+    },
+  },
 };
 
 function regionFromString(region: string): Region | null {
@@ -82,6 +94,8 @@ export function generateStaticParams() {
     { region: "us", slug: "mortgage-overpayment", article: "biweekly-mortgage-payments" },
     { region: "uk", slug: "net-worth-tracker", article: "sinking-funds" },
     { region: "us", slug: "net-worth-tracker", article: "emergency-fund-vs-hysa" },
+    { region: "uk", slug: "debt-payoff", article: "clear-5000-credit-card" },
+    { region: "us", slug: "debt-payoff", article: "pay-off-10000-credit-card" },
   ];
 }
 

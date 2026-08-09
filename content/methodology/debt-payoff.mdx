@@ -1,0 +1,75 @@
+# Debt Payoff methodology
+
+This page explains how the Your Net Worth Debt Payoff calculator works: what it measures, the formulas it uses, the assumptions behind the numbers, and where the reference data comes from. It is written in plain English, with enough detail to judge the tool for yourself.
+
+## What the calculator measures
+
+Given a list of debts — each with a balance, an APR, and a minimum payment — and a single monthly budget, the calculator simulates two payoff strategies:
+
+1. **Snowball** — extra money goes to the smallest balance first. Ties are broken by the higher APR.
+2. **Avalanche** — extra money goes to the highest APR first. Ties are broken by the smaller balance.
+
+For each strategy, the tool reports the months to debt-free, the total interest paid, the payoff order, and a month-by-month series of the total remaining balance. The two series are rendered as overlaid curves so you can see where the strategies diverge and by how much.
+
+Both strategies spend the same budget each month, so they always finish on the same date only when the payoff orders happen to coincide. In general the avalanche costs less interest, because it attacks the most expensive debt first; the snowball trades a little extra interest for faster early payoffs, which many people find easier to stick with.
+
+## Core formulas
+
+**Monthly interest accrual**
+
+Applied to every active balance at the start of each month:
+
+```
+interest_k = balance_(k-1) × (APR / 12)
+balance_k = balance_(k-1) + interest_k
+```
+
+**Budget distribution each month**
+
+After interest accrues, the monthly budget is distributed as follows:
+
+```
+1. Every active debt receives its minimum payment, capped at the remaining balance.
+2. extra = monthly_budget − (minimums actually paid this month)
+3. extra is applied to the priority debt; if it exceeds that balance, the remainder rolls to the next debt in priority order.
+4. When a debt reaches zero, it draws no minimum in later months, so its freed minimum automatically joins next month's extra (the "snowball effect").
+```
+
+**Validation**
+
+The monthly budget must be at least the sum of the minimum payments; the tool warns when it is not. If the payments cannot outrun the monthly interest on a debt — negative amortisation, where the balance grows even while you pay — the simulation stops at a 600-month cap and the tool reports that debt as not reachable at that budget.
+
+## Assumptions and limitations
+
+The calculator assumes fixed APRs for the whole timeline. Real rates can change, and promotional periods end.
+
+Minimum payments are held fixed. Real credit-card minimums usually decline as the balance falls, which stretches real-world timelines considerably. The tool models the disciplined fixed-payment plan instead, because that is the behaviour most debt charities and regulators recommend: keep paying at least today's minimum even as the required minimum drops.
+
+Interest compounds monthly. No fees, charges, or new borrowing are modelled, and payments are treated as made monthly in arrears.
+
+Promotional 0% periods and balance-transfer fees are not modelled directly. You can approximate them by entering the post-transfer balance — including any transfer fee — as a new debt with the new rate.
+
+The tool has no credit-score or tax effects. It models the arithmetic of repayment, nothing else.
+
+## Worked check
+
+A single balance of 10,000 at 22% APR, paid down at 300 per month, clears in 52 months with roughly 5,596 of interest paid in total. This matches a standard amortisation calculation for the same inputs, and you can reproduce it with any loan amortisation table or spreadsheet.
+
+## Sources and references
+
+- US Consumer Financial Protection Bureau, credit card and debt-collection guidance.
+- US Federal Reserve, G.19 consumer credit release, for average credit-card APR context.
+- UK Financial Conduct Authority, credit card market study and persistent-debt rules.
+- MoneyHelper, balance-transfer and debt-priority guidance.
+- Standard amortisation mathematics as used by lenders and loan servicers.
+- Behavioural research on debt-account aversion and the "small victories" effect (Kellogg School of Management), which motivates the snowball method's case for quick early wins.
+
+## Last updated
+
+This methodology was last reviewed on **9 August 2026**.
+
+<Related slugs={["snowball-method", "avalanche-method", "apr", "minimum-payment"]} />
+
+---
+
+_This methodology page is educational and is not financial advice._

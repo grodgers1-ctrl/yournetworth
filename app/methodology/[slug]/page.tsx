@@ -16,12 +16,14 @@ type PageProps = {
 import MultiCurrencyBudgetMethodology from "@/content/methodology/multi-currency-budget.mdx";
 import MortgageOverpaymentMethodology from "@/content/methodology/mortgage-overpayment.mdx";
 import NetWorthTrackerMethodology from "@/content/methodology/net-worth-tracker.mdx";
+import DebtPayoffMethodology from "@/content/methodology/debt-payoff.mdx";
 
 const METHODOLOGY_MODULES: Record<string, ComponentType | undefined> = {
   "fire-number": FireNumberMethodology,
   "multi-currency-budget": MultiCurrencyBudgetMethodology,
   "mortgage-overpayment": MortgageOverpaymentMethodology,
   "net-worth-tracker": NetWorthTrackerMethodology,
+  "debt-payoff": DebtPayoffMethodology,
 };
 
 export function generateStaticParams() {
@@ -30,6 +32,7 @@ export function generateStaticParams() {
     { slug: "multi-currency-budget" },
     { slug: "mortgage-overpayment" },
     { slug: "net-worth-tracker" },
+    { slug: "debt-payoff" },
   ];
 }
 

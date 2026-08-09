@@ -20,6 +20,8 @@ import UKMortgageOverpaymentGuide from "@/content/guides/uk/mortgage-overpayment
 import USMortgageOverpaymentGuide from "@/content/guides/us/mortgage-overpayment.mdx";
 import UKNetWorthTrackerGuide from "@/content/guides/uk/net-worth-tracker.mdx";
 import USNetWorthTrackerGuide from "@/content/guides/us/net-worth-tracker.mdx";
+import UKDebtPayoffGuide from "@/content/guides/uk/debt-payoff.mdx";
+import USDebtPayoffGuide from "@/content/guides/us/debt-payoff.mdx";
 
 const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> = {
   "fire-number": {
@@ -38,6 +40,10 @@ const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> =
     uk: UKNetWorthTrackerGuide,
     us: USNetWorthTrackerGuide,
   },
+  "debt-payoff": {
+    uk: UKDebtPayoffGuide,
+    us: USDebtPayoffGuide,
+  },
 };
 
 function regionFromString(region: string): Region | null {
@@ -54,6 +60,8 @@ export function generateStaticParams() {
     { region: "us", slug: "mortgage-overpayment" },
     { region: "uk", slug: "net-worth-tracker" },
     { region: "us", slug: "net-worth-tracker" },
+    { region: "uk", slug: "debt-payoff" },
+    { region: "us", slug: "debt-payoff" },
   ];
 }
 
