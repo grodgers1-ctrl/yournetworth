@@ -8,6 +8,8 @@ export const usRegion = {
   retirementAccountLabel: "IRA",
   taxShelterLabel: "Roth IRA",
   premiumBondLabel: "I Bonds",
+  /** Used by the net worth chart's "Today's prices" toggle. */
+  assumedInflationRate: 0.025,
   mortgageTerminology: "30-year fixed amortisation",
   mortgageDefaults: {
     defaultTermYears: 30,

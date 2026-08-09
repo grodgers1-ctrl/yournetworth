@@ -67,6 +67,16 @@ Each account has a list of dated snapshots. For any given date on the chart, the
 
 If an account has no snapshot on or before a chart date, its value is treated as zero for that date. If an account only has future snapshots, it contributes nothing until the first snapshot date arrives.
 
+## "Today's prices" chart view
+
+The chart offers an optional "Today's prices" toggle. It scales past snapshot values up to today's purchasing power using a fixed assumed inflation rate of 2.5% per year:
+
+```
+adjusted value = entered value x (1.025) ^ years since the snapshot
+```
+
+This is a viewing adjustment only. Your stored snapshots are unchanged, and 2.5% is an assumption, not a forecast. The toggle is meant to stop a gently rising nominal line from flattering you when most of the rise is inflation.
+
 ## Units tracking
 
 Advanced mode allows optional units tracking. If you enter a units value for an account, the snapshot value is treated as the price per unit, and the account value is calculated as:
@@ -98,7 +108,7 @@ The calculator assumes that values between snapshots stay constant. This is an a
 
 Currency conversion uses static fallback rates, not live rates. If you need precise cross-currency tracking, update values directly in your base currency or supply your own converted values.
 
-The calculator does not model taxes, fees, inflation, or investment returns. It shows the values you enter. If you want to project future net worth, you would need to estimate those effects separately.
+The calculator does not model taxes, fees, or investment returns, and it does not adjust your stored values for inflation (the optional "Today's prices" chart view applies a fixed 2.5% assumed rate for display only). It shows the values you enter. If you want to project future net worth, you would need to estimate those effects separately.
 
 ## Sources and references
 

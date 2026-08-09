@@ -8,6 +8,8 @@ export const ukRegion = {
   retirementAccountLabel: "SIPP",
   taxShelterLabel: "ISA",
   premiumBondLabel: "Premium Bonds",
+  /** Used by the net worth chart's "Today's prices" toggle. */
+  assumedInflationRate: 0.025,
   mortgageTerminology: "fixed-rate period and SVR revert",
   mortgageDefaults: {
     defaultTermYears: 25,

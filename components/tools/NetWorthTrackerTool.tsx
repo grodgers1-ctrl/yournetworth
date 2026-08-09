@@ -193,14 +193,14 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
     }));
   };
 
-  const addAccount = (category: AccountCategory) => {
+  const addAccount = (category: AccountCategory, name = "") => {
     setState((s) => ({
       ...s,
       accounts: [
         ...s.accounts,
         {
           id: makeId(),
-          name: "",
+          name,
           category,
           currency: s.baseCurrency,
           snapshots: [makeSnapshot()],
@@ -460,6 +460,16 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
               ))}
               <button
                 type="button"
+                onClick={() => {
+                  addAccount(state.mode === "standard" ? "asset" : "cash", "Savings pot");
+                  track("networth_add_savings_pot", { region });
+                }}
+                className="inline-flex h-7 items-center gap-1 rounded-full border border-hairline bg-elevated px-2.5 text-xs font-medium text-text-muted transition-colors hover:border-stroke hover:text-text focus-ring"
+              >
+                <Plus className="h-3 w-3" /> Savings pot
+              </button>
+              <button
+                type="button"
                 onClick={() => addAccount(state.mode === "standard" ? "asset" : "freedom_fund")}
                 className="inline-flex h-7 items-center gap-1 rounded-full border border-hairline bg-elevated px-2.5 text-xs font-medium text-text-muted transition-colors hover:border-stroke hover:text-text focus-ring"
               >
@@ -599,7 +609,7 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
             ]}
           />
 
-          <NetWorthChart data={outputs.series} mode={state.mode} formatValue={formatValue} formatAxis={formatCompact} />
+          <NetWorthChart data={outputs.series} mode={state.mode} formatValue={formatValue} formatAxis={formatCompact} inflationRate={config.assumedInflationRate} />
 
           {trendSeries.length > 0 && (
             <div className="rounded-[16px] border border-hairline bg-surface p-5">
@@ -873,6 +883,7 @@ function NetWorthChart({
   mode,
   formatValue,
   formatAxis,
+  inflationRate,
 }: {
   data: {
     date: string;
@@ -884,6 +895,7 @@ function NetWorthChart({
   mode: NetWorthMode;
   formatValue: (value: number) => string;
   formatAxis: (value: number) => string;
+  inflationRate?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
@@ -892,6 +904,25 @@ function NetWorthChart({
     y: number;
     containerWidth: number;
   } | null>(null);
+  const [realTerms, setRealTerms] = useState(false);
+
+  // "Today's prices" view: scale past values up by the assumed inflation rate
+  // so the trend is shown in the purchasing power of the latest snapshot.
+  const chartData = useMemo(() => {
+    if (!realTerms || !inflationRate || inflationRate <= 0 || data.length === 0) return data;
+    const latestMs = new Date(`${data[data.length - 1].date}T00:00:00Z`).getTime();
+    return data.map((d) => {
+      const years = Math.max(0, (latestMs - new Date(`${d.date}T00:00:00Z`).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+      const factor = Math.pow(1 + inflationRate, years);
+      return {
+        ...d,
+        netWorth: d.netWorth * factor,
+        totals: Object.fromEntries(Object.entries(d.totals).map(([k, v]) => [k, v * factor])),
+        positives: d.positives.map((p) => ({ ...p, y0: p.y0 * factor, y1: p.y1 * factor })),
+        negatives: d.negatives.map((n) => ({ ...n, y0: n.y0 * factor, y1: n.y1 * factor })),
+      };
+    });
+  }, [data, realTerms, inflationRate]);
 
   const width = 800;
   const height = 450;
@@ -911,19 +942,19 @@ function NetWorthChart({
     );
   }
 
-  const yMin = Math.min(0, ...data.flatMap((d) => d.negatives.map((n) => n.y1)));
+  const yMin = Math.min(0, ...chartData.flatMap((d) => d.negatives.map((n) => n.y1)));
   let yMax = Math.max(
     0,
-    ...data.flatMap((d) => d.positives.map((p) => p.y1)),
-    Math.max(...data.map((d) => d.netWorth)) * 1.05
+    ...chartData.flatMap((d) => d.positives.map((p) => p.y1)),
+    Math.max(...chartData.map((d) => d.netWorth)) * 1.05
   );
   if (yMax === yMin) yMax = yMin + 1;
 
-  const xFor = (index: number) => (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
+  const xFor = (index: number) => (chartData.length === 1 ? innerWidth / 2 : (index / (chartData.length - 1)) * innerWidth);
   const yFor = (value: number) => innerHeight - ((value - yMin) / (yMax - yMin)) * innerHeight;
 
-  const positiveKeys = Array.from(new Set(data.flatMap((d) => d.positives.map((p) => p.key))));
-  const negativeKeys = Array.from(new Set(data.flatMap((d) => d.negatives.map((n) => n.key))));
+  const positiveKeys = Array.from(new Set(chartData.flatMap((d) => d.positives.map((p) => p.key))));
+  const negativeKeys = Array.from(new Set(chartData.flatMap((d) => d.negatives.map((n) => n.key))));
 
   const buildAreaPath = (points: { x: number; y0: number; y1: number }[]) => {
     if (points.length === 0) return "";
@@ -932,23 +963,45 @@ function NetWorthChart({
     return `M ${top} L ${bottom} Z`;
   };
 
-  const linePath = data
+  const linePath = chartData
     .map((d, i) => `${i === 0 ? "M" : "L"} ${xFor(i)},${yFor(d.netWorth)}`)
     .join(" ");
 
   const yTicks = 5;
   const yTickValues = Array.from({ length: yTicks + 1 }, (_, i) => yMin + ((yMax - yMin) / yTicks) * i);
 
-  const xTickStride = Math.max(1, Math.floor(data.length / 6));
-  const xTickIndices = data.map((_, i) => i).filter((i) => i % xTickStride === 0);
-  if (!xTickIndices.includes(data.length - 1)) xTickIndices.push(data.length - 1);
+  const xTickStride = Math.max(1, Math.floor(chartData.length / 6));
+  const xTickIndices = chartData.map((_, i) => i).filter((i) => i % xTickStride === 0);
+  if (!xTickIndices.includes(chartData.length - 1)) xTickIndices.push(chartData.length - 1);
+
+  // Milestones: first upward crossing of £0-equivalent and round-number thresholds.
+  const netValues = chartData.map((d) => d.netWorth);
+  const maxNet = Math.max(...netValues);
+  const minNet = Math.min(...netValues);
+  const milestoneSteps = [10000, 25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000];
+  const milestoneStep = milestoneSteps.find((s) => maxNet / s <= 4) ?? 10000000;
+  const thresholds: number[] = [];
+  if (minNet < 0 && maxNet >= 0) thresholds.push(0);
+  for (let t = milestoneStep; t <= maxNet; t += milestoneStep) thresholds.push(t);
+  const milestones = thresholds.flatMap((t) => {
+    const i = netValues.findIndex((v, idx) => idx > 0 && v >= t && netValues[idx - 1] < t);
+    if (i < 0) return [];
+    return [
+      {
+        x: xFor(i),
+        y: yFor(netValues[i]),
+        label: t === 0 ? formatAxis(0) : `First ${formatAxis(t)}`,
+        anchor: (i >= chartData.length - 1 ? "end" : "middle") as "end" | "middle",
+      },
+    ];
+  });
 
   const handleMouseMove = (event: React.MouseEvent<SVGRectElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = event.clientX - rect.left - margin.left;
     const ratio = Math.max(0, Math.min(1, x / innerWidth));
-    const index = Math.round(ratio * (data.length - 1));
+    const index = Math.round(ratio * (chartData.length - 1));
     setTooltip({
       index,
       x: event.clientX - rect.left,
@@ -978,7 +1031,38 @@ function NetWorthChart({
   return (
     <div ref={containerRef} className="relative flex flex-col rounded-[16px] border border-hairline bg-surface">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 pt-4">
-        <h3 className="text-sm font-semibold text-text">Net worth over time</h3>
+        <div className="flex flex-wrap items-center gap-3">
+          <h3 className="text-sm font-semibold text-text">Net worth over time</h3>
+          {inflationRate !== undefined && inflationRate > 0 && (
+            <div
+              className="flex rounded-full border border-hairline p-0.5 text-[11px] font-medium"
+              title={`"Today's prices" adjusts past values for an assumed ${(inflationRate * 100).toFixed(1)}% annual inflation rate`}
+            >
+              <button
+                type="button"
+                onClick={() => setRealTerms(false)}
+                aria-pressed={!realTerms}
+                className={cn(
+                  "rounded-full px-2 py-0.5 transition-colors focus-ring",
+                  !realTerms ? "bg-elevated text-text" : "text-text-dim hover:text-text"
+                )}
+              >
+                Nominal
+              </button>
+              <button
+                type="button"
+                onClick={() => setRealTerms(true)}
+                aria-pressed={realTerms}
+                className={cn(
+                  "rounded-full px-2 py-0.5 transition-colors focus-ring",
+                  realTerms ? "bg-elevated text-text" : "text-text-dim hover:text-text"
+                )}
+              >
+                Today&apos;s prices
+              </button>
+            </div>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-3 text-xs text-text-dim">
           {mode === "freedom_framework" ? (
             <>
@@ -1038,21 +1122,21 @@ function NetWorthChart({
           {/* X axis ticks */}
           {xTickIndices.map((i, pos) => (
             <text
-              key={data[i].date}
+              key={chartData[i].date}
               x={xFor(i)}
               y={innerHeight + 20}
-              textAnchor={pos === 0 ? "start" : i === data.length - 1 ? "end" : "middle"}
+              textAnchor={pos === 0 ? "start" : i === chartData.length - 1 ? "end" : "middle"}
               fill="var(--color-text-dim)"
               fontSize={11}
               className="tabular-nums"
             >
-              {formatDate(data[i].date)}
+              {formatDate(chartData[i].date)}
             </text>
           ))}
 
           {/* Positive stacked areas */}
           {positiveKeys.map((key) => {
-            const points = data.map((d, i) => {
+            const points = chartData.map((d, i) => {
               const layer = d.positives.find((p) => p.key === key);
               return {
                 x: xFor(i),
@@ -1073,7 +1157,7 @@ function NetWorthChart({
 
           {/* Negative stacked areas */}
           {negativeKeys.map((key) => {
-            const points = data.map((d, i) => {
+            const points = chartData.map((d, i) => {
               const layer = d.negatives.find((n) => n.key === key);
               return {
                 x: xFor(i),
@@ -1095,6 +1179,23 @@ function NetWorthChart({
           {/* Net worth line */}
           <path d={linePath} fill="none" stroke="var(--color-accent)" strokeWidth={2} strokeLinecap="round" />
 
+          {/* Milestones */}
+          {milestones.map((m) => (
+            <g key={m.label}>
+              <circle cx={m.x} cy={m.y} r={3.5} fill="var(--color-accent)" stroke="var(--color-bg)" strokeWidth={1.5} />
+              <text
+                x={m.x}
+                y={m.y - 10}
+                textAnchor={m.anchor}
+                fill="var(--color-text-dim)"
+                fontSize={10}
+                className="tabular-nums"
+              >
+                {m.label}
+              </text>
+            </g>
+          ))}
+
           {/* Hover target */}
           <rect
             x={0}
@@ -1110,7 +1211,7 @@ function NetWorthChart({
         </svg>
       </div>
 
-      {tooltip && data[tooltip.index] && (
+      {tooltip && chartData[tooltip.index] && (
         <div
           className="pointer-events-none absolute z-10 rounded-lg border border-hairline bg-elevated px-3 py-2 text-xs shadow-card"
           style={{
@@ -1118,13 +1219,13 @@ function NetWorthChart({
             top: Math.max(tooltip.y - 12, 0),
           }}
         >
-          <p className="font-medium text-text">{formatDate(data[tooltip.index].date)}</p>
+          <p className="font-medium text-text">{formatDate(chartData[tooltip.index].date)}</p>
           <p className="mt-1 tabular-nums text-text">
-            Net worth: {formatValue(data[tooltip.index].netWorth)}
+            Net worth: {formatValue(chartData[tooltip.index].netWorth)}
           </p>
           <div className="mt-1 space-y-0.5 tabular-nums text-text-muted">
             {modeCategories[mode].map((key) => {
-              const value = data[tooltip.index].totals[key] || 0;
+              const value = chartData[tooltip.index].totals[key] || 0;
               if (Math.abs(value) < 0.01) return null;
               return (
                 <p key={key}>
