@@ -1,4 +1,4 @@
-import type { Account } from "@/lib/calc/networth";
+import type { NetWorthExampleAccount, NetWorthPreset } from "@/lib/calc/networth";
 
 export const ukRegion = {
   id: "uk" as const,
@@ -33,9 +33,9 @@ export const ukRegion = {
     return Math.max(0, Math.min(1, Math.exp(-hazard)));
   },
   netWorthPresets: [
-    { id: "stocks-isa", name: "Stocks & Shares ISA", category: "freedom_fund" as const, currency: "GBP" },
+    { id: "stocks-isa", name: "Stocks & Shares ISA", shortName: "S&S ISA", category: "freedom_fund" as const, currency: "GBP" },
     { id: "sipp", name: "SIPP", category: "freedom_fund" as const, currency: "GBP" },
-    { id: "gia", name: "General Investment Account", category: "freedom_fund" as const, currency: "GBP" },
+    { id: "gia", name: "General Investment Account", shortName: "GIA", category: "freedom_fund" as const, currency: "GBP" },
     { id: "premium-bonds", name: "Premium Bonds", category: "cash" as const, currency: "GBP" },
     { id: "cash-isa", name: "Cash ISA", category: "cash" as const, currency: "GBP" },
     { id: "current-account", name: "Current Account", category: "cash" as const, currency: "GBP" },
@@ -43,7 +43,14 @@ export const ukRegion = {
     { id: "mortgage", name: "Mortgage", category: "debt" as const, currency: "GBP" },
     { id: "credit-cards", name: "Credit Cards", category: "debt" as const, currency: "GBP" },
     { id: "student-loan", name: "Student Loan", category: "debt" as const, currency: "GBP" },
-  ] satisfies Omit<Account, "snapshots">[],
+  ] satisfies NetWorthPreset[],
+  netWorthExample: [
+    { presetId: "current-account", values: [7200, 7500, 7100, 7800, 8000, 7650, 8200, 8000] },
+    { presetId: "stocks-isa", values: [38500, 39200, 37800, 40100, 40900, 41500, 41800, 42000] },
+    { presetId: "sipp", values: [16200, 16600, 16100, 17000, 17350, 17600, 17850, 18000] },
+    { presetId: "main-residence", values: [258000, 259500, 261000, 261500, 262000, 263500, 264000, 265000] },
+    { presetId: "mortgage", values: [216200, 215600, 215000, 214300, 213600, 212800, 212000, 210000] },
+  ] satisfies NetWorthExampleAccount[],
   formatValue(value: number): string {
     return new Intl.NumberFormat("en-GB", {
       style: "currency",

@@ -1,3 +1,5 @@
+import { convertToBase } from "./fx";
+
 export type AccountCategory =
   | "asset"
   | "liability"
@@ -14,11 +16,24 @@ export type Snapshot = {
 
 export type Account = {
   id: string;
+  /** Id of the preset this account was created from, if any. */
+  presetId?: string;
   name: string;
   category: AccountCategory;
   currency: string;
   units?: number;
   snapshots: Snapshot[];
+};
+
+export type NetWorthPreset = Omit<Account, "snapshots" | "presetId"> & {
+  /** Short label for compact UI such as preset chips. */
+  shortName?: string;
+};
+
+export type NetWorthExampleAccount = {
+  presetId: string;
+  /** Monthly balances, oldest to newest, ending this month. */
+  values: number[];
 };
 
 export type NetWorthMode = "standard" | "freedom_framework";
@@ -76,19 +91,6 @@ export function accountValueAt(account: Account, date: string): number {
 export function accountValueToday(account: Account): number {
   const today = new Date().toISOString().slice(0, 10);
   return accountValueAt(account, today);
-}
-
-export function convertToBase(
-  amount: number,
-  fromCurrency: string,
-  baseCurrency: string,
-  rates: Record<string, number> = {}
-): number {
-  if (fromCurrency === baseCurrency) return amount;
-  const fromRate = rates[fromCurrency] ?? 1;
-  const baseRate = rates[baseCurrency] ?? 1;
-  if (baseRate === 0) return amount;
-  return (amount * fromRate) / baseRate;
 }
 
 function uniqueDates(accounts: Account[]): string[] {
@@ -237,14 +239,21 @@ export function categoryLabel(category: AccountCategory): string {
     case "liability":
       return "Liabilities";
     case "freedom_fund":
-      return "Freedom Fund";
+      return "Investments";
     case "valuable_liability":
-      return "Valuable Liabilities";
+      return "Property";
     case "cash":
       return "Cash";
     case "debt":
       return "Debts";
   }
+}
+
+export function categoryHint(category: AccountCategory): string | undefined {
+  if (categoryIsNegative(category)) {
+    return "Enter the amount you owe, as a positive number.";
+  }
+  return undefined;
 }
 
 export const COMMON_CURRENCIES = [

@@ -21,6 +21,10 @@ type CalcShellProps<T extends Record<string, unknown>> = {
   importLabel?: string;
   note?: string;
   cta?: React.ReactNode;
+  /** Extra buttons rendered in the hero action row, e.g. "Load example". */
+  extraActions?: React.ReactNode;
+  /** Set false when the surrounding header already shows a region toggle. */
+  showRegionToggle?: boolean;
   children: React.ReactNode;
 };
 
@@ -38,6 +42,8 @@ export function CalcShell<T extends Record<string, unknown>>({
   importLabel = "Import",
   note,
   cta,
+  extraActions,
+  showRegionToggle = true,
   children,
 }: CalcShellProps<T>) {
   const [copied, setCopied] = useState(false);
@@ -70,7 +76,8 @@ export function CalcShell<T extends Record<string, unknown>>({
             <p className="mt-1 text-sm text-text-muted">{subtitle ?? "Move any slider to see the chart recalculate instantly."}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <RegionToggle />
+            {showRegionToggle && <RegionToggle />}
+            {extraActions}
             <Button
               type="button"
               onClick={handleCopy}

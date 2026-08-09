@@ -89,7 +89,7 @@ export const tools: Tool[] = [
     slug: "net-worth-tracker",
     title: "Net Worth Tracker",
     region: "uk",
-    description: "Track assets, liabilities, and the gap between them over time. Includes a Freedom Framework mode with a 4% coverage overlay.",
+    description: "Add your accounts and see your net worth in under a minute. Track assets and debts over time, with a Freedom Framework mode and a 4% withdrawal estimate.",
     pillarGuide: "net-worth-tracker",
     supportingArticles: ["sinking-funds"],
     relatedTools: ["fire-number", "compound-interest"],
@@ -101,7 +101,7 @@ export const tools: Tool[] = [
     slug: "net-worth-tracker",
     title: "Net Worth Tracker",
     region: "us",
-    description: "Track assets, liabilities, and the gap between them over time. Includes a Freedom Framework mode with a 4% coverage overlay.",
+    description: "Add your accounts and see your net worth in under a minute. Track assets and debts over time, with a Freedom Framework mode and a 4% withdrawal estimate.",
     pillarGuide: "net-worth-tracker",
     supportingArticles: ["emergency-fund-vs-hysa"],
     relatedTools: ["fire-number", "compound-interest"],
@@ -406,7 +406,7 @@ export const methodologies: Methodology[] = [
     slug: "net-worth-tracker",
     title: "Net Worth Tracker methodology",
     toolSlug: "net-worth-tracker",
-    lastReviewed: "2026-08-03",
+    lastReviewed: "2026-08-09",
     published: true,
   },
   {
@@ -428,8 +428,20 @@ export const glossaryTerms: GlossaryTerm[] = [
 Assets include cash, investments, property, pensions, and anything else you could sell for a meaningful amount. Liabilities include mortgages, credit cards, student loans, car finance, and any other debt.
 
 The number changes every day as markets move, debts shrink, and savings grow. Tracking it monthly is usually enough. The goal is not a specific figure; it is a clear, honest picture of where you stand.`,
-    relatedTerms: ["fire-number", "compound-interest"],
+    relatedTerms: ["fire-number", "compound-interest", "freedom-fund"],
     relatedTools: ["net-worth-tracker"],
+  },
+  {
+    slug: "freedom-fund",
+    title: "Freedom Fund",
+    definition: "Your Freedom Fund is the part of your net worth held in investments that can eventually pay you an income.",
+    body: `The Freedom Fund comes from the Freedom Framework, a way of splitting net worth popularised by the Rebel Finance School net worth spreadsheet. It covers income-producing investments such as ISAs, SIPPs, pensions, and brokerage accounts. It excludes cash, your home, and anything you owe.
+
+The point of the framework is to separate wealth that works for you from wealth that sits still or costs money to keep. A large home and a small Freedom Fund is a very different position from a modest home and a large one.
+
+In the Net Worth Tracker, accounts in this group use the Investments category label. The summary panel shows your Freedom Fund total alongside the yearly income it could support at a 4% withdrawal rate.`,
+    relatedTerms: ["net-worth", "withdrawal-rate", "fire-number"],
+    relatedTools: ["net-worth-tracker", "fire-number"],
   },
   {
     slug: "fire-number",

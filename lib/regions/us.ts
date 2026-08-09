@@ -1,4 +1,4 @@
-import type { Account } from "@/lib/calc/networth";
+import type { NetWorthExampleAccount, NetWorthPreset } from "@/lib/calc/networth";
 
 export const usRegion = {
   id: "us" as const,
@@ -36,14 +36,21 @@ export const usRegion = {
     { id: "roth-ira", name: "Roth IRA", category: "freedom_fund" as const, currency: "USD" },
     { id: "401k", name: "401(k)", category: "freedom_fund" as const, currency: "USD" },
     { id: "hsa", name: "HSA", category: "freedom_fund" as const, currency: "USD" },
-    { id: "hysa", name: "High-Yield Savings", category: "cash" as const, currency: "USD" },
+    { id: "hysa", name: "High-Yield Savings", shortName: "HYSA", category: "cash" as const, currency: "USD" },
     { id: "i-bonds", name: "I Bonds", category: "cash" as const, currency: "USD" },
-    { id: "checking", name: "Checking Account", category: "cash" as const, currency: "USD" },
+    { id: "checking", name: "Checking Account", shortName: "Checking", category: "cash" as const, currency: "USD" },
     { id: "main-residence", name: "Main Residence", category: "valuable_liability" as const, currency: "USD" },
     { id: "mortgage", name: "Mortgage", category: "debt" as const, currency: "USD" },
     { id: "credit-cards", name: "Credit Cards", category: "debt" as const, currency: "USD" },
     { id: "student-loans", name: "Student Loans", category: "debt" as const, currency: "USD" },
-  ] satisfies Omit<Account, "snapshots">[],
+  ] satisfies NetWorthPreset[],
+  netWorthExample: [
+    { presetId: "checking", values: [9200, 9600, 9100, 9800, 10200, 9750, 10400, 10000] },
+    { presetId: "401k", values: [50500, 51800, 49800, 52600, 53400, 54100, 54900, 55000] },
+    { presetId: "roth-ira", values: [20100, 20550, 19800, 21000, 21350, 21650, 21900, 22000] },
+    { presetId: "main-residence", values: [298000, 300000, 301500, 303000, 305000, 306500, 308000, 310000] },
+    { presetId: "mortgage", values: [252000, 251200, 250400, 249600, 248800, 247900, 247000, 245000] },
+  ] satisfies NetWorthExampleAccount[],
   formatValue(value: number): string {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

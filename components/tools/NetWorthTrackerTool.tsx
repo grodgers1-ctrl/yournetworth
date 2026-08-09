@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowUpRight,
   Plus,
+  Sparkles,
   Trash2,
   TrendingUp,
+  X,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -14,10 +16,13 @@ import { CalcResult } from "@/components/calc/CalcResult";
 import { useCalcState } from "@/components/calc/useCalcState";
 import {
   calculateNetWorth,
+  categoryHint,
+  categoryIsNegative,
   categoryLabel,
   type Account,
   type AccountCategory,
   type NetWorthMode,
+  type NetWorthPreset,
   type NetWorthState,
   accountValueAt,
   categorySign,
@@ -26,6 +31,8 @@ import {
 import { convertToBase, DEFAULT_FX_RATES } from "@/lib/calc/fx";
 import { ukRegion, usRegion } from "@/lib/regions";
 import { Input } from "@/components/ui/Input";
+import { CurrencyInput } from "@/components/ui/CurrencyInput";
+import { Button } from "@/components/ui/Button";
 import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
 import { useTrackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -71,6 +78,12 @@ function nextMonth(date: string): string {
   return d.toISOString().slice(0, 10);
 }
 
+function monthsAgo(months: number): string {
+  const d = new Date();
+  d.setMonth(d.getMonth() - months);
+  return d.toISOString().slice(0, 10);
+}
+
 function currencySymbol(currency: string): string {
   try {
     return (
@@ -113,8 +126,11 @@ function makeInitialState(region: "uk" | "us"): NetWorthState {
     accounts: config.netWorthPresets
       .filter((preset) => starters.has(preset.id))
       .map((preset) => ({
-        ...preset,
         id: makeId(),
+        presetId: preset.id,
+        name: preset.name,
+        category: preset.category,
+        currency: preset.currency,
         snapshots: [makeSnapshot()],
       })),
   };
@@ -169,7 +185,6 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
   };
 
   const removeAccount = (account: Account) => {
-    if (!window.confirm(`Delete "${account.name || "Untitled"}" and all its snapshots?`)) return;
     setState((s) => ({
       ...s,
       accounts: s.accounts.filter((a) => a.id !== account.id),
@@ -192,14 +207,17 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
     }));
   };
 
-  const addPreset = (preset: { id: string; name: string; category: AccountCategory; currency: string }) => {
+  const addPreset = (preset: NetWorthPreset) => {
     setState((s) => ({
       ...s,
       accounts: [
         ...s.accounts,
         {
-          ...preset,
           id: makeId(),
+          presetId: preset.id,
+          name: preset.name,
+          category: preset.category,
+          currency: preset.currency,
           snapshots: [makeSnapshot()],
         },
       ],
@@ -269,6 +287,37 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
     }
   };
 
+  const hasRealValues = state.accounts.some((account) =>
+    account.snapshots.some((snapshot) => snapshot.value !== 0)
+  );
+
+  const loadExample = () => {
+    if (hasRealValues && !window.confirm("Load example data? This replaces your current accounts.")) return;
+    setState((s) => ({
+      ...s,
+      accounts: config.netWorthExample
+        .map((example) => {
+          const preset = config.netWorthPresets.find((p) => p.id === example.presetId);
+          if (!preset) return undefined;
+          const account: Account = {
+            id: makeId(),
+            presetId: preset.id,
+            name: preset.name,
+            category: modeMap[s.mode][preset.category],
+            currency: preset.currency,
+            snapshots: example.values.map((value, index) => ({
+              id: makeId(),
+              date: monthsAgo(example.values.length - 1 - index),
+              value,
+            })),
+          };
+          return account;
+        })
+        .filter((account): account is Account => account !== undefined),
+    }));
+    track("networth_load_example", { region });
+  };
+
   const hasInvestments = state.accounts.some(
     (account) => account.category === "freedom_fund" || account.category === "asset"
   );
@@ -303,12 +352,20 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
 
   const usedPresets = new Set(
     state.accounts
-      .map((account) => config.netWorthPresets.find((p) => p.name === account.name && p.category === account.category))
-      .filter(Boolean)
-      .map((p) => p?.id)
+      .map((account) => {
+        if (account.presetId) return account.presetId;
+        // Saved accounts from before presetId existed: fall back to name+category.
+        return config.netWorthPresets.find((p) => p.name === account.name && p.category === account.category)?.id;
+      })
+      .filter((id): id is string => Boolean(id))
   );
 
   const unusedPresets = config.netWorthPresets.filter((preset) => !usedPresets.has(preset.id));
+
+  const trendSeries = outputs.accountSeries.filter((series) => {
+    const account = state.accounts.find((a) => a.id === series.id);
+    return account !== undefined && account.snapshots.length >= 2;
+  });
 
   return (
     <CalcShell
@@ -324,41 +381,43 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
       exportLabel="Back up data"
       importLabel="Restore backup"
       note="Backups save a small file to your computer so you can restore your tracker later."
-      cta={undefined}
+      showRegionToggle={false}
+      extraActions={
+        <Button
+          type="button"
+          onClick={loadExample}
+          variant="secondary"
+          size="sm"
+          aria-label="Load example data"
+        >
+          <Sparkles className="h-4 w-4" />
+          Load example
+        </Button>
+      }
     >
+      <IntroStrip />
       <div className="grid gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-5">
           <div className="rounded-[16px] border border-hairline bg-surface p-5">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold text-text">Accounts</h2>
-              <div className="flex items-center gap-2">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const preset = config.netWorthPresets.find((p) => p.id === e.target.value);
-                      if (preset) addPreset(preset);
-                      e.target.value = "";
-                    }
-                  }}
-                  className="h-8 rounded-lg border border-hairline bg-elevated px-2 text-xs text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
-                  aria-label="Add preset account"
-                >
-                  <option value="">Add preset...</option>
-                  {unusedPresets.map((preset) => (
-                    <option key={preset.id} value={preset.id}>
-                      {preset.name}
-                    </option>
-                  ))}
-                </select>
+            <h2 className="mb-3 text-sm font-semibold text-text">Accounts</h2>
+            <div className="mb-4 flex flex-wrap gap-1.5">
+              {unusedPresets.map((preset) => (
                 <button
+                  key={preset.id}
                   type="button"
-                  onClick={() => addAccount(state.mode === "standard" ? "asset" : "freedom_fund")}
-                  className="inline-flex h-8 items-center gap-1 rounded-lg border border-hairline bg-elevated px-3 text-xs font-medium text-text-muted transition-colors hover:text-text focus-ring"
+                  onClick={() => addPreset(preset)}
+                  className="inline-flex h-7 items-center gap-1 rounded-full border border-hairline bg-elevated px-2.5 text-xs font-medium text-text-muted transition-colors hover:border-stroke hover:text-text focus-ring"
                 >
-                  <Plus className="h-3.5 w-3.5" /> Custom
+                  <Plus className="h-3 w-3" /> {preset.shortName ?? preset.name}
                 </button>
-              </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => addAccount(state.mode === "standard" ? "asset" : "freedom_fund")}
+                className="inline-flex h-7 items-center gap-1 rounded-full border border-hairline bg-elevated px-2.5 text-xs font-medium text-text-muted transition-colors hover:border-stroke hover:text-text focus-ring"
+              >
+                <Plus className="h-3 w-3" /> Custom
+              </button>
             </div>
 
             <div className="mb-4 grid grid-cols-2 gap-3">
@@ -406,6 +465,11 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
                   mode={state.mode}
                   baseCurrency={state.baseCurrency}
                   showAdvanced={showAdvanced}
+                  hideCategory={
+                    account.presetId !== undefined ||
+                    config.netWorthPresets.some((p) => p.name === account.name && p.category === account.category)
+                  }
+                  formatValue={formatValue}
                   onUpdate={(patch) => updateAccount(account.id, patch)}
                   onRemove={() => removeAccount(account)}
                   onAddSnapshot={() => addSnapshot(account.id)}
@@ -454,7 +518,7 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
               ...(state.mode === "freedom_framework"
                 ? [
                     { label: "Freedom Fund", value: formatValue(outputs.freedomFundTotal) },
-                    { label: "4% annual cover", value: formatValue(outputs.annual4PctCoverage) },
+                    { label: "Yearly income at 4% withdrawal", value: formatValue(outputs.annual4PctCoverage) },
                   ]
                 : []),
             ]}
@@ -462,13 +526,11 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
 
           <NetWorthChart data={outputs.series} mode={state.mode} formatValue={formatCompact} />
 
-          <div className="rounded-[16px] border border-hairline bg-surface p-5">
-            <h3 className="text-sm font-semibold text-text">Account trends</h3>
-            {outputs.accountSeries.length === 0 ? (
-              <p className="mt-4 text-sm text-text-dim">No accounts to chart yet.</p>
-            ) : (
+          {trendSeries.length > 0 && (
+            <div className="rounded-[16px] border border-hairline bg-surface p-5">
+              <h3 className="text-sm font-semibold text-text">Account trends</h3>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {outputs.accountSeries.map((series) => (
+                {trendSeries.map((series) => (
                   <div key={series.id} className="rounded-xl border border-hairline bg-elevated p-3">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-medium text-text">{series.name || "Untitled"}</p>
@@ -480,8 +542,8 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <p className="text-xs text-text-dim">
             Not financial advice. Net worth is assets minus liabilities, converted to your base currency using static
@@ -493,11 +555,46 @@ export function NetWorthTrackerTool({ region }: { region: "uk" | "us" }) {
   );
 }
 
+function IntroStrip() {
+  const [dismissedLocally, setDismissedLocally] = useState(false);
+  // Server snapshot is "dismissed" so the strip only appears after hydration.
+  const storedDismissed = useSyncExternalStore(
+    () => () => {},
+    () => window.localStorage.getItem("nwt-intro-dismissed") === "1",
+    () => true
+  );
+
+  if (dismissedLocally || storedDismissed) return null;
+
+  const dismiss = () => {
+    window.localStorage.setItem("nwt-intro-dismissed", "1");
+    setDismissedLocally(true);
+  };
+
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-[16px] border border-hairline bg-surface px-4 py-2.5 text-xs text-text-muted">
+      <p>
+        1. Add your accounts → 2. Enter today&apos;s balances → 3. Come back monthly and add a snapshot.
+      </p>
+      <button
+        type="button"
+        onClick={dismiss}
+        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-dim transition-colors hover:text-text focus-ring"
+        aria-label="Dismiss introduction"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
 function AccountCard({
   account,
   mode,
   baseCurrency,
   showAdvanced,
+  hideCategory,
+  formatValue,
   onUpdate,
   onRemove,
   onAddSnapshot,
@@ -508,6 +605,8 @@ function AccountCard({
   mode: NetWorthMode;
   baseCurrency: string;
   showAdvanced: boolean;
+  hideCategory: boolean;
+  formatValue: (value: number) => string;
   onUpdate: (patch: Partial<Account>) => void;
   onRemove: () => void;
   onAddSnapshot: () => void;
@@ -516,7 +615,11 @@ function AccountCard({
 }) {
   const categories = modeCategories[mode];
   const latest = accountValueAt(account, today());
-  const converted = convertToBase(latest * categorySign(account.category), account.currency, baseCurrency, DEFAULT_FX_RATES);
+  const signed = latest * categorySign(account.category);
+  const converted = signed === 0 ? 0 : convertToBase(signed, account.currency, baseCurrency, DEFAULT_FX_RATES);
+  const isDebt = categoryIsNegative(account.category);
+  const hint = categoryHint(account.category);
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
 
   return (
     <div className="rounded-xl border border-hairline bg-elevated p-3">
@@ -529,11 +632,12 @@ function AccountCard({
             className="h-8 text-xs"
             aria-label="Account name"
           />
-          <div className="grid grid-cols-2 gap-2">
+          {hint && <p className="text-xs text-text-dim">{hint}</p>}
+          {!hideCategory && (
             <select
               value={account.category}
               onChange={(e) => onUpdate({ category: e.target.value as AccountCategory })}
-              className="h-8 rounded-lg border border-hairline bg-surface px-2 text-xs text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
+              className="h-8 w-full rounded-lg border border-hairline bg-surface px-2 text-xs text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
               aria-label="Category"
             >
               {categories.map((c) => (
@@ -542,53 +646,89 @@ function AccountCard({
                 </option>
               ))}
             </select>
-            <select
-              value={account.currency}
-              onChange={(e) => onUpdate({ currency: e.target.value })}
-              className="h-8 rounded-lg border border-hairline bg-surface px-2 text-xs text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
-              aria-label="Currency"
-            >
-              {COMMON_CURRENCIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
+          )}
           {showAdvanced && (
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                type="number"
-                min={0}
-                step={0.0001}
-                value={account.units ?? ""}
-                onChange={(e) => {
-                  const units = e.target.value === "" ? undefined : Number(e.target.value);
-                  onUpdate({ units });
-                }}
-                placeholder="Units (optional)"
-                className="h-8 text-xs"
-                aria-label="Units"
-              />
-              <p className="flex items-center text-xs text-text-dim">
-                {account.units && account.units > 0 ? `Value = units x price` : "Units disabled"}
-              </p>
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                {hideCategory && (
+                  <select
+                    value={account.category}
+                    onChange={(e) => onUpdate({ category: e.target.value as AccountCategory })}
+                    className="h-8 rounded-lg border border-hairline bg-surface px-2 text-xs text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
+                    aria-label="Category"
+                  >
+                    {categories.map((c) => (
+                      <option key={c} value={c}>
+                        {categoryLabel(c)}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <select
+                  value={account.currency}
+                  onChange={(e) => onUpdate({ currency: e.target.value })}
+                  className={cn(
+                    "h-8 rounded-lg border border-hairline bg-surface px-2 text-xs text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20",
+                    !hideCategory && "col-span-2"
+                  )}
+                  aria-label="Currency"
+                >
+                  {COMMON_CURRENCIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  type="number"
+                  min={0}
+                  step={0.0001}
+                  value={account.units ?? ""}
+                  onChange={(e) => {
+                    const units = e.target.value === "" ? undefined : Number(e.target.value);
+                    onUpdate({ units });
+                  }}
+                  placeholder="Units (optional)"
+                  className="h-8 text-xs"
+                  aria-label="Units"
+                />
+                <p className="flex items-center text-xs text-text-dim">
+                  {account.units && account.units > 0 ? `Value = units x price` : "Units disabled"}
+                </p>
+              </div>
             </div>
           )}
         </div>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full text-text-dim transition-colors hover:bg-debt/10 hover:text-debt focus-ring"
-          aria-label="Remove account"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+        {confirmingRemove ? (
+          <button
+            type="button"
+            onClick={onRemove}
+            onMouseLeave={() => setConfirmingRemove(false)}
+            onBlur={() => setConfirmingRemove(false)}
+            className="mt-1 inline-flex h-7 items-center rounded-full bg-debt/10 px-2 text-xs font-medium text-debt focus-ring"
+          >
+            Delete?
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => (account.snapshots.length >= 2 ? setConfirmingRemove(true) : onRemove())}
+            className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full text-text-dim transition-colors hover:bg-debt/10 hover:text-debt focus-ring"
+            aria-label="Remove account"
+            title="Delete account"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="mt-3 border-t border-hairline pt-3">
         <div className="mb-2 flex items-center justify-between">
-          <p className="text-xs font-medium text-text-dim">Snapshots</p>
+          <p className="text-xs font-medium text-text-dim">
+            {account.snapshots.length === 1 ? "Today's balance" : "Snapshots"}
+          </p>
           <button
             type="button"
             onClick={onAddSnapshot}
@@ -597,47 +737,59 @@ function AccountCard({
             <Plus className="h-3 w-3" /> Add
           </button>
         </div>
-        <div className="space-y-2">
-          {account.snapshots.length === 0 && <p className="text-xs text-text-dim">No snapshots yet.</p>}
-          {account.snapshots.map((snapshot) => (
-            <div key={snapshot.id ?? snapshot.date} className="grid grid-cols-[1fr_1fr_auto] items-center gap-2">
-              <Input
-                type="date"
-                value={snapshot.date}
-                onChange={(e) => onUpdateSnapshot(snapshot.id, { date: e.target.value })}
-                className="h-8 text-xs"
-                aria-label="Snapshot date"
-              />
-              <Input
-                type="number"
-                step={1}
-                value={snapshot.value}
-                onChange={(e) => onUpdateSnapshot(snapshot.id, { value: Number(e.target.value) })}
-                onFocus={(e) => e.target.select()}
-                className="h-8 text-xs"
-                aria-label="Snapshot value"
-              />
-              <button
-                type="button"
-                onClick={() => onRemoveSnapshot(snapshot.id)}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-text-dim transition-colors hover:bg-debt/10 hover:text-debt focus-ring"
-                aria-label="Remove snapshot"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ))}
-        </div>
-        <p className="mt-2 text-xs tabular-nums text-text-muted">
-          Latest: {formatNumber(converted)} in {baseCurrency}
-        </p>
+        {account.snapshots.length === 0 && <p className="text-xs text-text-dim">No snapshots yet.</p>}
+        {account.snapshots.length === 1 && (
+          <CurrencyInput
+            value={account.snapshots[0].value}
+            onCommit={(value) => onUpdateSnapshot(account.snapshots[0].id, { value })}
+            currencySymbol={currencySymbol(account.currency)}
+            hideZero
+            step={1}
+            placeholder="0"
+            aria-label="Today's balance"
+          />
+        )}
+        {account.snapshots.length > 1 && (
+          <div className="space-y-2">
+            {account.snapshots.map((snapshot) => (
+              <div key={snapshot.id ?? snapshot.date} className="group grid grid-cols-[1fr_1fr_auto] items-center gap-2">
+                <Input
+                  type="date"
+                  value={snapshot.date}
+                  onChange={(e) => onUpdateSnapshot(snapshot.id, { date: e.target.value })}
+                  className="h-9 text-sm"
+                  aria-label="Snapshot date"
+                />
+                <CurrencyInput
+                  value={snapshot.value}
+                  onCommit={(value) => onUpdateSnapshot(snapshot.id, { value })}
+                  currencySymbol={currencySymbol(account.currency)}
+                  hideZero
+                  step={1}
+                  placeholder="0"
+                  aria-label="Snapshot value"
+                />
+                <button
+                  type="button"
+                  onClick={() => onRemoveSnapshot(snapshot.id)}
+                  title="Delete entry"
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-full text-text-dim opacity-0 transition hover:bg-debt/10 hover:text-debt focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100 focus-ring"
+                  aria-label="Remove snapshot"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {account.snapshots.length > 0 && (
+          <p className="mt-2 text-xs tabular-nums text-text-muted">
+            {isDebt ? `You owe: ${formatValue(Math.abs(converted))}` : `Latest: ${formatValue(converted)}`}
+          </p>
+        )}
       </div>
     </div>
   );
-}
-
-function formatNumber(value: number): string {
-  return new Intl.NumberFormat("en", { maximumFractionDigits: 0 }).format(value);
 }
 
 function NetWorthChart({
@@ -669,11 +821,13 @@ function NetWorthChart({
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
-  if (data.length === 0) {
+  if (data.length <= 1) {
     return (
       <div className="aspect-video rounded-[16px] border border-hairline bg-surface">
-        <div className="flex h-full items-center justify-center text-sm text-text-muted">
-          Add accounts and snapshots to see the chart.
+        <div className="flex h-full items-center justify-center px-6 text-center text-sm text-text-muted">
+          {data.length === 0
+            ? "Add accounts and snapshots to see the chart."
+            : "Add next month's snapshot to start your trend line."}
         </div>
       </div>
     );
@@ -745,10 +899,10 @@ function NetWorthChart({
           {mode === "freedom_framework" ? (
             <>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-text/80" /> Freedom Fund
+                <span className="h-1.5 w-4 rounded-full bg-text/80" /> Investments
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-text-muted/60" /> Valuable Liabilities
+                <span className="h-1.5 w-4 rounded-full bg-text-muted/60" /> Property
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-1.5 w-4 rounded-full bg-text-dim/50" /> Cash
