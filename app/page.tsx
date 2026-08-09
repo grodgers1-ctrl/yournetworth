@@ -9,19 +9,19 @@ import { NetWorthDeepDive } from "@/components/landing/NetWorthDeepDive";
 export const metadata: Metadata = {
   title: "Your Net Worth - Free UK & US Personal Finance Calculators",
   description:
-    "A dark-first, no-sign-up suite of personal-finance calculators for UK and US savers. Track net worth, find your FIRE number, and see the gap between assets and liabilities.",
+    "Free UK & US net worth tracker and personal finance calculators. Track assets and debts over time, find your FIRE number, and model your mortgage. No sign-up — your data stays in your browser.",
   openGraph: {
     url: "/",
     title: "Your Net Worth - Free UK & US Personal Finance Calculators",
-    description: "A dark-first, no-sign-up suite of personal-finance calculators for UK and US savers.",
+    description: "Free UK & US net worth tracker and personal finance calculators. No sign-up — your data stays in your browser.",
   },
 };
 
 const features = [
   {
     icon: BarChart3,
-    title: "Aggregation",
-    desc: "All assets and liabilities in one view. No manual spreadsheet required.",
+    title: "Net worth tracking",
+    desc: "Monthly snapshots become a trend line with milestones and a monthly delta. Assets and debts in one view.",
   },
   {
     icon: CreditCard,
@@ -90,15 +90,15 @@ export default function HomePage() {
             </p>
             <h1 className="text-display md:text-7xl">Your net worth, without the noise.</h1>
             <p className="mt-6 text-xl leading-relaxed text-text-muted md:text-2xl">
-              Free personal-finance calculators for UK and US savers. No sign-up, no ads, no dark patterns. Just live numbers and a clear chart.
+              A free net worth tracker and personal-finance calculators for UK and US savers. No sign-up, no ads, no dark patterns. Just live numbers and a clear chart.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <ToolRegionLink toolSlug="fire-number" className={buttonVariants({ variant: "primary" })}>
-                Try the FIRE Number tool <ArrowRight className="h-4 w-4" />
+              <ToolRegionLink toolSlug="net-worth-tracker" className={buttonVariants({ variant: "primary" })}>
+                Try the Net Worth Tracker <ArrowRight className="h-4 w-4" />
               </ToolRegionLink>
-              <LinkButton href="/about" variant="secondary">
-                About the project
-              </LinkButton>
+              <ToolRegionLink toolSlug="fire-number" className={buttonVariants({ variant: "secondary" })}>
+                Find your FIRE number
+              </ToolRegionLink>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-text-dim">
               <span className="flex items-center gap-2">
@@ -147,19 +147,24 @@ export default function HomePage() {
                 <p className="text-caption mb-3 font-medium uppercase tracking-widest text-accent">Showcase</p>
                 <h2 className="text-section md:text-4xl">Net worth, deconstructed.</h2>
                 <p className="mt-4 text-body">
-                  Assets minus liabilities, tracked over time. The chart shows the trend, the gap, and the monthly delta. No manual entry required once you set the inputs.
+                  Assets minus liabilities, tracked over time. A few minutes to set up, a minute a month to maintain. The chart shows the trend, the gap, and the monthly delta.
                 </p>
                 <div className="mt-6 space-y-3">
                   {[
-                    "Automatic asset and liability aggregation",
-                    "Monthly delta calculation with trend arrows",
-                    "Allocation breakdown across equities, property, and cash",
+                    "Monthly snapshots with an automatic trend line and monthly delta",
+                    "Investments, Property, Cash and Debts breakdown, with milestones",
+                    "Inflation-adjusted view, savings pots, and CSV export",
                   ].map((item) => (
                     <div key={item} className="flex items-start gap-3 text-text-muted">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                       <span className="text-sm">{item}</span>
                     </div>
                   ))}
+                </div>
+                <div className="mt-8">
+                  <ToolRegionLink toolSlug="net-worth-tracker" className={buttonVariants({ variant: "primary" })}>
+                    Open the Net Worth Tracker <ArrowRight className="h-4 w-4" />
+                  </ToolRegionLink>
                 </div>
               </div>
             </AnimateIn>
@@ -231,9 +236,9 @@ export default function HomePage() {
       <section className="mx-auto max-w-[1160px] px-6 py-16 md:py-24">
         <AnimateIn>
           <div className="rounded-[16px] border border-hairline bg-surface p-8 text-center md:p-12">
-            <h2 className="text-section md:text-4xl">Start with your FIRE number.</h2>
+            <h2 className="text-section md:text-4xl">Then find your FIRE number.</h2>
             <p className="mt-4 text-body">
-              See the portfolio size you would need to cover your annual spending, plus the probability that it lasts through the years ahead.
+              Once you know where you stand, see the portfolio size you would need to cover your annual spending, plus the probability that it lasts through the years ahead.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <ToolRegionLink toolSlug="fire-number" className={buttonVariants({ variant: "primary" })}>
