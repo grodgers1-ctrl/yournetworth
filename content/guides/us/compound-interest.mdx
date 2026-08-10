@@ -1,0 +1,227 @@
+# Compound interest: the formula, the rule of 72, and how $500 a month actually becomes $1m
+
+Compound interest is the effect of earning returns on your previous returns. When your savings or investments grow, the next period's growth is calculated on the new, larger balance, not just the money you first put in. Over a long enough horizon, this is the most powerful force in ordinary wealth building.
+
+<CalloutDark title="TL;DR">
+- Compound interest is interest on interest.
+- The formula is `FV = PV(1 + r/n)^(nt) + PMT * (((1 + r/n)^(nt) - 1) / (r/n))`.
+- The rule of 72 estimates doubling time as 72 divided by the rate.
+- Regular contributions matter more than chasing a high return.
+- A 401(k) or IRA can shield the growth from tax.
+- The calculator is a planning tool, not a forecast.
+</CalloutDark>
+
+## What is compound interest?
+
+Compound interest is the process where the interest or growth earned on a balance is added to the balance, and future growth is calculated on the new total. The result is an accelerating curve. In the early years the balance grows slowly. In later years the same percentage rate produces much larger dollar gains because the balance is larger.
+
+Imagine a savings account that pays 5% a year. On $1,000 you earn $50 in year one. In year two you earn 5% of $1,050, which is $52.50. In year three you earn 5% of $1,102.50, which is $55.13. The extra dollars are small at first, but they grow. After 20 years the balance is about $2,653, not $2,000. The extra $653 comes from earning interest on interest.
+
+The idea is simple but it is not magic. It works best when the money stays invested, the return is positive, and the time horizon is long. If you withdraw the growth each year, you lose the compounding effect. If you earn a negative return, compounding works in reverse.
+
+In the US, the wrapper you choose changes the tax result but not the underlying math. A 401(k) reduces taxable income now and grows tax-deferred, but withdrawals are taxed as income. A Roth IRA is funded with after-tax dollars and grows tax-free. A traditional IRA may be tax-deductible depending on income and access to a workplace plan. A taxable brokerage account has no tax wrapper. The formula applies to all of them. The IRS and the SEC set the wider context for retirement accounts, tax rules, and market disclosure.
+
+The difference between nominal and real returns matters. A 7% nominal return with 3% inflation is a 4% real return. Compound interest calculators usually show nominal numbers. If you want to know what your money will buy in the future, you should mentally subtract inflation or use a real return rate as your input.
+
+The concept is explained by the SEC at [Investor.gov](https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator) and by the IRS in retirement plan guidance.
+
+## How is compound interest calculated?
+
+The standard future-value formula for a lump sum plus regular contributions is:
+
+```
+FV = PV(1 + r/n)^(nt) + PMT * (((1 + r/n)^(nt) - 1) / (r/n))
+```
+
+Where:
+
+- `FV` = future value
+- `PV` = present value or starting lump sum
+- `PMT` = regular contribution
+- `r` = annual nominal return rate (as a decimal)
+- `n` = compounding periods per year
+- `t` = number of years
+
+The first part of the formula grows the starting lump sum. The second part grows the stream of contributions. Contributions are assumed to be made at the end of each period, so a monthly contribution does not earn interest in the month it is paid.
+
+The calculator supports three compounding frequencies:
+
+| Frequency | n | When to use it |
+| --- | --- | --- |
+| Monthly | 12 | Regular monthly contributions, the default for most savings and investment projections |
+| Daily | 365 | Daily interest savings accounts or very short horizons |
+| Annual | 1 | Annual bonuses, lump-sum investments, or simple back-of-envelope checks |
+
+Changing the frequency changes the result slightly. Monthly compounding gives a higher result than annual compounding for the same rate because interest is credited more often. The difference is small at low rates but grows over long horizons.
+
+Here is a simple comparison. $1,000 at 5% a year for 10 years:
+
+| Compounding | n | Future value |
+| --- | --- | --- |
+| Annual | 1 | $1,629 |
+| Monthly | 12 | $1,647 |
+| Daily | 365 | $1,649 |
+
+Daily and monthly are almost identical for most practical purposes. Monthly is the default because most US savers and investors contribute monthly.
+
+## What is the rule of 72?
+
+The rule of 72 is a quick way to estimate how long an investment takes to double at a fixed annual rate. Divide 72 by the rate. At 7%, the doubling time is about 10.3 years. At 10%, it is about 7.2 years.
+
+| Annual return | Approximate doubling time (years) |
+| --- | --- |
+| 3% | 24 |
+| 4% | 18 |
+| 5% | 14.4 |
+| 6% | 12 |
+| 7% | 10.3 |
+| 8% | 9 |
+| 10% | 7.2 |
+| 12% | 6 |
+
+The rule is an approximation, not a precise formula. It is most accurate for rates between 5% and 10%. At very low or very high rates, the exact logarithmic calculation is better. Still, it is useful for quick mental checks.
+
+For example, if your Roth IRA is expected to return 7% a year, your money doubles roughly every 10 years. Over 30 years, that is about three doublings. $10,000 becomes $20,000, then $40,000, then $80,000. This is why starting early matters so much. A 25-year-old who invests $10,000 could see three doublings before retirement. A 45-year-old who invests the same amount may see only one and a half.
+
+## Why regular contributions matter more than the rate
+
+A common mistake is to obsess over the rate of return while ignoring the contribution. The rate is important, but it is not the only lever. The contribution and the time horizon are usually more important for ordinary savers.
+
+Consider two savers who both have 20 years.
+
+| Saver | Monthly contribution | Return | Final value | Total contributions |
+| --- | --- | --- | --- | --- |
+| A | $200 | 10% | $151,900 | $58,000 |
+| B | $500 | 5% | $208,500 | $130,000 |
+
+Saver B ends with more money despite a lower return. The higher contribution outweighs the lower rate. Saver A would need to earn a very high rate to catch up, and that rate would probably come with much more risk.
+
+Here is the same idea shown another way. All three savers earn 7% over 20 years.
+
+| Monthly contribution | Final value | Total contributions | Growth |
+| --- | --- | --- | --- |
+| $250 | $150,425 | $70,000 | $80,425 |
+| $500 | $300,852 | $130,000 | $170,852 |
+| $1,000 | $601,704 | $250,000 | $351,704 |
+
+Doubling the monthly contribution does not quite double the final value because the first contributions have more time to compound. Even so, the table shows that the contribution level is the main driver of the final number. A saver who can increase their monthly contribution from $250 to $500 adds far more to the final balance than a saver who finds an extra 1% of return.
+
+This is good news for most people. You cannot control the market, but you can control how much you save. The best strategy is usually to set a steady contribution that you can keep up for decades, inside a tax-advantaged account, and accept that the return will vary.
+
+## A US worked example inside a 401(k) or IRA
+
+Here is a realistic example: $10,000 already in a Roth IRA or 401(k), plus $500 added every month, earning 7% a year before fees and taxes, with monthly compounding. A Roth IRA means the growth is not taxed. A 401(k) may also include an employer match, which is not included in this example but would speed up the result.
+
+After 20 years the numbers look like this:
+
+| Year | Balance | Total contributions | Growth from compounding |
+| --- | --- | --- | --- |
+| 0 | $10,000 | $10,000 | $0 |
+| 5 | $53,500 | $40,000 | $13,500 |
+| 10 | $106,639 | $70,000 | $36,639 |
+| 15 | $180,500 | $100,000 | $80,500 |
+| 20 | $300,852 | $130,000 | $170,852 |
+| 30 | $691,150 | $190,000 | $501,150 |
+| 40 | $1,475,521 | $250,000 | $1,225,521 |
+
+The total contributions over 20 years are $130,000. The growth from compounding is about $170,852. After 20 years, more than half of the final balance is growth rather than money paid in. By year 40, growth accounts for more than $1.2 million of the final balance.
+
+The same pattern continues. If the contributions carry on at $500 a month, the balance reaches about $1 million after roughly 35 years. By year 40, the balance is about $1.48 million. The early contributions do the most work because they have the longest time to compound.
+
+$500 a month is $6,000 a year. That is well inside the current IRA contribution limit, and a modest part of a 401(k) limit for most workers. A 401(k) with an employer match would grow even faster because the match adds money that also compounds. The same math applies to a Roth IRA or a taxable brokerage account, though the tax treatment differs.
+
+The long-term historical return of the US stock market, as measured by the S&P 500, has been about 10% a year before inflation. After inflation, the real return is closer to 6-7%. This is why many planners use 6-7% as a planning rate for a diversified portfolio of index funds.
+
+The example ignores platform fees and inflation. A 0.5% annual fee would lower the final figure by a few percent. A 1% fee would lower it by more. Inflation would reduce the purchasing power of the nominal balance. The calculator lets you model the nominal path; you should factor in fees and inflation separately when making real decisions.
+
+## Compound interest vs simple interest
+
+Simple interest is calculated only on the original principal. It does not grow the balance on which interest is calculated. With compound interest, the balance grows, and the interest is calculated on the larger balance each period.
+
+Some cash-like products pay simple interest, or they pay interest into a separate account that you choose not to reinvest. In that case, the balance does not compound. The gap between simple and compound results is small in year one but becomes enormous over decades.
+
+The difference becomes enormous over long periods. Here is the same example from the 401(k) or IRA section, but comparing compound interest against simple interest on the same principal and contributions.
+
+| Years | Compound interest | Simple interest | Difference |
+| --- | --- | --- | --- |
+| 10 | $106,639 | $97,825 | $8,814 |
+| 20 | $300,852 | $227,650 | $73,202 |
+| 30 | $691,150 | $399,475 | $291,675 |
+| 40 | $1,475,521 | $613,300 | $862,221 |
+
+The simple interest calculation assumes that each monthly contribution earns a fixed 7% of the remaining years, but the interest itself does not earn further interest. The compound interest line is the real-world effect of an investment that compounds monthly. Over 40 years, the difference is more than $862,000.
+
+## Common myths
+
+**Myth: You need a high return to build wealth.**
+A steady 5% return with a steady contribution beats a high return that you cannot sustain. Time and consistency are more important than the headline rate.
+
+**Myth: Compound interest only works for people who start with a lot of money.**
+The math works on any amount. $50 a month is enough to see the effect. The key is to start and to keep going.
+
+**Myth: You can start later and catch up by contributing more.**
+You can contribute more later, but you cannot buy back time. A contribution made at age 25 has more doubling cycles ahead of it than the same contribution made at age 45.
+
+**Myth: The calculator predicts your future wealth.**
+It does not. It assumes a fixed rate, fixed contributions, and no fees or taxes. Real life is more variable. Use the calculator as a planning tool, not a forecast.
+
+**Myth: Fees and taxes do not matter.**
+They matter a lot. A 1% annual fee reduces the final balance more than most people expect. A 401(k) or IRA reduces tax drag, which is why the wrapper is important even though the formula is the same.
+
+**Myth: Cash in a savings account compounds as fast as investments.**
+Cash accounts do compound, but the rate is usually lower than inflation. In real terms, the purchasing power may be shrinking even if the nominal balance is rising. Compound interest is most powerful when the rate is above inflation.
+
+## How do I use the calculator?
+
+Open the [US compound interest calculator](/us/tools/compound-interest/). You can use it to answer several questions.
+
+To project a future balance, enter your starting amount, monthly contribution, expected return, and time horizon. The calculator shows the total balance, the amount you paid in, and the growth from compounding.
+
+To work backwards, click the tab for the variable you want to find. For example, select the "Years" tab, enter a target balance of $1,000,000, a 7% return, and a $500 monthly contribution, then adjust the starting amount if you want to. The calculator will estimate how many years it takes to reach the target. This is the same method used to estimate that $500 a month plus $10,000 reaches about $1m in roughly 35 years.
+
+To test sensitivity, change one input at a time. Try a lower return, a higher return, a larger contribution, or a longer horizon. This helps you see which lever matters most for your situation. The contribution and time are usually the strongest levers you can control.
+
+For retirement planning, use the result alongside the [FIRE number guide](/us/guides/fire-number/). For tracking the balance you are building, use the [net worth tracker guide](/us/guides/net-worth-tracker/). The compound interest calculator tells you where a single stream of contributions is heading. The net worth tracker tells you where you actually are.
+
+The formula is documented by the SEC at [Investor.gov](https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator) and by the IRS in retirement plan guidance.
+
+## FAQ
+
+<FAQ
+  items={[
+    {
+      question: "What is compound interest in simple terms?",
+      answer: "It is earning growth on your previous growth. The balance gets bigger each period, so the same percentage rate produces a larger dollar gain over time.",
+    },
+    {
+      question: "How does the rule of 72 work?",
+      answer: "Divide 72 by the annual return rate to estimate the number of years it takes to double your money. At 7%, it takes about 10 years. At 10%, it takes about 7 years.",
+    },
+    {
+      question: "Do I need a 401(k) or IRA to benefit from compound interest?",
+      answer: "No, the math works in any account. But a 401(k) or IRA reduces tax drag, so more of the growth stays in the pot. A 401(k) with an employer match is especially powerful because the match is free money.",
+    },
+    {
+      question: "What is a realistic return rate for US investors?",
+      answer: "A diversified portfolio of US and global index funds is often projected at 6-7% a year after inflation. The S&P 500 has returned about 10% a year before inflation over long periods. Real returns vary year to year.",
+    },
+    {
+      question: "Why do regular contributions matter more than the rate?",
+      answer: "You can control how much you contribute. The market return is not under your control. A higher contribution for a long time usually has a bigger effect than a slightly higher rate.",
+    },
+    {
+      question: "Is the calculator a guarantee?",
+      answer: "No. It uses a fixed rate and ignores fees, taxes, and inflation. Real investing involves variable returns, costs, and taxes. The result is a projection, not a promise.",
+    },
+    {
+      question: "How long does $500 a month take to become $1m?",
+      answer: "Starting with $10,000 and contributing $500 a month at 7% a year, the balance reaches about $1m after roughly 35 years. After 20 years it is about $301,000.",
+    },
+  ]}
+/>
+
+<Related slugs={["compound-interest", "rule-of-72", "fire-number", "net-worth"]} />
+
+---
+
+_Last updated: 2026-08-10. This guide is educational and is not financial advice. Please speak to a qualified adviser before making investment or retirement decisions._

@@ -24,6 +24,8 @@ import UKMortgage10PercentRule from "@/content/articles/uk/mortgage-overpayment/
 import USBiweeklyMortgagePayments from "@/content/articles/us/mortgage-overpayment/biweekly-mortgage-payments.mdx";
 import UKClear5000CreditCard from "@/content/articles/uk/debt-payoff/clear-5000-credit-card.mdx";
 import USPayOff10000CreditCard from "@/content/articles/us/debt-payoff/pay-off-10000-credit-card.mdx";
+import UKHowLongToSave100k from "@/content/articles/uk/compound-interest/how-long-to-save-100k.mdx";
+import USHowLongToSave100k from "@/content/articles/us/compound-interest/how-long-to-save-100k.mdx";
 
 const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentType | undefined>>> = {
   "fire-number": {
@@ -76,6 +78,12 @@ const ARTICLE_MODULES: Record<string, Record<string, Record<Region, ComponentTyp
       us: USPayOff10000CreditCard,
     },
   },
+  "compound-interest": {
+    "how-long-to-save-100k": {
+      uk: UKHowLongToSave100k,
+      us: USHowLongToSave100k,
+    },
+  },
 };
 
 function regionFromString(region: string): Region | null {
@@ -96,6 +104,8 @@ export function generateStaticParams() {
     { region: "us", slug: "net-worth-tracker", article: "emergency-fund-vs-hysa" },
     { region: "uk", slug: "debt-payoff", article: "clear-5000-credit-card" },
     { region: "us", slug: "debt-payoff", article: "pay-off-10000-credit-card" },
+    { region: "uk", slug: "compound-interest", article: "how-long-to-save-100k" },
+    { region: "us", slug: "compound-interest", article: "how-long-to-save-100k" },
   ];
 }
 

@@ -12,6 +12,7 @@ import { MultiCurrencyBudgetTool } from "@/components/tools/MultiCurrencyBudgetT
 import { MortgageOverpaymentTool } from "@/components/tools/MortgageOverpaymentTool";
 import { NetWorthTrackerTool } from "@/components/tools/NetWorthTrackerTool";
 import { DebtPayoffTool } from "@/components/tools/DebtPayoffTool";
+import { CompoundInterestTool } from "@/components/tools/CompoundInterestTool";
 
 type PageProps = {
   params: Promise<{ region: string; slug: string }>;
@@ -27,11 +28,12 @@ const TOOL_MODULES: Record<string, ComponentType<{ region: "uk" | "us" }> | unde
   "mortgage-overpayment": MortgageOverpaymentTool,
   "net-worth-tracker": NetWorthTrackerTool,
   "debt-payoff": DebtPayoffTool,
+  "compound-interest": CompoundInterestTool,
 };
 
 type ToolSlug = keyof typeof TOOL_MODULES;
 
-const PUBLISHED_SLUGS: ToolSlug[] = ["fire-number", "multi-currency-budget", "mortgage-overpayment", "net-worth-tracker", "debt-payoff"];
+const PUBLISHED_SLUGS: ToolSlug[] = ["fire-number", "multi-currency-budget", "mortgage-overpayment", "net-worth-tracker", "debt-payoff", "compound-interest"];
 
 export function generateStaticParams() {
   return PUBLISHED_SLUGS.flatMap((slug) => [

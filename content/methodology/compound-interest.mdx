@@ -1,0 +1,145 @@
+# Compound Interest methodology
+
+Compound interest is the effect of earning returns on returns. When a balance grows, the next period's interest is calculated on the larger total, not just the original amount. The compound interest calculator turns this into a projection: it takes a starting balance, regular contribution, expected return, compounding frequency, and time horizon, and estimates a future balance.
+
+<CalloutDark title="TL;DR">
+- The calculator uses the standard future-value annuity formula.
+- It supports monthly, daily, and annual compounding.
+- Contributions are added at the end of each period.
+- Any one variable can be selected as the output and solved for numerically.
+- The model assumes fixed rates, fixed contributions, and no taxes or fees.
+- This is a projection, not a prediction of actual returns.
+</CalloutDark>
+
+## What the calculator measures
+
+The compound interest calculator measures the future value of a single lump sum plus a stream of equal contributions. It answers questions such as:
+
+- How much will my savings be worth in 20 years?
+- How much do I need to contribute each month to reach a target?
+- What return rate would I need to hit a goal?
+- How long will it take to reach a target balance?
+
+It does not model taxes, fees, inflation, or changing contribution rates. It projects a single, smooth growth path.
+
+## Core formula and compounding frequencies
+
+The calculator uses the standard future-value-of-an-annuity formula with end-of-period contributions.
+
+```
+FV = PV(1 + r/n)^(nt) + PMT * (((1 + r/n)^(nt) - 1) / (r/n))
+```
+
+Where:
+
+- `FV` = future value
+- `PV` = present value (starting lump sum)
+- `PMT` = regular contribution
+- `r` = annual nominal return rate (as a decimal)
+- `n` = number of compounding periods per year
+- `t` = number of years
+
+The tool supports three compounding frequencies:
+
+| Frequency | n | Contributions per year |
+| --- | --- | --- |
+| Monthly | 12 | 12 |
+| Daily | 365 | 365 |
+| Annual | 1 | 1 |
+
+The formula is the same for all frequencies. Only `n` changes.
+
+## End-of-period contributions
+
+Contributions are treated as happening at the end of each compounding period. A monthly contribution paid at the end of a month does not earn interest during that month. This is the standard convention for savings and pension projections.
+
+End-of-period contributions produce a slightly lower result than beginning-of-period contributions. Beginning-of-period would give each contribution an extra period of growth. The calculator does not support beginning-of-period timing.
+
+## Solve-for-any implementation
+
+The calculator can solve for any one missing variable if the others are supplied. It uses a numerical search rather than a closed-form rearrangement when a closed form is awkward or does not exist.
+
+| Input | How it is solved |
+| --- | --- |
+| Future value | Direct formula evaluation |
+| Present value | Direct formula rearrangement |
+| Regular contribution | Direct formula rearrangement |
+| Time | Bisection search on the full formula |
+| Return rate | Bisection search on the full formula |
+
+Bisection starts with a wide bracket and repeatedly halves the interval until the result is within a small tolerance. The search is bounded by practical limits. For example, the rate search is bounded between 0% and 100% to avoid nonsensical results.
+
+## Assumptions and limitations
+
+The calculator assumes:
+
+- A fixed annual return rate for the entire horizon.
+- A fixed contribution amount for the entire horizon.
+- Contributions are made at the end of each period.
+- No taxes, platform fees, fund charges, or inflation.
+- The return rate stays constant even after the balance grows.
+
+These assumptions are useful for planning but they are not realistic over long periods. Real returns vary from year to year. Fees and taxes reduce returns. Inflation reduces purchasing power. A person may change contributions or withdraw money early. The calculator shows a mathematically clean projection, not a forecast.
+
+## Worked check
+
+Here is a closed-form check using the formula above.
+
+Inputs: $10,000 starting balance, $500 contributed monthly, 7% annual return, monthly compounding, 20 years.
+
+| Part | Calculation | Result |
+| --- | --- | --- |
+| Lump sum | $10,000 × (1 + 0.07/12)^(12 × 20) | $40,387.39 |
+| Contributions | $500 × (((1 + 0.07/12)^(240) - 1) / (0.07/12)) | $260,463.33 |
+| Total future value | $40,387.39 + $260,463.33 | $300,851.72 |
+| Total paid in | $10,000 + ($500 × 240) | $130,000.00 |
+| Growth from compounding | $300,851.72 - $130,000.00 | $170,851.72 |
+
+You can plug the same numbers into either the [UK compound interest calculator](/uk/tools/compound-interest/) or the [US compound interest calculator](/us/tools/compound-interest/) and get the same result.
+
+## Sources and references
+
+- Investor.gov, [Compound Interest Calculator](https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator) - US Securities and Exchange Commission.
+- US Securities and Exchange Commission, "Saving and Investing," including compound interest basics.
+- Bank of England, "Inflation and the economy," for context on nominal versus real returns.
+- HM Revenue and Customs, ISA and SIPP guidance, for UK tax wrapper context.
+- Internal Revenue Service, retirement plan and IRA guidance, for US tax wrapper context.
+
+## Last updated
+
+This methodology was last reviewed on **10 August 2026**.
+
+<FAQ
+  items={[
+    {
+      question: "What formula does the calculator use?",
+      answer: "The standard future-value-of-an-annuity formula with end-of-period contributions.",
+    },
+    {
+      question: "What compounding frequencies are supported?",
+      answer: "Monthly (n=12), daily (n=365), and annual (n=1).",
+    },
+    {
+      question: "When are contributions added?",
+      answer: "At the end of each period. A monthly contribution does not earn interest in the month it is paid.",
+    },
+    {
+      question: "How does the solver work?",
+      answer: "It leaves one input blank and solves the formula, using direct rearrangement for some variables and bisection for rate and time.",
+    },
+    {
+      question: "Does the calculator include taxes or fees?",
+      answer: "No. It assumes a fixed rate, fixed contributions, and no taxes, fees, or inflation.",
+    },
+    {
+      question: "Where do the numbers come from?",
+      answer: "The formula is documented by the SEC at Investor.gov, supported by Bank of England, HMRC, and IRS guidance.",
+    },
+  ]}
+/>
+
+<Related slugs={["compound-interest", "rule-of-72"]} />
+
+---
+
+_This methodology page is educational and is not financial advice._

@@ -22,6 +22,8 @@ import UKNetWorthTrackerGuide from "@/content/guides/uk/net-worth-tracker.mdx";
 import USNetWorthTrackerGuide from "@/content/guides/us/net-worth-tracker.mdx";
 import UKDebtPayoffGuide from "@/content/guides/uk/debt-payoff.mdx";
 import USDebtPayoffGuide from "@/content/guides/us/debt-payoff.mdx";
+import UKCompoundInterestGuide from "@/content/guides/uk/compound-interest.mdx";
+import USCompoundInterestGuide from "@/content/guides/us/compound-interest.mdx";
 
 const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> = {
   "fire-number": {
@@ -44,6 +46,10 @@ const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> =
     uk: UKDebtPayoffGuide,
     us: USDebtPayoffGuide,
   },
+  "compound-interest": {
+    uk: UKCompoundInterestGuide,
+    us: USCompoundInterestGuide,
+  },
 };
 
 function regionFromString(region: string): Region | null {
@@ -62,6 +68,8 @@ export function generateStaticParams() {
     { region: "us", slug: "net-worth-tracker" },
     { region: "uk", slug: "debt-payoff" },
     { region: "us", slug: "debt-payoff" },
+    { region: "uk", slug: "compound-interest" },
+    { region: "us", slug: "compound-interest" },
   ];
 }
 

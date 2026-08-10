@@ -113,15 +113,25 @@ export const tools: Tool[] = [
     slug: "compound-interest",
     title: "Compound Interest Calculator",
     region: "uk",
-    description: "See how principal, contributions, rate, and time interact.",
-    published: false,
+    description: "Free compound interest calculator for the UK. See how starting amount, monthly contributions, annual rate and time interact. Solve for any variable and switch between monthly, daily and annual compounding.",
+    pillarGuide: "compound-interest",
+    supportingArticles: ["how-long-to-save-100k"],
+    relatedTools: ["fire-number", "net-worth-tracker", "mortgage-overpayment"],
+    methodology: "compound-interest",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "compound-interest",
     title: "Compound Interest Calculator",
     region: "us",
-    description: "See how principal, contributions, rate, and time interact.",
-    published: false,
+    description: "Free compound interest calculator for the US. See how starting amount, monthly contributions, annual rate and time interact. Solve for any variable and switch between monthly, daily and annual compounding.",
+    pillarGuide: "compound-interest",
+    supportingArticles: ["how-long-to-save-100k"],
+    relatedTools: ["fire-number", "net-worth-tracker", "mortgage-overpayment"],
+    methodology: "compound-interest",
+    authorSlug: "glenn-rodgers",
+    published: true,
   },
   {
     slug: "fire-number",
@@ -324,6 +334,28 @@ export const guides: Guide[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "compound-interest",
+    title: "Compound interest: the formula, the rule of 72, and how growth actually builds",
+    region: "uk",
+    tool: "compound-interest",
+    description: "How compound interest works in the UK: the formula, the rule of 72, and why regular contributions matter more than chasing a higher rate. ISA and SIPP context.",
+    relatedArticles: ["how-long-to-save-100k"],
+    relatedGuides: ["fire-number", "net-worth-tracker"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "compound-interest",
+    title: "Compound interest: the formula, the rule of 72, and how growth actually builds",
+    region: "us",
+    tool: "compound-interest",
+    description: "How compound interest works in the US: the formula, the rule of 72, and why regular contributions matter more than chasing a higher rate. 401(k) and index-fund context.",
+    relatedArticles: ["how-long-to-save-100k"],
+    relatedGuides: ["fire-number", "net-worth-tracker"],
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const articles: Article[] = [
@@ -435,6 +467,24 @@ export const articles: Article[] = [
     authorSlug: "glenn-rodgers",
     published: true,
   },
+  {
+    slug: "how-long-to-save-100k",
+    title: "How long does it take to save £100k?",
+    region: "uk",
+    guide: "compound-interest",
+    description: "How long to save £100k in the UK. Tables for different monthly contributions and rates, and how to use the compound interest calculator to find your own timeline.",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
+  {
+    slug: "how-long-to-save-100k",
+    title: "How long does it take to save $100k?",
+    region: "us",
+    guide: "compound-interest",
+    description: "How long to save $100k in the US. Tables for different monthly contributions and rates, and how to use the compound interest calculator to find your own timeline.",
+    authorSlug: "glenn-rodgers",
+    published: true,
+  },
 ];
 
 export const methodologies: Methodology[] = [
@@ -471,6 +521,13 @@ export const methodologies: Methodology[] = [
     title: "Debt Payoff methodology",
     toolSlug: "debt-payoff",
     lastReviewed: "2026-08-09",
+    published: true,
+  },
+  {
+    slug: "compound-interest",
+    title: "Compound Interest methodology",
+    toolSlug: "compound-interest",
+    lastReviewed: "2026-08-10",
     published: true,
   },
 ];
@@ -520,8 +577,24 @@ The right withdrawal rate depends on your age, mix of assets, flexibility, and h
 
 Three inputs control the shape: the starting amount, the rate of return, and time. A higher rate helps, but time is usually the strongest lever. Starting ten years earlier can matter more than finding a slightly better fund.
 
-Contributions also compound. Regular monthly deposits add a second layer of growth on top of the first.`,
-    relatedTerms: ["fire-number", "withdrawal-rate"],
+Contributions also compound. Regular monthly deposits add a second layer of growth on top of the first.
+
+You can model this with the Your Net Worth Compound Interest Calculator, and a quick mental shortcut is the rule of 72: divide 72 by the annual rate to estimate how many years it takes to double your money.`,
+    relatedTerms: ["fire-number", "withdrawal-rate", "rule-of-72"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "rule-of-72",
+    title: "Rule of 72",
+    definition: "The rule of 72 is a quick way to estimate how long it takes money to double at a given annual return.",
+    body: `The rule of 72 says: divide 72 by the annual return as a percentage to get the approximate doubling time in years. At 7.2% per year, money doubles in about ten years. At 10%, it doubles in about 7.2 years.
+
+It is not exact, but it is close enough for mental maths. The rule works best for returns between about 5% and 15%. At very low or very high rates it drifts away from the true compound calculation.
+
+It also applies in reverse. Divide 72 by the inflation rate to estimate how long it takes purchasing power to halve. At 6% inflation, a lump sum buys half as much in roughly twelve years.
+
+The rule of 72 is a useful check when you see a compound interest projection. If a headline promises to double your money in a short time, the implied return should be easy to test with this rule.`,
+    relatedTerms: ["compound-interest"],
     relatedTools: ["compound-interest"],
   },
   {
@@ -664,6 +737,11 @@ export const updates: Update[] = [
     date: "2026-08-09",
     title: "Week 5: Debt Payoff cluster live",
     body: "Added the Debt Payoff calculator for UK and US users, with inline debt entry, a monthly-budget slider, overlaid snowball vs avalanche curves, side-by-side debt-free dates and total interest, plus region-specific pillar guides, supporting articles, and a methodology page.",
+  },
+  {
+    date: "2026-08-10",
+    title: "Week 6: Compound Interest cluster live",
+    body: "Added the Compound Interest calculator for UK and US users, with a solve-for-any-variable mode, monthly/daily/annual compounding, a stacked contributions-vs-growth chart, plus region-specific pillar guides, a supporting article on how long to save £100k/$100k, a methodology page, and a rule of 72 glossary term.",
   },
 ];
 
