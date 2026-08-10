@@ -178,7 +178,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
       subtitle="Project how a starting balance and regular contributions grow over time with compound interest. Move any slider to see the chart update."
     >
       <div className="grid gap-6 lg:grid-cols-12">
-        <div className="space-y-6 lg:col-span-5">
+        <div className="order-2 space-y-6 lg:order-1 lg:col-span-5">
           <div className="rounded-[16px] border border-hairline bg-surface p-5">
             <div className="mb-4 flex flex-wrap gap-2">
               {tabs.map((tab) => (
@@ -197,6 +197,10 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
                 </button>
               ))}
             </div>
+
+            <p className="mb-4 text-xs text-text-muted">
+              Example: {config.formatValue(10000)} starting balance, {config.formatValue(500)} monthly contributions, {formatPercent(0.07)} annual return, over 20 years. Tap a tab to solve for a different missing number.
+            </p>
 
             <div className="space-y-5">
               {state.solveFor !== "principal" && (
@@ -308,7 +312,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
           </div>
         </div>
 
-        <div className="space-y-6 lg:col-span-7">
+        <div className="order-1 space-y-6 lg:order-2 lg:col-span-7">
           <CompoundInterestChart
             data={series as CompoundInterestChartPoint[]}
             formatValue={config.formatValue}
