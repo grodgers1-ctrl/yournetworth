@@ -11,6 +11,8 @@ export type DebtPayoffChartPoint = {
   month: number;
   snowballRemaining: number;
   avalancheRemaining: number;
+  /** Present only when the minimums-only baseline is payable. */
+  minimumsRemaining?: number;
 };
 
 type DebtPayoffChartProps = {
@@ -31,11 +33,14 @@ export function DebtPayoffChart({ data, formatValue, className, title }: DebtPay
     month: number;
     snowballRemaining: number;
     avalancheRemaining: number;
+    minimumsRemaining?: number;
     x: number;
     y: number;
   } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const showMinimums = data.some((d) => d.minimumsRemaining !== undefined);
 
   const xScale = useMemo(
     () => scaleLinear({ domain: [0, Math.max(data.length - 1, 1)], range: [0, innerWidth] }),
@@ -43,7 +48,10 @@ export function DebtPayoffChart({ data, formatValue, className, title }: DebtPay
   );
 
   const yMax = useMemo(() => {
-    const max = Math.max(...data.map((d) => Math.max(d.snowballRemaining, d.avalancheRemaining)), 0);
+    const max = Math.max(
+      ...data.map((d) => Math.max(d.snowballRemaining, d.avalancheRemaining, d.minimumsRemaining ?? 0)),
+      0
+    );
     return max * 1.05;
   }, [data]);
 
@@ -63,6 +71,7 @@ export function DebtPayoffChart({ data, formatValue, className, title }: DebtPay
           month: point.month,
           snowballRemaining: point.snowballRemaining,
           avalancheRemaining: point.avalancheRemaining,
+          minimumsRemaining: point.minimumsRemaining,
           x: Math.min(event.clientX - wrapperRect.left + 12, wrapperRect.width - 190),
           y: event.clientY - wrapperRect.top - 12,
         });
@@ -93,11 +102,28 @@ export function DebtPayoffChart({ data, formatValue, className, title }: DebtPay
             <span className="flex items-center gap-1.5">
               <span className="h-0.5 w-4" style={{ backgroundColor: "var(--color-debt)" }} /> Avalanche
             </span>
+            {showMinimums && (
+              <span className="flex items-center gap-1.5">
+                <span className="h-0 w-4 border-t-2 border-dashed" style={{ borderColor: "var(--color-text-muted)" }} /> Minimums only
+              </span>
+            )}
           </div>
         </div>
       )}
       <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} className="h-full w-full overflow-visible" aria-label={title || "Debt payoff chart"}>
         <g transform={`translate(${margin.left},${margin.top})`}>
+          {showMinimums && (
+            <LinePath
+              data={data}
+              x={(d) => xScale(d.month)}
+              y={(d) => yScale(d.minimumsRemaining ?? 0)}
+              curve={curveMonotoneX}
+              stroke="var(--color-text-muted)"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeDasharray="4 4"
+            />
+          )}
           <LinePath
             data={data}
             x={(d) => xScale(d.month)}
@@ -168,6 +194,9 @@ export function DebtPayoffChart({ data, formatValue, className, title }: DebtPay
           <div className="mt-1 space-y-0.5 tabular-nums text-text-muted">
             <p>Snowball: {formatValue(tooltip.snowballRemaining)}</p>
             <p>Avalanche: {formatValue(tooltip.avalancheRemaining)}</p>
+            {tooltip.minimumsRemaining !== undefined && (
+              <p>Minimums only: {formatValue(tooltip.minimumsRemaining)}</p>
+            )}
           </div>
         </div>
       )}

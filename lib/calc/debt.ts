@@ -21,7 +21,7 @@ export type PayoffEvent = {
 };
 
 export type DebtStrategyResult = {
-  strategy: "snowball" | "avalanche";
+  strategy: "snowball" | "avalanche" | "minimums";
   monthsToDebtFree: number;
   totalInterest: number;
   /** False when the budget cannot clear the debts within the month cap (e.g. payments below interest). */
@@ -33,6 +33,8 @@ export type DebtStrategyResult = {
 export type DebtOutputs = {
   snowball: DebtStrategyResult;
   avalanche: DebtStrategyResult;
+  /** Baseline "do nothing extra" plan: every debt gets only its fixed minimum payment. */
+  minimumsOnly: DebtStrategyResult;
   totalBalance: number;
   totalMinimums: number;
   /** False when monthlyBudget is below the sum of minimum payments. */
@@ -41,6 +43,10 @@ export type DebtOutputs = {
   monthsSavedByBest: number;
   /** Interest saved by choosing the cheaper strategy (avalanche minus snowball when positive). */
   interestSavedByBest: number;
+  /** Months the best strategy saves versus paying only the minimums (0 when not payable). */
+  monthsSavedVsMinimums: number;
+  /** Interest the best strategy saves versus paying only the minimums (0 when not payable). */
+  interestSavedVsMinimums: number;
   /** Which strategy clears the debts cheapest. */
   bestStrategy: "snowball" | "avalanche";
 };
@@ -70,11 +76,13 @@ function monthlyRate(apr: number): number {
  * Freed minimum payments join next month's extra automatically because the
  * cleared debt no longer draws a minimum.
  */
-function simulate(debts: Debt[], monthlyBudget: number, strategy: "snowball" | "avalanche"): DebtStrategyResult {
+function simulate(debts: Debt[], monthlyBudget: number, strategy: "snowball" | "avalanche" | "minimums"): DebtStrategyResult {
   const active: SimDebt[] = debts
     .filter((d) => d.balance > 0)
     .map((d) => ({ id: d.id, name: d.name, balance: d.balance, apr: Math.max(0, d.apr), minPayment: Math.max(0, d.minPayment) }));
 
+  // Priority order only matters when there is spare budget to direct; the
+  // minimums-only baseline never has any, so its ordering is arbitrary.
   const priority = (list: SimDebt[]): SimDebt[] =>
     [...list].sort((a, b) => {
       if (strategy === "snowball") {
@@ -164,7 +172,7 @@ export function calculateDebtPayoff(inputs: DebtInputs): DebtOutputs {
   const budgetValid = monthlyBudget >= totalMinimums;
 
   if (!budgetValid || totalBalance === 0) {
-    const empty = (strategy: "snowball" | "avalanche"): DebtStrategyResult => ({
+    const empty = (strategy: "snowball" | "avalanche" | "minimums"): DebtStrategyResult => ({
       strategy,
       monthsToDebtFree: 0,
       totalInterest: 0,
@@ -175,31 +183,42 @@ export function calculateDebtPayoff(inputs: DebtInputs): DebtOutputs {
     return {
       snowball: empty("snowball"),
       avalanche: empty("avalanche"),
+      minimumsOnly: empty("minimums"),
       totalBalance,
       totalMinimums,
       budgetValid,
       monthsSavedByBest: 0,
       interestSavedByBest: 0,
+      monthsSavedVsMinimums: 0,
+      interestSavedVsMinimums: 0,
       bestStrategy: "avalanche",
     };
   }
 
   const snowball = simulate(debts, monthlyBudget, "snowball");
   const avalanche = simulate(debts, monthlyBudget, "avalanche");
+  const minimumsOnly = simulate(debts, totalMinimums, "minimums");
 
   const bestStrategy = avalanche.totalInterest <= snowball.totalInterest ? "avalanche" : "snowball";
+  const best = bestStrategy === "avalanche" ? avalanche : snowball;
   const monthsSavedByBest =
     snowball.payable && avalanche.payable ? Math.abs(snowball.monthsToDebtFree - avalanche.monthsToDebtFree) : 0;
   const interestSavedByBest = Math.abs(snowball.totalInterest - avalanche.totalInterest);
+  const monthsSavedVsMinimums =
+    minimumsOnly.payable && best.payable ? minimumsOnly.monthsToDebtFree - best.monthsToDebtFree : 0;
+  const interestSavedVsMinimums = minimumsOnly.payable && best.payable ? minimumsOnly.totalInterest - best.totalInterest : 0;
 
   return {
     snowball,
     avalanche,
+    minimumsOnly,
     totalBalance,
     totalMinimums,
     budgetValid,
     monthsSavedByBest,
     interestSavedByBest,
+    monthsSavedVsMinimums,
+    interestSavedVsMinimums,
     bestStrategy,
   };
 }

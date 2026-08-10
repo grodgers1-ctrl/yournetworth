@@ -9,7 +9,9 @@ Given a list of debts (each with a balance, an APR, and a minimum payment) and a
 1. **Snowball**: extra money goes to the smallest balance first. Ties are broken by the higher APR.
 2. **Avalanche**: extra money goes to the highest APR first. Ties are broken by the smaller balance.
 
-For each strategy, the tool reports the months to debt-free, the total interest paid, the payoff order, and a month-by-month series of the total remaining balance. The two series are rendered as overlaid curves so you can see where the strategies diverge and by how much.
+It also simulates a **minimums-only baseline**, where every debt receives only its fixed minimum payment and nothing more. This is the "do nothing extra" path, and the tool reports the months and interest each strategy saves against it.
+
+For each strategy and the baseline, the tool reports the months to debt-free, the total interest paid, the payoff order, and a month-by-month series of the total remaining balance. The series are rendered as overlaid curves so you can see where the strategies diverge and by how much.
 
 Both strategies spend the same budget each month, so they always finish on the same date only when the payoff orders happen to coincide. In general the avalanche costs less interest, because it attacks the most expensive debt first; the snowball trades a little extra interest for faster early payoffs, which many people find easier to stick with.
 
@@ -43,7 +45,7 @@ The monthly budget must be at least the sum of the minimum payments; the tool wa
 
 The calculator assumes fixed APRs for the whole timeline. Real rates can change, and promotional periods end.
 
-Minimum payments are held fixed. Real credit-card minimums usually decline as the balance falls, which stretches real-world timelines considerably. The tool models the disciplined fixed-payment plan instead, because that is the behaviour most debt charities and regulators recommend: keep paying at least today's minimum even as the required minimum drops.
+Minimum payments are held fixed. Real credit-card minimums usually decline as the balance falls, which stretches real-world timelines considerably. The tool models the disciplined fixed-payment plan instead, because that is the behaviour most debt charities and regulators recommend: keep paying at least today's minimum even as the required minimum drops. The same fixed-minimum assumption applies to the minimums-only baseline, which makes that baseline optimistic: with real declining minimums, the "do nothing extra" path would be slower and more expensive still.
 
 Interest compounds monthly. No fees, charges, or new borrowing are modelled, and payments are treated as made monthly in arrears.
 

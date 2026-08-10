@@ -80,12 +80,18 @@ export function DebtPayoffTool({ region }: { region: "uk" | "us" }) {
   );
 
   const chartData = useMemo<DebtPayoffChartPoint[]>(() => {
-    const { snowball, avalanche } = outputs;
-    const length = Math.max(snowball.series.length, avalanche.series.length);
+    const { snowball, avalanche, minimumsOnly } = outputs;
+    const includeMinimums = minimumsOnly.payable;
+    const length = Math.max(
+      snowball.series.length,
+      avalanche.series.length,
+      includeMinimums ? minimumsOnly.series.length : 0
+    );
     return Array.from({ length }, (_, i) => ({
       month: i,
       snowballRemaining: snowball.series[i]?.totalRemaining ?? 0,
       avalancheRemaining: avalanche.series[i]?.totalRemaining ?? 0,
+      ...(includeMinimums ? { minimumsRemaining: minimumsOnly.series[i]?.totalRemaining ?? 0 } : {}),
     }));
   }, [outputs]);
 
@@ -280,11 +286,23 @@ export function DebtPayoffTool({ region }: { region: "uk" | "us" }) {
                   ? `${config.formatValue(outputs.avalanche.totalInterest)} interest · highest APR first`
                   : "Not reachable at this budget",
               },
-              { label: "Total debt", value: config.formatValue(outputs.totalBalance) },
+              {
+                label: "Minimums only",
+                value: outputs.minimumsOnly.payable ? `${outputs.minimumsOnly.monthsToDebtFree} months` : "—",
+                caption: outputs.minimumsOnly.payable
+                  ? `${config.formatValue(outputs.minimumsOnly.totalInterest)} interest if you only pay the minimums`
+                  : "Minimums don't cover the interest",
+              },
               {
                 label: "Interest saved",
-                value: showComparison ? config.formatValue(outputs.interestSavedByBest) : "—",
-                caption: showComparison ? `${outputs.bestStrategy} vs ${other.strategy}` : "Both methods tie",
+                value:
+                  outputs.minimumsOnly.payable && best.payable
+                    ? config.formatValue(outputs.interestSavedVsMinimums)
+                    : "—",
+                caption:
+                  outputs.minimumsOnly.payable && best.payable
+                    ? `${outputs.bestStrategy} vs minimums only${showComparison ? ` · ${config.formatValue(outputs.interestSavedByBest)} vs ${other.strategy}` : ""}`
+                    : "Paying the minimums never clears this debt",
               },
             ]}
           />
