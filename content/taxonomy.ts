@@ -173,7 +173,7 @@ export const tools: Tool[] = [
     slug: "debt-payoff",
     title: "Debt Payoff Calculator",
     region: "uk",
-    description: "Free debt payoff calculator for the UK. Add your credit cards and loans, set a monthly budget, and compare the cheapest order to clear them — with your debt-free date and total interest.",
+    description: "Free debt payoff calculator for the UK. Add your credit cards and loans, set a monthly budget, and compare the cheapest order to clear them, with your debt-free date and total interest.",
     pillarGuide: "debt-payoff",
     supportingArticles: ["clear-5000-credit-card"],
     relatedTools: ["mortgage-overpayment", "net-worth-tracker", "compound-interest"],
@@ -611,7 +611,7 @@ The tool also helps you see whether your total income covers your total spending
   {
     slug: "apr",
     title: "APR",
-    definition: "APR is the annual percentage rate — the yearly cost of borrowing, including interest and most fees, expressed as a percentage of the balance.",
+    definition: "APR is the annual percentage rate: the yearly cost of borrowing, including interest and most fees, expressed as a percentage of the balance.",
     body: `APR stands for annual percentage rate. It rolls the interest rate and most compulsory fees into a single yearly figure, which makes it the cleanest way to compare two credit products.
 
 On a credit card, the APR is applied monthly: each month the issuer charges roughly one twelfth of the APR on your outstanding balance. A card at 24.9% APR charges about 2.075% of the balance every month. On a £5,000 balance that is over £100 of interest a month before your payment touches the principal.
@@ -624,7 +624,7 @@ APR is the single most important number when you rank debts for payoff. The aval
     slug: "minimum-payment",
     title: "Minimum payment",
     definition: "The minimum payment is the smallest amount a lender requires you to pay each month to keep the account in good standing.",
-    body: `On a credit card, the minimum payment is usually a small percentage of the balance — often 1% to 3% — or a fixed floor amount, whichever is higher. It is designed to keep the account current, not to clear the debt quickly.
+    body: `On a credit card, the minimum payment is usually a small percentage of the balance (often 1% to 3%) or a fixed floor amount, whichever is higher. It is designed to keep the account current, not to clear the debt quickly.
 
 The trap is that the minimum falls as the balance falls, so a card you could clear in three years at a fixed payment can take well over a decade on minimums alone, with interest mounting all the way. Fixing your payment at today's level, rather than letting it decline, is one of the simplest ways to shorten a payoff timeline.
 

@@ -4,10 +4,10 @@ This page explains how the Your Net Worth Debt Payoff calculator works: what it 
 
 ## What the calculator measures
 
-Given a list of debts — each with a balance, an APR, and a minimum payment — and a single monthly budget, the calculator simulates two payoff strategies:
+Given a list of debts (each with a balance, an APR, and a minimum payment) and a single monthly budget, the calculator simulates two payoff strategies:
 
-1. **Snowball** — extra money goes to the smallest balance first. Ties are broken by the higher APR.
-2. **Avalanche** — extra money goes to the highest APR first. Ties are broken by the smaller balance.
+1. **Snowball**: extra money goes to the smallest balance first. Ties are broken by the higher APR.
+2. **Avalanche**: extra money goes to the highest APR first. Ties are broken by the smaller balance.
 
 For each strategy, the tool reports the months to debt-free, the total interest paid, the payoff order, and a month-by-month series of the total remaining balance. The two series are rendered as overlaid curves so you can see where the strategies diverge and by how much.
 
@@ -37,7 +37,7 @@ After interest accrues, the monthly budget is distributed as follows:
 
 **Validation**
 
-The monthly budget must be at least the sum of the minimum payments; the tool warns when it is not. If the payments cannot outrun the monthly interest on a debt — negative amortisation, where the balance grows even while you pay — the simulation stops at a 600-month cap and the tool reports that debt as not reachable at that budget.
+The monthly budget must be at least the sum of the minimum payments; the tool warns when it is not. If the payments cannot outrun the monthly interest on a debt (negative amortisation, where the balance grows even while you pay), the simulation stops at a 600-month cap and the tool reports that debt as not reachable at that budget.
 
 ## Assumptions and limitations
 
@@ -47,7 +47,7 @@ Minimum payments are held fixed. Real credit-card minimums usually decline as th
 
 Interest compounds monthly. No fees, charges, or new borrowing are modelled, and payments are treated as made monthly in arrears.
 
-Promotional 0% periods and balance-transfer fees are not modelled directly. You can approximate them by entering the post-transfer balance — including any transfer fee — as a new debt with the new rate.
+Promotional 0% periods and balance-transfer fees are not modelled directly. You can approximate them by entering the post-transfer balance (including any transfer fee) as a new debt with the new rate.
 
 The tool has no credit-score or tax effects. It models the arithmetic of repayment, nothing else.
 

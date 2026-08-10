@@ -12,11 +12,11 @@ import { getPublishedTools } from "@/content/taxonomy";
 export const metadata: Metadata = {
   title: "Your Net Worth - Free UK & US Personal Finance Calculators",
   description:
-    "Free UK & US net worth tracker and personal finance calculators. Track assets and debts over time, find your FIRE number, and model your mortgage. No sign-up — your data stays in your browser.",
+    "Free UK & US net worth tracker and personal finance calculators. Track assets and debts over time, find your FIRE number, and model your mortgage. No sign-up. Your data stays in your browser.",
   openGraph: {
     url: "/",
     title: "Your Net Worth - Free UK & US Personal Finance Calculators",
-    description: "Free UK & US net worth tracker and personal finance calculators. No sign-up — your data stays in your browser.",
+    description: "Free UK & US net worth tracker and personal finance calculators. No sign-up. Your data stays in your browser.",
   },
 };
 
@@ -133,7 +133,7 @@ export default function HomePage() {
             <p className="text-caption mb-3 font-medium uppercase tracking-widest text-accent">The tools</p>
             <h2 className="text-section md:text-4xl">Free UK &amp; US personal finance calculators.</h2>
             <p className="mt-4 text-body">
-              Every calculator runs live in your browser — no sign-up, nothing sent to a server. Pick one, move any
+              Every calculator runs live in your browser: no sign-up, nothing sent to a server. Pick one, move any
               input, and the chart recalculates instantly.
             </p>
           </div>

@@ -129,7 +129,7 @@ export function DebtPayoffTool({ region }: { region: "uk" | "us" }) {
           value: `${best.monthsToDebtFree} months`,
           caption: `${debtFreeDate(best.monthsToDebtFree, config.locale)} with the ${outputs.bestStrategy} method${
             showComparison
-              ? ` — ${outputs.monthsSavedByBest} months and ${config.formatValue(outputs.interestSavedByBest)} interest sooner than the ${other.strategy}`
+              ? `, that's ${outputs.monthsSavedByBest} months and ${config.formatValue(outputs.interestSavedByBest)} interest sooner than the ${other.strategy}`
               : ""
           }`,
         };
@@ -311,7 +311,7 @@ export function DebtPayoffTool({ region }: { region: "uk" | "us" }) {
           <p className="text-xs text-text-dim">
             Not financial advice. The chart assumes fixed APRs, fixed minimum payments, and that you never miss a
             payment or add new borrowing. Real minimum payments usually fall as the balance falls, which stretches the
-            timeline — fixing your payment at today&apos;s level is exactly what this plan does. Your inputs stay in
+            timeline. Fixing your payment at today&apos;s level is exactly what this plan does. Your inputs stay in
             your browser.
           </p>
         </div>
