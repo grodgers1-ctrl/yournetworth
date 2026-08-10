@@ -21,6 +21,7 @@ type CompoundInterestState = {
   years: number;
   target: number;
   frequency: number;
+  contributionFrequency: number;
 };
 
 const initialCompoundState: CompoundInterestState = {
@@ -31,18 +32,26 @@ const initialCompoundState: CompoundInterestState = {
   years: 20,
   target: 250000,
   frequency: 12,
+  contributionFrequency: 12,
 };
 
 const tabs: { id: SolveMode; label: string }[] = [
   { id: "fv", label: "Future value" },
   { id: "principal", label: "Starting amount" },
-  { id: "monthly", label: "Monthly contribution" },
+  { id: "monthly", label: "Contribution amount" },
   { id: "rate", label: "Rate" },
   { id: "years", label: "Years" },
 ];
 
 function formatPercent(value: number): string {
   return `${(value * 100).toFixed(2)}%`;
+}
+
+function frequencyLabel(frequency: number): string {
+  if (frequency === 52) return "weekly";
+  if (frequency === 4) return "quarterly";
+  if (frequency === 1) return "annually";
+  return "monthly";
 }
 
 export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
@@ -62,6 +71,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
         years: state.years,
         futureValue: state.target,
         frequency: state.frequency,
+        contributionFrequency: state.contributionFrequency,
       }),
     [state]
   );
@@ -96,7 +106,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
     state.solveFor === "principal"
       ? "Starting amount needed"
       : state.solveFor === "monthly"
-        ? "Monthly contribution needed"
+        ? "Contribution amount needed"
         : state.solveFor === "rate"
           ? "Annual return needed"
           : state.solveFor === "years"
@@ -113,7 +123,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
 
   const primaryCaption = impossible
     ? state.solveFor === "principal"
-      ? "The target is higher than the future value of the monthly plan at the selected rate and years. Lower the target or raise the other inputs."
+      ? "The target is higher than the future value of the contribution plan at the selected rate and years. Lower the target or raise the other inputs."
       : state.solveFor === "monthly"
         ? "The target is lower than what the starting amount and growth already produce. A negative monthly contribution would be needed to match it exactly."
         : state.solveFor === "rate"
@@ -122,7 +132,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
             ? "The target is too high to reach within 200 years at this contribution level. Raise the rate, monthly contribution, or starting amount."
             : "The inputs do not produce a reachable outcome."
     : state.solveFor === "fv"
-      ? `After ${inputs.years} years of ${config.formatValue(inputs.monthly)} monthly contributions at ${formatPercent(inputs.rate)}.`
+      ? `After ${inputs.years} years of ${config.formatValue(inputs.monthly)} monthly contributions paid ${frequencyLabel(inputs.contributionFrequency ?? 12)} at ${formatPercent(inputs.rate)}.`
       : state.solveFor === "principal"
         ? `Starting amount needed to reach ${config.formatValue(state.target)} in ${inputs.years} years at ${formatPercent(inputs.rate)}.`
         : state.solveFor === "monthly"
@@ -165,11 +175,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
       copyLink={copyLink}
       exportJson={exportJson}
       cta={cta}
-      subtitle={
-        region === "uk"
-          ? "See how starting amount, monthly contributions, annual return, and time interact. Solve for any variable and switch between monthly, daily, and annual compounding."
-          : "See how starting amount, monthly contributions, annual return, and time interact. Solve for any variable and switch between monthly, daily, and annual compounding."
-      }
+      subtitle="Project how a starting balance and regular contributions grow over time with compound interest. Move any slider to see the chart update."
     >
       <div className="grid gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-5">
@@ -207,7 +213,7 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
 
               {state.solveFor !== "monthly" && (
                 <CalcSlider
-                  label="Monthly contribution"
+                  label="Monthly contribution amount"
                   value={state.monthly}
                   min={0}
                   max={5000}
@@ -273,7 +279,27 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
                       <option value={1}>Annual</option>
                     </select>
                     <p className="text-xs text-text-dim">
-                      Daily compounding is a common long-tail search target for daily compound interest calculators. It usually adds only a small amount versus monthly.
+                      How often interest is applied to the balance. Daily is a common option for daily compound calculators; it usually adds only a small amount versus monthly.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                  <label htmlFor="contributionFrequency" className="text-xs font-medium text-text-dim">
+                      Contribution frequency
+                    </label>
+                    <select
+                      id="contributionFrequency"
+                      value={state.contributionFrequency}
+                      onChange={(e) => setState((s) => ({ ...s, contributionFrequency: Number(e.target.value) }))}
+                      className="mt-1.5 h-10 w-full rounded-lg border border-hairline bg-elevated px-3 py-2 text-sm text-text focus:border-stroke focus:outline-none focus:ring-2 focus:ring-accent/20"
+                    >
+                      <option value={52}>Weekly</option>
+                      <option value={12}>Monthly</option>
+                      <option value={4}>Quarterly</option>
+                      <option value={1}>Annual</option>
+                    </select>
+                    <p className="text-xs text-text-dim">
+                      How often deposits are made. The monthly contribution slider is converted to match this schedule.
                     </p>
                   </div>
                 </div>
@@ -304,6 +330,34 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
               },
             ]}
           />
+
+          <details className="group rounded-[16px] border border-hairline bg-surface p-5">
+            <summary className="cursor-pointer text-sm font-medium text-text hover:text-text-muted">
+              Year-by-year breakdown
+            </summary>
+            <div className="mt-4 max-h-96 overflow-x-auto overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-surface">
+                  <tr className="border-b border-hairline text-left text-xs text-text-dim">
+                    <th className="pb-2 font-medium">Year</th>
+                    <th className="pb-2 font-medium">Contributions</th>
+                    <th className="pb-2 font-medium">Value</th>
+                    <th className="pb-2 font-medium">Growth</th>
+                  </tr>
+                </thead>
+                <tbody className="text-text-muted tabular-nums">
+                  {series.map((point) => (
+                    <tr key={point.year} className="border-b border-hairline last:border-b-0">
+                      <td className="py-2 pr-4">{point.year}</td>
+                      <td className="py-2 pr-4">{config.formatValue(point.contributions)}</td>
+                      <td className="py-2 pr-4">{config.formatValue(point.value)}</td>
+                      <td className="py-2 pr-4">{config.formatValue(point.value - point.contributions)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
 
           <p className="text-xs text-text-dim">
             Not financial advice. The calculator assumes a fixed return, fixed contributions, and no taxes or fees. Your inputs stay in your browser.
