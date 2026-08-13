@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/site/Header";
-import { Footer } from "@/components/site/Footer";
 import { Suspense } from "react";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import { PostHogPageView } from "@/components/providers/PostHogPageView";
+import { LayoutShell } from "@/components/site/LayoutShell";
+import { Header } from "@/components/site/Header";
+import { Footer } from "@/components/site/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -92,11 +93,9 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
-          <Header />
-          <main id="main" className="flex-1">
+          <LayoutShell header={<Header />} footer={<Footer />}>
             {children}
-          </main>
-          <Footer />
+          </LayoutShell>
         </body>
       </PostHogProvider>
     </html>

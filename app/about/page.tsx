@@ -81,9 +81,9 @@ export default function AboutPage() {
           <div className="mt-12">
             <h2 className="text-subsection">What is coming</h2>
             <p className="mt-3 max-w-3xl text-body">
-              We are shipping six calculators in weekly clusters: Net Worth Tracker, FIRE Number, Compound Interest, Mortgage
-              Overpayment, Debt Payoff, and Multi-Currency Budget. After that, the plan is to grow the glossary, add more
-              guides, and publish original research. There are no ads and no plans to sell your data.
+              The first six calculators are live: Net Worth Tracker, FIRE Number, Compound Interest, Mortgage
+              Overpayment, Debt Payoff, and Multi-Currency Budget. The next phase adds more tools, grows the glossary,
+              and publishes original research. There are no ads and no plans to sell your data.
             </p>
           </div>
         </div>

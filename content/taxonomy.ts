@@ -10,6 +10,7 @@ export type Tool = {
   relatedTools?: string[];
   methodology?: string;
   authorSlug?: string;
+  reviewedBy?: string;
   published?: boolean;
 };
 
@@ -43,6 +44,7 @@ export type Methodology = {
   title: string;
   toolSlug: string;
   lastReviewed: string;
+  reviewedBy?: string;
   published?: boolean;
 };
 
@@ -79,7 +81,8 @@ export const authors: Author[] = [
     jobTitle: "Investor",
     credentials: [],
     sameAs: ["https://ihatebeards.substack.com/"],
-    bio: "Glenn Rodgers is an investor who writes about turning income into lasting financial security. He built Your Net Worth because he believes checking your numbers should not cost your privacy. The tools here run in your browser, with no account required, and the guides stick to what the maths and the primary sources actually say.",
+    bio: "I’m a UK entrepreneur and investor with a slightly obsessive interest in money, investing and working out whether the numbers stack up. I’ve built businesses in a few very different industries and have spent years learning, often the hard way, about investing, saving, tax, property and building wealth. I started this site as a place to share the calculators, research and useful financial stuff I find myself looking for, with a focus on keeping things simple and practical.",
+    photo: "/glenn-rodgers.jpg",
     publications: [],
   },
 ];
@@ -92,9 +95,10 @@ export const tools: Tool[] = [
     description: "Free net worth tracker with no sign-up. Your data stays in your browser. Add accounts and see your net worth in under a minute, with a Freedom Framework mode and a 4% withdrawal estimate.",
     pillarGuide: "net-worth-tracker",
     supportingArticles: ["sinking-funds"],
-    relatedTools: ["fire-number", "compound-interest"],
+    relatedTools: ["fire-number", "compound-interest", "mortgage-overpayment", "debt-payoff", "multi-currency-budget"],
     methodology: "net-worth-tracker",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -104,9 +108,10 @@ export const tools: Tool[] = [
     description: "Free net worth tracker with no sign-up. Your data stays in your browser. Add accounts and see your net worth in under a minute, with a Freedom Framework mode and a 4% withdrawal estimate.",
     pillarGuide: "net-worth-tracker",
     supportingArticles: ["emergency-fund-vs-hysa"],
-    relatedTools: ["fire-number", "compound-interest"],
+    relatedTools: ["fire-number", "compound-interest", "mortgage-overpayment", "debt-payoff", "multi-currency-budget"],
     methodology: "net-worth-tracker",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -116,9 +121,10 @@ export const tools: Tool[] = [
     description: "Free compound interest calculator for the UK. See how starting amount, monthly contributions, annual rate and time interact. Solve for any variable and switch between monthly, daily and annual compounding.",
     pillarGuide: "compound-interest",
     supportingArticles: ["how-long-to-save-100k"],
-    relatedTools: ["fire-number", "net-worth-tracker", "mortgage-overpayment"],
+    relatedTools: ["fire-number", "net-worth-tracker", "mortgage-overpayment", "debt-payoff", "multi-currency-budget"],
     methodology: "compound-interest",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -128,9 +134,10 @@ export const tools: Tool[] = [
     description: "Free compound interest calculator for the US. See how starting amount, monthly contributions, annual rate and time interact. Solve for any variable and switch between monthly, daily and annual compounding.",
     pillarGuide: "compound-interest",
     supportingArticles: ["how-long-to-save-100k"],
-    relatedTools: ["fire-number", "net-worth-tracker", "mortgage-overpayment"],
+    relatedTools: ["fire-number", "net-worth-tracker", "mortgage-overpayment", "debt-payoff", "multi-currency-budget"],
     methodology: "compound-interest",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -140,8 +147,10 @@ export const tools: Tool[] = [
     description: "Estimate the portfolio size needed to cover annual spending.",
     pillarGuide: "fire-number",
     supportingArticles: ["4-percent-rule"],
+    relatedTools: ["net-worth-tracker", "compound-interest", "mortgage-overpayment"],
     methodology: "fire-number",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -151,8 +160,10 @@ export const tools: Tool[] = [
     description: "Estimate the portfolio size needed to cover annual spending.",
     pillarGuide: "fire-number",
     supportingArticles: ["4-percent-rule"],
+    relatedTools: ["net-worth-tracker", "compound-interest", "mortgage-overpayment"],
     methodology: "fire-number",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -165,6 +176,7 @@ export const tools: Tool[] = [
     relatedTools: ["compound-interest", "debt-payoff", "fire-number", "net-worth-tracker"],
     methodology: "mortgage-overpayment",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -177,6 +189,7 @@ export const tools: Tool[] = [
     relatedTools: ["compound-interest", "debt-payoff", "fire-number", "net-worth-tracker"],
     methodology: "mortgage-overpayment",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -189,6 +202,7 @@ export const tools: Tool[] = [
     relatedTools: ["mortgage-overpayment", "net-worth-tracker", "compound-interest"],
     methodology: "debt-payoff",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -201,6 +215,7 @@ export const tools: Tool[] = [
     relatedTools: ["mortgage-overpayment", "net-worth-tracker", "compound-interest"],
     methodology: "debt-payoff",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -210,8 +225,10 @@ export const tools: Tool[] = [
     description: "Add income and spending in different currencies and convert to one base.",
     pillarGuide: "multi-currency-budget",
     supportingArticles: ["exchange-rate-risk"],
+    relatedTools: ["net-worth-tracker", "compound-interest"],
     methodology: "multi-currency-budget",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -221,8 +238,10 @@ export const tools: Tool[] = [
     description: "Add income and spending in different currencies and convert to one base.",
     pillarGuide: "multi-currency-budget",
     supportingArticles: ["exchange-rate-risk"],
+    relatedTools: ["net-worth-tracker", "compound-interest"],
     methodology: "multi-currency-budget",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
 ];
@@ -236,6 +255,7 @@ export const guides: Guide[] = [
     description: "What is a FIRE number and how do you calculate it for the UK? Learn the 4% rule, safe withdrawal rates, and why UK retirees may need a lower number.",
     relatedArticles: ["4-percent-rule"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -246,6 +266,7 @@ export const guides: Guide[] = [
     description: "What is a FIRE number and how do you calculate it in the US? Learn the 4% rule, the Trinity Study, and how to estimate your retirement portfolio size.",
     relatedArticles: ["4-percent-rule"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -256,6 +277,7 @@ export const guides: Guide[] = [
     description: "How to build a multi-currency budget in the UK. Track income and spending in pounds, euros, dollars and more with live exchange rates.",
     relatedArticles: ["exchange-rate-risk"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -266,6 +288,7 @@ export const guides: Guide[] = [
     description: "How to build a multi-currency budget in the US. Track income and spending across dollars, euros, pounds and more with live exchange rates.",
     relatedArticles: ["exchange-rate-risk"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -277,6 +300,7 @@ export const guides: Guide[] = [
     relatedArticles: ["sinking-funds"],
     relatedGuides: ["fire-number", "multi-currency-budget"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -288,6 +312,7 @@ export const guides: Guide[] = [
     relatedArticles: ["emergency-fund-vs-hysa"],
     relatedGuides: ["fire-number", "multi-currency-budget"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -299,6 +324,7 @@ export const guides: Guide[] = [
     relatedArticles: ["overpay-vs-isa", "10-percent-overpayment-rule"],
     relatedGuides: ["compound-interest", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -310,6 +336,7 @@ export const guides: Guide[] = [
     relatedArticles: ["pay-off-vs-401k", "biweekly-mortgage-payments"],
     relatedGuides: ["compound-interest", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -321,6 +348,7 @@ export const guides: Guide[] = [
     relatedArticles: ["clear-5000-credit-card"],
     relatedGuides: ["mortgage-overpayment", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -332,6 +360,7 @@ export const guides: Guide[] = [
     relatedArticles: ["pay-off-10000-credit-card"],
     relatedGuides: ["mortgage-overpayment", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -343,6 +372,7 @@ export const guides: Guide[] = [
     relatedArticles: ["how-long-to-save-100k"],
     relatedGuides: ["fire-number", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -354,6 +384,7 @@ export const guides: Guide[] = [
     relatedArticles: ["how-long-to-save-100k"],
     relatedGuides: ["fire-number", "net-worth-tracker"],
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
 ];
@@ -366,6 +397,7 @@ export const articles: Article[] = [
     guide: "fire-number",
     description: "Is the 4% rule safe for UK retirees? Why US-based research may be too optimistic for UK investors and what withdrawal rate to use instead.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -375,6 +407,7 @@ export const articles: Article[] = [
     guide: "fire-number",
     description: "Where does the 4% rule come from? A look at Bengen's 1994 study, the Trinity Study, and what US retirees should know about safe withdrawals.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -384,6 +417,7 @@ export const articles: Article[] = [
     guide: "multi-currency-budget",
     description: "How exchange-rate swings affect a UK budget. Why converting foreign income and spending to pounds matters and how to manage currency risk.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -393,6 +427,7 @@ export const articles: Article[] = [
     guide: "multi-currency-budget",
     description: "How exchange-rate swings affect a US budget. Why converting foreign income and spending to dollars matters and how to manage currency risk.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -402,6 +437,7 @@ export const articles: Article[] = [
     guide: "net-worth-tracker",
     description: "How sinking funds work in the UK. Set aside small monthly amounts for predictable expenses like Christmas, car maintenance, and holidays.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -411,6 +447,7 @@ export const articles: Article[] = [
     guide: "net-worth-tracker",
     description: "Emergency fund versus high-yield savings: where US savers should keep cash. Learn the difference and how much to keep accessible.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -420,6 +457,7 @@ export const articles: Article[] = [
     guide: "mortgage-overpayment",
     description: "Should you overpay your mortgage or invest in a UK Stocks and Shares ISA? Compare guaranteed interest savings against tax-free investment growth.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -429,6 +467,7 @@ export const articles: Article[] = [
     guide: "mortgage-overpayment",
     description: "Should you pay off your mortgage early or invest in a 401(k)? Compare guaranteed principal savings against tax-deferred retirement growth.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -438,6 +477,7 @@ export const articles: Article[] = [
     guide: "mortgage-overpayment",
     description: "The 10% mortgage overpayment rule explained for UK borrowers. How annual overpayment limits work, when ERCs apply, and how to check your allowance.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -447,6 +487,7 @@ export const articles: Article[] = [
     guide: "mortgage-overpayment",
     description: "Should you make biweekly mortgage payments? Learn how 26 half-payments save interest, when servicers hold funds, and how to avoid setup fees.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -456,6 +497,7 @@ export const articles: Article[] = [
     guide: "debt-payoff",
     description: "How long to clear a £5,000 credit card in the UK. Real payoff times and interest at 19.9%, 24.9% and 29.9% APR, and why the minimum-payment trap keeps you in debt for years.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -465,6 +507,7 @@ export const articles: Article[] = [
     guide: "debt-payoff",
     description: "How long to pay off $10,000 in credit card debt. Payoff-time and interest tables at 18%, 22% and 26% APR for $200, $300 and $500 monthly payments.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -474,6 +517,7 @@ export const articles: Article[] = [
     guide: "compound-interest",
     description: "How long to save £100k in the UK. Tables for different monthly contributions and rates, and how to use the compound interest calculator to find your own timeline.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -483,6 +527,7 @@ export const articles: Article[] = [
     guide: "compound-interest",
     description: "How long to save $100k in the US. Tables for different monthly contributions and rates, and how to use the compound interest calculator to find your own timeline.",
     authorSlug: "glenn-rodgers",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
 ];
@@ -493,6 +538,7 @@ export const methodologies: Methodology[] = [
     title: "FIRE Number methodology",
     toolSlug: "fire-number",
     lastReviewed: "2026-08-02",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -500,6 +546,7 @@ export const methodologies: Methodology[] = [
     title: "Multi-Currency Budget methodology",
     toolSlug: "multi-currency-budget",
     lastReviewed: "2026-08-02",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -507,6 +554,7 @@ export const methodologies: Methodology[] = [
     title: "Net Worth Tracker methodology",
     toolSlug: "net-worth-tracker",
     lastReviewed: "2026-08-09",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -514,6 +562,7 @@ export const methodologies: Methodology[] = [
     title: "Mortgage Overpayment methodology",
     toolSlug: "mortgage-overpayment",
     lastReviewed: "2026-08-04",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -521,6 +570,7 @@ export const methodologies: Methodology[] = [
     title: "Debt Payoff methodology",
     toolSlug: "debt-payoff",
     lastReviewed: "2026-08-09",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
   {
@@ -528,6 +578,7 @@ export const methodologies: Methodology[] = [
     title: "Compound Interest methodology",
     toolSlug: "compound-interest",
     lastReviewed: "2026-08-10",
+    reviewedBy: "glenn-rodgers",
     published: true,
   },
 ];
@@ -654,7 +705,7 @@ Critics point out that future returns may be lower than the historical average, 
 Mathematically, it is rarely the cheapest route. Psychologically, it can be powerful. The early wins build momentum and make the process feel achievable.
 
 It works best for people who need visible progress to stay motivated. For pure cost minimisation, the avalanche method usually wins.`,
-    relatedTerms: ["avalanche-method", "debt-payoff"],
+    relatedTerms: ["avalanche-method", "minimum-payment"],
     relatedTools: ["debt-payoff"],
   },
   {
@@ -666,7 +717,7 @@ It works best for people who need visible progress to stay motivated. For pure c
 This approach minimises the total interest paid and usually clears debt fastest in pure mathematical terms. The downside is that the first win can take a long time if the highest-rate debt is also large.
 
 It suits people who can stay motivated without frequent small victories. Our calculator lets you compare both methods side by side.`,
-    relatedTerms: ["snowball-method", "debt-payoff"],
+    relatedTerms: ["snowball-method", "minimum-payment"],
     relatedTools: ["debt-payoff"],
   },
   {
@@ -705,6 +756,174 @@ In a snowball or avalanche plan, every debt gets its minimum payment first, and 
     relatedTerms: ["apr", "snowball-method", "avalanche-method"],
     relatedTools: ["debt-payoff"],
   },
+  {
+    slug: "emergency-fund",
+    title: "Emergency fund",
+    definition: "An emergency fund is cash set aside to cover essential expenses if your income stops or an unexpected cost hits.",
+    body: `Most guides suggest three to six months of essential spending held somewhere safe and accessible. That usually means an easy-access savings account in the UK or a high-yield savings account in the US, not investments that could fall when you need the money.
+
+The fund is for true emergencies: job loss, urgent home repairs, medical bills, or a car failure that lets you keep earning. It is not for planned spending like holidays or Christmas.
+
+Build it before you aggressively invest or overpay low-rate debt. Once it is in place, you can redirect the same monthly amount to longer-term goals.`,
+    relatedTerms: ["easy-access-savings", "high-yield-savings-account", "savings-rate"],
+    relatedTools: ["net-worth-tracker"],
+  },
+  {
+    slug: "expense-ratio",
+    title: "Expense ratio",
+    definition: "An expense ratio is the annual fee a fund charges its investors, expressed as a percentage of assets under management.",
+    body: `If a fund has a 0.5% expense ratio, it deducts roughly £5 a year for every £1,000 invested. That charge is taken from the fund's returns before they reach you, so a 7% gross return becomes a 6.5% net return.
+
+Expense ratios vary widely. Broad global index trackers often charge below 0.25%. Actively managed funds can charge 0.75% to 1.5% or more. The difference sounds small, but over decades the same gap compounds into a significant drag on final wealth.
+
+In the UK the published number is often the Ongoing Charges Figure (OCF), which includes most fund costs. In the US it is usually the expense ratio. Either way, it is one of the few predictors of future returns you can control.`,
+    relatedTerms: ["fee-drag", "compound-interest"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "fee-drag",
+    title: "Fee drag",
+    definition: "Fee drag is the long-term wealth you lose to fees and charges, beyond the simple annual percentage.",
+    body: `A 1% annual fee does not reduce your final balance by 1%. Because the fee is taken from returns that would otherwise have compounded, the drag grows over time. Over twenty or thirty years a 1% fee can easily eat a quarter or more of the portfolio.
+
+Fee drag includes fund expense ratios, platform or brokerage fees, adviser charges, and any other cost that reduces your net return. Some fees are explicit, some are quietly deducted from fund performance.
+
+The simplest way to estimate fee drag is to run the same projection with and without the fee. The gap between the two outcomes is the true cost.`,
+    relatedTerms: ["expense-ratio", "compound-interest"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "inflation",
+    title: "Inflation",
+    definition: "Inflation is the rate at which prices rise and the purchasing power of money falls over time.",
+    body: `If inflation runs at 3% for a year, a basket of goods that cost £100 at the start costs roughly £103 at the end. Your cash still says £100, but it buys less.
+
+Inflation matters for every financial plan. A savings account paying 4% interest with 3% inflation delivers a real return of about 1%. A wage rise below inflation is effectively a pay cut.
+
+Central banks target low and stable inflation, commonly 2% in the UK and the US. They measure it with indexes such as the Consumer Prices Index (CPI) or the Consumer Price Index for All Urban Consumers (CPI-U).`,
+    relatedTerms: ["real-return", "nominal-return", "purchasing-power"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "purchasing-power",
+    title: "Purchasing power",
+    definition: "Purchasing power is what a unit of currency can actually buy, after accounting for inflation.",
+    body: `A pound or dollar is only useful for what it purchases. If prices double, the same nominal amount buys half as much. That is a loss of purchasing power.
+
+When people talk about money in real terms, they mean purchasing power. £100 today is not the same as £100 in twenty years unless prices stay flat, which rarely happens.
+
+Investors care about purchasing power because the goal is not a large number on a screen but the lifestyle that number can support.`,
+    relatedTerms: ["inflation", "real-return", "nominal-return"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "nominal-return",
+    title: "Nominal return",
+    definition: "Nominal return is the percentage gain on an investment before adjusting for inflation.",
+    body: `If your portfolio grows from £10,000 to £11,000 in a year, your nominal return is 10%. That is the number most statements and fund factsheets show first.
+
+Nominal returns are useful for comparing products and tracking account balances. They are not useful for measuring whether you are actually richer, because they ignore what the money can buy.
+
+To see the real return, subtract inflation from the nominal return. A 10% nominal return with 7% inflation gives roughly a 3% real return.`,
+    relatedTerms: ["real-return", "inflation", "purchasing-power"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "real-return",
+    title: "Real return",
+    definition: "Real return is the investment gain after accounting for inflation, showing the change in actual purchasing power.",
+    body: `A 5% nominal return with 3% inflation is roughly a 2% real return. Your money grew, but only by 2% in terms of what it can buy.
+
+Real return is what matters for long-term goals. A pension projection in nominal pounds can look impressive while quietly promising a poorer lifestyle than you expect.
+
+The shortcut calculation is: real return = (1 + nominal return) / (1 + inflation) - 1. For small numbers, subtracting inflation is close enough. For larger numbers or longer periods, use the full formula.`,
+    relatedTerms: ["nominal-return", "inflation", "purchasing-power"],
+    relatedTools: ["compound-interest", "fire-number"],
+  },
+  {
+    slug: "savings-rate",
+    title: "Savings rate",
+    definition: "Your savings rate is the percentage of your after-tax income that you save or invest rather than spend.",
+    body: `If you take home £3,000 a month and save £600, your savings rate is 20%. The higher the rate, the faster you can build an emergency fund, hit a savings goal, or reach financial independence.
+
+Savings rate is one of the most powerful levers in personal finance. A higher rate both increases how much you invest and reduces how much you need to live on, which lowers the target portfolio for independence.
+
+It is usually measured against net income, so taxes and pension contributions taken at source are already accounted for. Include employer pension contributions if you want a fuller picture.`,
+    relatedTerms: ["emergency-fund", "fire-number"],
+    relatedTools: ["net-worth-tracker", "fire-number"],
+  },
+  {
+    slug: "time-to-goal",
+    title: "Time to goal",
+    definition: "Time to goal is the number of months or years needed to reach a savings or investment target.",
+    body: `Given a starting amount, a monthly contribution, and an expected return, you can calculate when the pot will hit a target. The answer depends more on the contribution amount than on the return rate for short goals, and more on the return rate for long goals.
+
+Time-to-goal maths is the mirror of compound interest. Instead of asking "what will this grow to?", you ask "how long until it grows to that?"
+
+Inflation changes the picture. A goal stated in today's money needs more nominal pounds by the deadline, so the real time to goal is usually longer than the nominal one.`,
+    relatedTerms: ["compound-interest", "savings-rate", "inflation"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "pound-cost-averaging",
+    title: "Pound-cost averaging",
+    definition: "Pound-cost averaging is investing a fixed amount regularly, buying more units when prices are low and fewer when they are high.",
+    body: `In the US the same idea is usually called dollar-cost averaging. The principle is identical: you remove the temptation to time the market by automating a steady contribution.
+
+Pound-cost averaging reduces the risk of investing a large lump sum just before a market fall. It also enforces discipline during volatility, because the same monthly amount automatically buys more when prices drop.
+
+It is not a guarantee of better returns than a lump sum. Historically, markets rise more often than they fall, so investing immediately has usually won. But for many people the behavioural benefit of a regular plan outweighs the statistical edge.`,
+    relatedTerms: ["compound-interest", "time-to-goal"],
+    relatedTools: ["compound-interest"],
+  },
+  {
+    slug: "sequence-of-returns-risk",
+    title: "Sequence-of-returns risk",
+    definition: "Sequence-of-returns risk is the danger that poor investment returns occur just before or after you start withdrawing from a portfolio.",
+    body: `Two retirees can have the same average return over thirty years but very different outcomes if one gets the good years early and the other gets the bad years early. The one with bad years early may run out of money even though the long-term average looks fine.
+
+This risk is highest in the years around retirement, when the portfolio is largest and withdrawals are beginning. A few negative years at that point can permanently reduce the pot.
+
+Common defences include holding cash reserves, using a lower withdrawal rate, and being willing to cut spending after a bad year. It is one reason the 4% rule is a starting point, not a guarantee.`,
+    relatedTerms: ["fire-number", "withdrawal-rate", "four-percent-rule"],
+    relatedTools: ["fire-number"],
+  },
+  {
+    slug: "fire-variants",
+    title: "Coast, Lean and Fat FIRE",
+    definition: "Coast, Lean and Fat FIRE are variations of the FIRE movement that trade lifestyle spending against how much capital you need.",
+    body: `Lean FIRE means retiring on a frugal budget, which needs a smaller pot but a simpler lifestyle. Fat FIRE means retiring with a generous budget, which needs a much larger pot.
+
+Coast FIRE is different. You save enough early in life that your portfolio can grow to your target by a normal retirement age without further contributions. After that point you only need to cover current living costs, not save more.
+
+Barista FIRE sits somewhere in the middle: you leave a high-pressure career but keep a part-time or lower-paid job for income and perhaps benefits. The right variant depends on your spending, your health, and how much flexibility you want.`,
+    relatedTerms: ["fire-number", "withdrawal-rate", "four-percent-rule"],
+    relatedTools: ["fire-number"],
+  },
+  {
+    slug: "easy-access-savings",
+    title: "Easy-access savings account",
+    definition: "An easy-access savings account is a UK account that lets you withdraw money quickly without penalty.",
+    body: `Easy-access accounts are the normal home for emergency funds because the cash is available within hours or days. They pay interest, but the rate is usually lower than fixed-term accounts or investments.
+
+The interest may be tax-free if it falls within the Personal Savings Allowance or is held inside a Cash ISA. For most people, the key feature is liquidity, not return.
+
+The US equivalent is usually called a high-yield savings account (HYSA). Both serve the same purpose: keeping safe cash accessible.`,
+    relatedTerms: ["emergency-fund", "high-yield-savings-account", "isa"],
+    relatedTools: ["net-worth-tracker"],
+  },
+  {
+    slug: "high-yield-savings-account",
+    title: "High-yield savings account",
+    definition: "A high-yield savings account is a US savings account that pays a higher interest rate than a standard checking or savings account.",
+    body: `HYSAs are the normal place for US emergency funds. They are FDIC-insured up to the relevant limits and allow quick transfers to a checking account. Online banks often offer better rates than traditional branches because they have lower overheads.
+
+Rates move with the federal funds rate and the competitive landscape, so the best account today may not be the best account in a year. There is usually no commitment period, unlike a certificate of deposit.
+
+The UK equivalent is an easy-access savings account. Both are designed for cash you might need soon, not for long-term growth.`,
+    relatedTerms: ["emergency-fund", "easy-access-savings"],
+    relatedTools: ["net-worth-tracker"],
+  },
 ];
 
 export const updates: Update[] = [
@@ -742,6 +961,11 @@ export const updates: Update[] = [
     date: "2026-08-10",
     title: "Week 6: Compound Interest cluster live",
     body: "Added the Compound Interest calculator for UK and US users, with a solve-for-any-variable mode, monthly/daily/annual compounding, a stacked contributions-vs-growth chart, plus region-specific pillar guides, a supporting article on how long to save £100k/$100k, a methodology page, and a rule of 72 glossary term.",
+  },
+  {
+    date: "2026-08-11",
+    title: "Week 7: polish, speed, research, and embeddability",
+    body: "Reviewed and expanded PostHog event tracking, added reviewedBy bylines to all published tools, guides, articles and methodologies, grew the glossary with wave-2 terms, fixed bidirectional relatedTool links, hardened charts against invalid data, and shipped an embeddable compound-interest calculator prototype with iframe auto-resize and attribution.",
   },
 ];
 

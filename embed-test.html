@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your Net Worth — embed test</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        max-width: 720px;
+        margin: 40px auto;
+        padding: 0 20px;
+        line-height: 1.5;
+      }
+      iframe {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+      }
+      pre {
+        background: #f4f4f5;
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Compound Interest embed test</h1>
+    <p>
+      This page simulates a third-party site embedding the Your Net Worth compound-interest calculator. The
+      iframe height should update automatically as the calculator content changes.
+    </p>
+
+    <h2>Embed code</h2>
+    <pre id="snippet"></pre>
+
+    <h2>Live embed</h2>
+    <iframe id="calc" src="/embed/uk/tools/compound-interest" height="640"></iframe>
+
+    <script>
+      const iframe = document.getElementById("calc");
+      const snippet = document.getElementById("snippet");
+      const src = iframe.getAttribute("src");
+      const absoluteSrc = new URL(src, window.location.origin).toString();
+      snippet.textContent = `<iframe\n  src="${absoluteSrc}"\n  width="100%"\n  height="640"\n  frameborder="0"\n  loading="lazy"\n  title="Compound interest calculator by Your Net Worth"\n></iframe>`;
+
+      window.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "yournetworth-embed-height") {
+          iframe.height = event.data.height;
+        }
+      });
+    </script>
+  </body>
+</html>

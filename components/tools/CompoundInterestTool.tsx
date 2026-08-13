@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowUpRight, Check, Code2 } from "lucide-react";
 import { CalcShell } from "@/components/calc/CalcShell";
 import { CalcSlider } from "@/components/calc/CalcSlider";
 import { CalcResult } from "@/components/calc/CalcResult";
@@ -10,8 +10,10 @@ import { solveCompound, calculateCompound } from "@/lib/calc/compound";
 import type { SolveMode } from "@/lib/calc/compound";
 import { ukRegion, usRegion } from "@/lib/regions";
 import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { CompoundInterestChart, type CompoundInterestChartPoint } from "./CompoundInterestChart";
+import { useTrackEvent } from "@/lib/analytics";
 
 type CompoundInterestState = {
   solveFor: SolveMode;
@@ -54,8 +56,9 @@ function frequencyLabel(frequency: number): string {
   return "monthly";
 }
 
-export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
+export function CompoundInterestTool({ region, embed = false }: { region: "uk" | "us"; embed?: boolean }) {
   const config = region === "uk" ? ukRegion : usRegion;
+  const track = useTrackEvent();
   const { state, setState, copyLink, exportJson } = useCalcState<CompoundInterestState>({
     key: "compound-interest",
     initial: initialCompoundState,
@@ -165,6 +168,31 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
     </Card>
   );
 
+  const embedBacklink = `https://yournetworth.net/${region}/tools/compound-interest`;
+  const embedCode = `<iframe\n  src="https://yournetworth.net/embed/${region}/tools/compound-interest"\n  width="100%"\n  height="640"\n  frameborder="0"\n  loading="lazy"\n  title="Compound interest calculator by Your Net Worth"\n></iframe>`;
+  const [embedCopied, setEmbedCopied] = useState(false);
+
+  const handleCopyEmbed = async () => {
+    await navigator.clipboard.writeText(embedCode);
+    track("embed_code_copied", { slug: "compound-interest", region });
+    setEmbedCopied(true);
+    window.setTimeout(() => setEmbedCopied(false), 1500);
+  };
+
+  const embedAction = !embed ? (
+    <Button
+      type="button"
+      onClick={handleCopyEmbed}
+      variant="secondary"
+      size="sm"
+      className={cn(embedCopied && "border-accent/30 bg-accent-muted text-accent")}
+      aria-label="Copy embed code"
+    >
+      {embedCopied ? <Check className="h-4 w-4" /> : <Code2 className="h-4 w-4" />}
+      {embedCopied ? "Copied" : "Embed"}
+    </Button>
+  ) : null;
+
   return (
     <CalcShell
       title="Compound Interest"
@@ -175,6 +203,9 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
       copyLink={copyLink}
       exportJson={exportJson}
       cta={cta}
+      embed={embed}
+      embedBacklink={embedBacklink}
+      extraActions={embedAction}
       subtitle="Project how a starting balance and regular contributions grow over time with compound interest. Move any slider to see the chart update."
     >
       <div className="grid gap-6 lg:grid-cols-12">
@@ -335,33 +366,35 @@ export function CompoundInterestTool({ region }: { region: "uk" | "us" }) {
             ]}
           />
 
-          <details className="group rounded-[16px] border border-hairline bg-surface p-5">
-            <summary className="cursor-pointer text-sm font-medium text-text hover:text-text-muted">
-              Year-by-year breakdown
-            </summary>
-            <div className="mt-4 max-h-96 overflow-x-auto overflow-y-auto">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-surface">
-                  <tr className="border-b border-hairline text-left text-xs text-text-dim">
-                    <th className="pb-2 font-medium">Year</th>
-                    <th className="pb-2 font-medium">Contributions</th>
-                    <th className="pb-2 font-medium">Value</th>
-                    <th className="pb-2 font-medium">Growth</th>
-                  </tr>
-                </thead>
-                <tbody className="text-text-muted tabular-nums">
-                  {series.map((point) => (
-                    <tr key={point.year} className="border-b border-hairline last:border-b-0">
-                      <td className="py-2 pr-4">{point.year}</td>
-                      <td className="py-2 pr-4">{config.formatValue(point.contributions)}</td>
-                      <td className="py-2 pr-4">{config.formatValue(point.value)}</td>
-                      <td className="py-2 pr-4">{config.formatValue(point.value - point.contributions)}</td>
+          {!embed && (
+            <details className="group rounded-[16px] border border-hairline bg-surface p-5">
+              <summary className="cursor-pointer text-sm font-medium text-text hover:text-text-muted">
+                Year-by-year breakdown
+              </summary>
+              <div className="mt-4 max-h-96 overflow-x-auto overflow-y-auto">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-surface">
+                    <tr className="border-b border-hairline text-left text-xs text-text-dim">
+                      <th className="pb-2 font-medium">Year</th>
+                      <th className="pb-2 font-medium">Contributions</th>
+                      <th className="pb-2 font-medium">Value</th>
+                      <th className="pb-2 font-medium">Growth</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
+                  </thead>
+                  <tbody className="text-text-muted tabular-nums">
+                    {series.map((point) => (
+                      <tr key={point.year} className="border-b border-hairline last:border-b-0">
+                        <td className="py-2 pr-4">{point.year}</td>
+                        <td className="py-2 pr-4">{config.formatValue(point.contributions)}</td>
+                        <td className="py-2 pr-4">{config.formatValue(point.value)}</td>
+                        <td className="py-2 pr-4">{config.formatValue(point.value - point.contributions)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          )}
 
           <p className="text-xs text-text-dim">
             Not financial advice. The calculator assumes a fixed return, fixed contributions, and no taxes or fees. Your inputs stay in your browser.

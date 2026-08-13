@@ -90,6 +90,26 @@ export function CalcChart({ data, currentAge, endAge, formatValue, className, ti
     );
   }
 
+  const hasInvalidData = data.some(
+    (d) =>
+      !Number.isFinite(d.p10) ||
+      !Number.isFinite(d.p25) ||
+      !Number.isFinite(d.p50) ||
+      !Number.isFinite(d.p75) ||
+      !Number.isFinite(d.p90)
+  );
+
+  if (hasInvalidData) {
+    return (
+      <div className={cn("aspect-video rounded-[16px] border border-hairline bg-surface", className)}>
+        <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-sm text-text-muted">
+          <span>Unable to draw chart.</span>
+          <span className="text-xs text-text-dim">Check that all inputs are valid numbers.</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div ref={wrapperRef} className={cn("relative aspect-video rounded-[16px] border border-hairline bg-surface", className)}>
       {(title || tooltip) && (

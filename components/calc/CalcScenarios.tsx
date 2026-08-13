@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useTrackEvent } from "@/lib/analytics";
 
 type ScenarioMap = Record<string, Record<string, unknown>>;
 
@@ -32,6 +33,7 @@ export function CalcScenarios<T extends Record<string, unknown>>({
   const storageKey = `${slug}-scenarios`;
   const [scenarios, setScenarios] = useState<ScenarioMap>(() => loadScenarios(storageKey));
   const [active, setActive] = useState<string>("baseline");
+  const track = useTrackEvent();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -60,6 +62,7 @@ export function CalcScenarios<T extends Record<string, unknown>>({
       } else {
         setScenarios({ ...scenarios, [name]: { ...state } });
       }
+      track("scenario_changed", { slug, scenario: name, action: "save" });
       return;
     }
     if (name === "baseline") {
@@ -73,6 +76,7 @@ export function CalcScenarios<T extends Record<string, unknown>>({
       }
     }
     setActive(name);
+    track("scenario_changed", { slug, scenario: name, action: "switch" });
   };
 
   return (
