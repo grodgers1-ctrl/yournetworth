@@ -30,6 +30,8 @@ type CalcShellProps<T extends Record<string, unknown>> = {
   embed?: boolean;
   /** URL to link back to the full tool from an embed view. */
   embedBacklink?: string;
+  /** Optional custom scenario content rendered in place of the default scenario row. */
+  scenarioContent?: React.ReactNode;
   children: React.ReactNode;
 };
 
@@ -51,6 +53,7 @@ export function CalcShell<T extends Record<string, unknown>>({
   showRegionToggle = true,
   embed = false,
   embedBacklink,
+  scenarioContent,
   children,
 }: CalcShellProps<T>) {
   const [copied, setCopied] = useState(false);
@@ -161,7 +164,7 @@ export function CalcShell<T extends Record<string, unknown>>({
           </div>
           {note && <p className="mt-3 text-xs text-text-dim">{note}</p>}
           <div className="mt-5 border-t border-hairline pt-4">
-            <CalcScenarios slug={slug} state={state} setState={setState} initial={initial} />
+            {scenarioContent ?? <CalcScenarios slug={slug} state={state} setState={setState} initial={initial} />}
           </div>
         </div>
       )}

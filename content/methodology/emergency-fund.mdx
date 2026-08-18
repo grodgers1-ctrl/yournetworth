@@ -1,0 +1,87 @@
+# Emergency Fund methodology
+
+The Emergency Fund calculator shows how much cash you need to cover essential spending and how long it will take to build that amount from your current savings and monthly contributions.
+
+<CalloutDark title="TL;DR">
+- Target fund size = monthly essential spending × target months.
+- Months to fully funded = the ceiling of the gap between target and current savings divided by the monthly contribution.
+- Progress percentage = current savings divided by target.
+- Coverage in months = current savings divided by monthly essential spending.
+- The calculator assumes no interest on the fund, fixed monthly contributions, and fixed essential spending.
+- This is a planning tool, not a prediction.
+</CalloutDark>
+
+## What the calculator measures
+
+The calculator answers two questions:
+
+1. How much cash do I need in my emergency fund?
+2. How long will it take to get there?
+
+It does not model investment returns, taxes, inflation, or changing contribution rates. The fund is treated as cash.
+
+## Core formula
+
+The target fund size is the simplest part of the calculation:
+
+```
+Target = Monthly essential expenses × Target months covered
+```
+
+For example, if your essential spending is £2,000 a month and you want six months of cover, your target is £12,000.
+
+The number of months needed to reach the target is:
+
+```
+Months to funded = ceil((Target - Current savings) / Monthly contribution)
+```
+
+If your current savings already meet or exceed the target, the result is zero months.
+
+Progress and coverage are expressed as:
+
+```
+Progress = Current savings / Target
+Coverage in months = Current savings / Monthly essential expenses
+```
+
+## How the chart is built
+
+The chart shows one point per month from month 0 up to the larger of the months-to-funded value or 120% of the target months. The balance line starts at your current savings and rises by your monthly contribution each month, capped at the target.
+
+Because the fund is cash, no interest is added. The line is straight until it reaches the target, then flat.
+
+The shaded target band shows 90% to 110% of the target. The horizontal dashed lines show three, six, and nine months of essential spending as reference points.
+
+## Assumptions and limitations
+
+The model assumes:
+
+- Your essential spending stays constant.
+- Your monthly contribution stays constant.
+- The fund earns no interest.
+- You do not withdraw from the fund while building it.
+- Current savings are already liquid and accessible.
+
+In reality, essential spending can rise or fall, contributions may be irregular, and a savings account will pay some interest. The calculator deliberately keeps the assumptions simple so the result is easy to understand.
+
+## Sources
+
+The three to six month rule is widely used by financial guidance bodies. The Consumer Financial Protection Bureau in the US recommends building an emergency savings fund as a core part of financial wellbeing. The Certified Financial Planner Board of Standards uses three to six months of expenses as a baseline. In the UK, MoneyHelper suggests considering how long it would take to find new work and what essential bills would continue during that period.
+
+## When this is not enough
+
+This calculator does not replace a full financial plan. It does not account for:
+
+- Irregular income or seasonal work
+- Changing household expenses
+- Interest earned on the fund
+- Inflation reducing purchasing power
+- Multiple currencies
+- Access delays from savings products with withdrawal restrictions
+
+Use it as a starting point, then adjust the target and contribution based on your own situation.
+
+---
+
+_Last updated: 2026-08-18. Reviewed by Glenn Rodgers. This methodology is educational and is not financial advice._

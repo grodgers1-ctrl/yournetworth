@@ -18,6 +18,7 @@ import MortgageOverpaymentMethodology from "@/content/methodology/mortgage-overp
 import NetWorthTrackerMethodology from "@/content/methodology/net-worth-tracker.mdx";
 import DebtPayoffMethodology from "@/content/methodology/debt-payoff.mdx";
 import CompoundInterestMethodology from "@/content/methodology/compound-interest.mdx";
+import EmergencyFundMethodology from "@/content/methodology/emergency-fund.mdx";
 
 const METHODOLOGY_MODULES: Record<string, ComponentType | undefined> = {
   "fire-number": FireNumberMethodology,
@@ -26,6 +27,7 @@ const METHODOLOGY_MODULES: Record<string, ComponentType | undefined> = {
   "net-worth-tracker": NetWorthTrackerMethodology,
   "debt-payoff": DebtPayoffMethodology,
   "compound-interest": CompoundInterestMethodology,
+  "emergency-fund": EmergencyFundMethodology,
 };
 
 export function generateStaticParams() {
@@ -36,6 +38,7 @@ export function generateStaticParams() {
     { slug: "net-worth-tracker" },
     { slug: "debt-payoff" },
     { slug: "compound-interest" },
+    { slug: "emergency-fund" },
   ];
 }
 

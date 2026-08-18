@@ -24,6 +24,8 @@ import UKDebtPayoffGuide from "@/content/guides/uk/debt-payoff.mdx";
 import USDebtPayoffGuide from "@/content/guides/us/debt-payoff.mdx";
 import UKCompoundInterestGuide from "@/content/guides/uk/compound-interest.mdx";
 import USCompoundInterestGuide from "@/content/guides/us/compound-interest.mdx";
+import UKEmergencyFundGuide from "@/content/guides/uk/emergency-fund.mdx";
+import USEmergencyFundGuide from "@/content/guides/us/emergency-fund.mdx";
 
 const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> = {
   "fire-number": {
@@ -50,6 +52,10 @@ const GUIDE_MODULES: Record<string, Record<Region, ComponentType | undefined>> =
     uk: UKCompoundInterestGuide,
     us: USCompoundInterestGuide,
   },
+  "emergency-fund": {
+    uk: UKEmergencyFundGuide,
+    us: USEmergencyFundGuide,
+  },
 };
 
 function regionFromString(region: string): Region | null {
@@ -70,6 +76,8 @@ export function generateStaticParams() {
     { region: "us", slug: "debt-payoff" },
     { region: "uk", slug: "compound-interest" },
     { region: "us", slug: "compound-interest" },
+    { region: "uk", slug: "emergency-fund" },
+    { region: "us", slug: "emergency-fund" },
   ];
 }
 
